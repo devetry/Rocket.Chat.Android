@@ -154,6 +154,13 @@ kotlin {
 
 androidExtensions {
     experimental = true
+
+    implementation libraries.androidSvg
+
+    testImplementation libraries.junit
+    androidTestImplementation (libraries.expressoCore , {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
 }
 
 // FIXME - build and install the sdk into the app/libs directory
