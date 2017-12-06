@@ -157,6 +157,8 @@ androidExtensions {
 
     implementation libraries.androidSvg
 
+    implementation libraries.androidSvg
+
     testImplementation libraries.junit
     androidTestImplementation (libraries.expressoCore , {
         exclude group: 'com.android.support', module: 'support-annotations'
