@@ -11,6 +11,7 @@ import androidx.core.content.edit
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Worker
 import chat.rocket.android.BuildConfig
+<<<<<<< HEAD
 import chat.rocket.android.dagger.DaggerAppComponent
 import chat.rocket.android.dagger.injector.HasWorkerInjector
 import chat.rocket.android.dagger.qualifier.ForMessages
@@ -30,6 +31,11 @@ import chat.rocket.android.util.retryIO
 import chat.rocket.android.util.setupFabric
 import chat.rocket.common.RocketChatException
 import chat.rocket.core.internal.rest.getCustomEmojis
+=======
+import chat.rocket.android.app.utils.CustomImageFormatConfigurator
+
+import chat.rocket.android.dagger.DaggerApplicationComponent
+>>>>>>> 1f5388f5... Fresco setup.
 import com.facebook.drawee.backends.pipeline.DraweeConfig
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.core.ImagePipelineConfig
@@ -96,11 +102,16 @@ class RocketChatApplication : Application(), HasActivityInjector, HasServiceInje
             .lifecycle
             .addObserver(appLifecycleObserver)
 
+<<<<<<< HEAD
         context = WeakReference(applicationContext)
 
         AndroidThreeTen.init(this)
 
         setupFabric(this)
+=======
+        AndroidThreeTen.init(this)
+
+>>>>>>> 1f5388f5... Fresco setup.
         setupFresco()
         setupTimber()
 
@@ -141,6 +152,18 @@ class RocketChatApplication : Application(), HasActivityInjector, HasServiceInje
 
     private fun setupFresco() {
         Fresco.initialize(this, imagePipelineConfig, draweeConfig)
+    }
+
+    private fun setupFresco() {
+        val imagePipelineConfig = ImagePipelineConfig.newBuilder(this)
+                .setImageDecoderConfig(CustomImageFormatConfigurator.createImageDecoderConfig())
+                .build()
+
+        val draweeConfigBuilder = DraweeConfig.newBuilder()
+
+        CustomImageFormatConfigurator.addCustomDrawableFactories(draweeConfigBuilder)
+
+        Fresco.initialize(this, imagePipelineConfig, draweeConfigBuilder.build())
     }
 
     private fun setupTimber() {
