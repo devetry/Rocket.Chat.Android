@@ -112,6 +112,7 @@ class LoginPresenter @Inject constructor(private val view: LoginView,
     }
 
     private fun setupOauthServicesView() {
+
         launchUI(strategy) {
             try {
                 val services = retryIO("settingsOauth()") {
@@ -121,19 +122,26 @@ class LoginPresenter @Inject constructor(private val view: LoginView,
                     val state = "{\"loginStyle\":\"popup\",\"credentialToken\":\"${generateRandomString(40)}\",\"isCordova\":true}".encodeToBase64()
                     var totalSocialAccountsEnabled = 0
 
+                    // drupal oauth will just use the github button
+                    val clientId = ""
+                    view.setupGithubButtonListener(OauthHelper.getGithubOauthUrl(clientId, state), state)
+                    view.enableLoginByGithub()
+                    totalSocialAccountsEnabled++
+
+
                     if (settings.isFacebookAuthenticationEnabled()) {
 //                        //TODO: Remove until we have this implemented
 //                        view.enableLoginByFacebook()
 //                        totalSocialAccountsEnabled++
                     }
-                    if (settings.isGithubAuthenticationEnabled()) {
-                        val clientId = getOauthClientId(services, SERVICE_NAME_GITHUB)
-                        if (clientId != null) {
-                            view.setupGithubButtonListener(OauthHelper.getGithubOauthUrl(clientId, state), state)
-                            view.enableLoginByGithub()
-                            totalSocialAccountsEnabled++
-                        }
-                    }
+//                    if (settings.isGithubAuthenticationEnabled()) {
+//                        val clientId = getOauthClientId(services, SERVICE_NAME_GITHUB)
+//                        if (clientId != null) {
+//                            view.setupGithubButtonListener(OauthHelper.getGithubOauthUrl(clientId, state), state)
+//                            view.enableLoginByGithub()
+//                            totalSocialAccountsEnabled++
+//                        }
+//                    }
                     if (settings.isGoogleAuthenticationEnabled()) {
                         val clientId = getOauthClientId(services, SERVICE_NAME_GOOGLE)
                         if (clientId != null) {

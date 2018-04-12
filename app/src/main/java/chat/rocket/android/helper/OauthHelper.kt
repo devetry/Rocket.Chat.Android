@@ -5,17 +5,23 @@ import chat.rocket.android.util.extensions.removeTrailingSlash
 object OauthHelper {
 
     /**
-     * Returns the Github Oauth URL.
+     * Returns the Drupal Oauth URL.
      *
-     * @param clientId The GitHub client ID.
+     * @param clientId The Drupal client ID.
      * @param state An unguessable random string used to protect against forgery attacks.
-     * @return The Github Oauth URL.
+     * @return The Drupal Oauth URL.
      */
     fun getGithubOauthUrl(clientId: String, state: String): String {
-        return "https://github.com/login/oauth/authorize" +
-                "?client_id=$clientId" +
-                "&state=$state" +
-                "&scope=user:email"
+        val rocketchat = "https://katien-rocket.herokuapp.com"
+        val drupal = "http://simplex.serveo.net"
+        val rocketchatClientId = "F9D848A32AA9C6552E1AB7F90C03B749FBF1300B"
+
+        return "$drupal/en/oauth2/authorize?destination=oauth2/authorize" +
+                "&client_id=$rocketchatClientId" +
+                "&redirect_uri=$rocketchat/_oauth/drupal?close" +
+                "&response_type=code" +
+                "&scope=gender%20email%20openid%20profile%20offline_access" +
+                "&state=$state"
     }
 
     /**
