@@ -25,16 +25,23 @@
             android:name=".authentication.ui.AuthenticationActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
+            android:excludeFromRecents="true"
             android:theme="@style/AuthenticationTheme"
             android:windowSoftInputMode="adjustResize">
+            <!--YTP Entry point-->
+            <intent-filter>
+                <action android:name="com.devetry.chat.START"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <!--TODO: Remove this regular entry point-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
+            android:excludeFromRecents="true"
             android:name=".server.ui.ChangeServerActivity"
             android:theme="@style/AuthenticationTheme" />
         <activity

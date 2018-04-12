@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/levelsItemBottomNav"
+        android:icon="@drawable/ic_levels"
+        android:title="Levels" />
+
+    <item
+        android:id="@+id/careerItemBottomNav"
+        android:icon="@drawable/ic_careers"
+        android:title="Careers" />
+
+    <item
+        android:id="@+id/coursesItemBottomNav"
+        android:icon="@drawable/ic_courses"
+        android:title="Courses" />
+
+    <item
+        android:id="@+id/chatItemBottomNav"
+        android:icon="@drawable/ic_chat"
+
+        android:title="Chat" />
+
+</menu>
