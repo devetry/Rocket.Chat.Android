@@ -12,8 +12,8 @@ object OauthHelper {
      * @return The Drupal Oauth URL.
      */
     fun getGithubOauthUrl(clientId: String, state: String): String {
-        val rocketchat = "https://katien-rocket.herokuapp.com"
-        val drupal = "http://simplex.serveo.net"
+        val rocketchat = "http://13.126.45.178:3000"
+        val drupal = "http://13.126.45.178"
         val rocketchatClientId = "F9D848A32AA9C6552E1AB7F90C03B749FBF1300B"
 
         return "$drupal/en/oauth2/authorize?destination=oauth2/authorize" +
