@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector, HasSupp
         presenter.loadCurrentInfo()
         setupToolbar()
         setupNavigationView()
+        setupBottomNavigation()
     }
 
     override fun onResume() {
@@ -213,5 +214,9 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector, HasSupp
                 presenter.logout()
             }
         }
+    }
+
+    private fun setupBottomNavigation() {
+        bottomNavigation.selectedItemId = bottomNavigation.menu.findItem(R.id.chatItemBottomNav).itemId
     }
 }
