@@ -30,16 +30,24 @@
             android:excludeFromRecents="true"
             android:theme="@style/AuthenticationTheme"
             android:windowSoftInputMode="adjustResize">
-            <!--YTP Entry point-->
-            <intent-filter>
-                <action android:name="com.devetry.chat.START"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
+
+
             <!--TODO: Remove this regular entry point-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".webview.oauth.ui.OauthWebViewActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" >
+            <!--YTP Entry point-->
+            <intent-filter>
+                <action android:name="com.devetry.chat.START"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
 
@@ -70,10 +78,6 @@
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".webview.cas.ui.CasWebViewActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity
-            android:name=".webview.oauth.ui.OauthWebViewActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity

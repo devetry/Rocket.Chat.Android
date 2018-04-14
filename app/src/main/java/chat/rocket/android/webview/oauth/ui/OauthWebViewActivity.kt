@@ -19,10 +19,16 @@ import org.json.JSONObject
 
 fun Context.oauthWebViewIntent(webPageUrl: String, state: String): Intent {
     return Intent(this, OauthWebViewActivity::class.java).apply {
-        putExtra(INTENT_WEB_PAGE_URL, webPageUrl)
-        putExtra(INTENT_STATE, state)
+        putExtra(YTP_INTENT_AUTH_URL, webPageUrl)
+        putExtra(YTP_INTENT_STATE, state)
     }
 }
+
+
+val YTP_INTENT_BASE_URL = "base_url"
+val YTP_INTENT_AUTH_URL = "auth_url"
+val YTP_INTENT_SESSION_COOKIE = "cookie"
+val YTP_INTENT_STATE = "state"
 
 private const val INTENT_WEB_PAGE_URL = "web_page_url"
 private const val INTENT_STATE = "state"
@@ -42,10 +48,10 @@ class OauthWebViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_view)
 
-        webPageUrl = intent.getStringExtra(INTENT_WEB_PAGE_URL)
+        webPageUrl = intent.getStringExtra(YTP_INTENT_AUTH_URL)
         requireNotNull(webPageUrl) { "no web_page_url provided in Intent extras" }
 
-        state = intent.getStringExtra(INTENT_STATE)
+        state = intent.getStringExtra(YTP_INTENT_STATE)
         requireNotNull(state) { "no state provided in Intent extras" }
 
         setupToolbar()
@@ -77,8 +83,9 @@ class OauthWebViewActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
-        val cookieString = "SESS603ca8782f39689084da0b7fb9c193f2=XgcCCZcNkz4Yuf9U_w0FFJKYpMr6YvztFXtNtvL8BZo"
-        CookieManager.getInstance().setCookie("http://13.126.45.178", cookieString)
+        val cookieString = intent.getStringExtra(YTP_INTENT_SESSION_COOKIE)
+        val baseUrl = intent.getStringExtra(YTP_INTENT_BASE_URL)
+        CookieManager.getInstance().setCookie(baseUrl, cookieString)
 
 
         with(web_view.settings) {
@@ -110,7 +117,7 @@ class OauthWebViewActivity : AppCompatActivity() {
 
     // If the states matches, then try to get the code, otherwise the request was created by a third party and the process should be aborted.
     private fun isStateValid(url: String): Boolean =
-        url.substringBefore("#").toUri().getQueryParameter(INTENT_STATE) == state
+        url.substringBefore("#").toUri().getQueryParameter(YTP_INTENT_STATE) == state
 
     private fun getCredentialToken(json: JSONObject): String =
         json.optString(JSON_CREDENTIAL_TOKEN)
