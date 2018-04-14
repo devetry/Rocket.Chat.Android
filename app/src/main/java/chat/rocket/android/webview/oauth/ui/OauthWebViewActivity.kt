@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.net.toUri
@@ -76,6 +77,10 @@ class OauthWebViewActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
+        val cookieString = "SESS603ca8782f39689084da0b7fb9c193f2=XgcCCZcNkz4Yuf9U_w0FFJKYpMr6YvztFXtNtvL8BZo"
+        CookieManager.getInstance().setCookie("http://13.126.45.178", cookieString)
+
+
         with(web_view.settings) {
             javaScriptEnabled = true
             // TODO Remove this workaround that is required to make Google OAuth to work. We should use Custom Tabs instead. See https://github.com/RocketChat/Rocket.Chat.Android/issues/968

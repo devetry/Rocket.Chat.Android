@@ -42,14 +42,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--Activities available to YTP-->
         <activity
-            android:excludeFromRecents="true"
-            android:name=".server.ui.ChangeServerActivity"
-            android:theme="@style/AuthenticationTheme" />
+            android:name=".chatroom.ui.ChatRoomActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
         <activity
             android:name=".main.ui.MainActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <activity
+            android:name=".chatroom.ui.PinnedMessagesActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <!--Disabled-->
+        <activity
+            android:excludeFromRecents="true"
+            android:name=".server.ui.ChangeServerActivity"
+            android:theme="@style/AuthenticationTheme" />
         <activity
             android:name=".webview.ui.WebViewActivity"
             android:theme="@style/AppTheme"
@@ -60,14 +74,6 @@
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".webview.oauth.ui.OauthWebViewActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity
-            android:name=".chatroom.ui.ChatRoomActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity
-            android:name=".chatroom.ui.PinnedMessagesActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity

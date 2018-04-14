@@ -55,14 +55,6 @@
 
     </android.support.v4.widget.DrawerLayout>
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/ytp_bottom_navigation_height"
-        android:layout_gravity="bottom"
-        android:background="@color/blue"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
-        app:menu="@menu/bottom_navigation" />
 
+    <include layout="@layout/bottom_nav"/>
 </FrameLayout>

@@ -2,6 +2,7 @@ package chat.rocket.android.main.ui
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -31,6 +32,7 @@ import dagger.android.HasActivityInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.android.synthetic.main.bottom_nav.*
 import kotlinx.android.synthetic.main.nav_header.view.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
@@ -38,9 +40,12 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), MainView, HasActivityInjector, HasSupportFragmentInjector {
-    @Inject lateinit var activityDispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
-    @Inject lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
-    @Inject lateinit var presenter: MainPresenter
+    @Inject
+    lateinit var activityDispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
+    @Inject
+    lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+    @Inject
+    lateinit var presenter: MainPresenter
     private var isFragmentAdded: Boolean = false
     private var expanded = false
     private val headerLayout by lazy { view_navigation.getHeaderView(0) }
@@ -85,10 +90,10 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector, HasSupp
     override fun showUserStatus(userStatus: UserStatus) {
         headerLayout.apply {
             image_user_status.setImageDrawable(
-                DrawableHelper.getUserStatusDrawable(
-                    userStatus,
-                    this.context
-                )
+                    DrawableHelper.getUserStatusDrawable(
+                            userStatus,
+                            this.context
+                    )
             )
         }
     }
@@ -99,7 +104,7 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector, HasSupp
             with(viewModel) {
                 if (userStatus != null) {
                     image_user_status.setImageDrawable(
-                        DrawableHelper.getUserStatusDrawable(userStatus, context)
+                            DrawableHelper.getUserStatusDrawable(userStatus, context)
                     )
                 }
                 if (userDisplayName != null) {
@@ -217,6 +222,26 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector, HasSupp
     }
 
     private fun setupBottomNavigation() {
-        bottomNavigation.selectedItemId = bottomNavigation.menu.findItem(R.id.chatItemBottomNav).itemId
+
+
+        levelsTab.setOnClickListener {
+            val ytpIntent = Intent("com.devetry.ytp.START")
+            ytpIntent.putExtra("tab", "levels")
+            ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivity(ytpIntent)
+        }
+        careersTab.setOnClickListener {
+            val ytpIntent = Intent("com.devetry.ytp.START")
+            ytpIntent.putExtra("tab", "careers")
+            ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivity(ytpIntent)
+        }
+        coursesTab.setOnClickListener {
+            val ytpIntent = Intent("com.devetry.ytp.START")
+            ytpIntent.putExtra("tab", "courses")
+            ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivity(ytpIntent)
+        }
+
     }
 }

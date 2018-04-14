@@ -10,10 +10,18 @@
         android:id="@+id/layout_app_bar"
         layout="@layout/app_bar_chat_room" />
 
+    <include
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ytp_bottom_navigation_height"
+        layout="@layout/bottom_nav"/>
+
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/layout_app_bar" />
+        android:layout_below="@+id/layout_app_bar"
+        android:layout_marginBottom="@dimen/ytp_bottom_navigation_height"/>
+
 
 </RelativeLayout>
