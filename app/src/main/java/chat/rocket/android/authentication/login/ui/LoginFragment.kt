@@ -18,6 +18,7 @@ import chat.rocket.android.BuildConfig
 import chat.rocket.android.R
 import chat.rocket.android.authentication.login.presentation.LoginPresenter
 import chat.rocket.android.authentication.login.presentation.LoginView
+import chat.rocket.android.authentication.ui.YTPOAuth
 import chat.rocket.android.helper.KeyboardHelper
 import chat.rocket.android.helper.TextHelper
 import chat.rocket.android.util.extensions.*
@@ -26,6 +27,7 @@ import chat.rocket.android.webview.cas.ui.casWebViewIntent
 import chat.rocket.android.webview.oauth.ui.INTENT_OAUTH_CREDENTIAL_SECRET
 import chat.rocket.android.webview.oauth.ui.INTENT_OAUTH_CREDENTIAL_TOKEN
 import chat.rocket.android.webview.oauth.ui.oauthWebViewIntent
+import chat.rocket.android.webview.oauth.ui.ytpoauthWebViewIntent
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_authentication_log_in.*
 import javax.inject.Inject
@@ -42,12 +44,29 @@ class LoginFragment : Fragment(), LoginView {
     private var isGlobalLayoutListenerSetUp = false
 
     companion object {
+        const val ARG_YTP_OAUTH = "ytpOAuth"
         fun newInstance() = LoginFragment()
+
+        fun newInstance(ytpOAuth: YTPOAuth) : LoginFragment {
+            val fragment = LoginFragment()
+            val args = Bundle()
+            args.putSerializable(ARG_YTP_OAUTH, ytpOAuth)
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
+
+        ( arguments?.getSerializable(ARG_YTP_OAUTH) as? YTPOAuth)?.let{
+
+            startActivityForResult(activity?.ytpoauthWebViewIntent(it), REQUEST_CODE_FOR_OAUTH)
+        }
+
+
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =

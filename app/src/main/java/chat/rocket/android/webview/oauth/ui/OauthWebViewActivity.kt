@@ -11,6 +11,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.net.toUri
 import chat.rocket.android.R
+import chat.rocket.android.authentication.ui.YTPOAuth
 import chat.rocket.android.util.extensions.decodeUrl
 import chat.rocket.android.util.extensions.toJsonObject
 import kotlinx.android.synthetic.main.activity_web_view.*
@@ -21,6 +22,15 @@ fun Context.oauthWebViewIntent(webPageUrl: String, state: String): Intent {
     return Intent(this, OauthWebViewActivity::class.java).apply {
         putExtra(YTP_INTENT_AUTH_URL, webPageUrl)
         putExtra(YTP_INTENT_STATE, state)
+    }
+}
+
+fun Context.ytpoauthWebViewIntent(ytpOAuth: YTPOAuth): Intent {
+    return Intent(this, OauthWebViewActivity::class.java).apply {
+        putExtra(YTP_INTENT_AUTH_URL, ytpOAuth.drupal_idp)
+        putExtra(YTP_INTENT_STATE, ytpOAuth.state)
+        putExtra(YTP_INTENT_BASE_URL, ytpOAuth.chat_server)
+        putExtra(YTP_INTENT_SESSION_COOKIE, ytpOAuth.session_cookie)
     }
 }
 

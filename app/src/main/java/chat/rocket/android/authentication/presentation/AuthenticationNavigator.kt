@@ -8,6 +8,7 @@ import chat.rocket.android.authentication.signup.ui.SignupFragment
 import chat.rocket.android.authentication.twofactor.ui.TwoFAFragment
 import chat.rocket.android.authentication.ui.AuthenticationActivity
 import chat.rocket.android.authentication.ui.newServerIntent
+import chat.rocket.android.authentication.ui.YTPOAuth
 import chat.rocket.android.main.ui.MainActivity
 import chat.rocket.android.server.ui.changeServerIntent
 import chat.rocket.android.util.extensions.addFragmentBackStack
@@ -15,6 +16,11 @@ import chat.rocket.android.webview.ui.webViewIntent
 
 class AuthenticationNavigator(internal val activity: AuthenticationActivity) {
 
+    fun toYTPLogin(ytpOAuth: YTPOAuth) {
+        activity.addFragmentBackStack("LoginFragment", R.id.fragment_container) {
+            LoginFragment.newInstance(ytpOAuth)
+        }
+    }
     fun toLogin() {
         activity.addFragmentBackStack("LoginFragment", R.id.fragment_container) {
             LoginFragment.newInstance()
