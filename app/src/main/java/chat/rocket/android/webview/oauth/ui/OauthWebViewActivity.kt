@@ -11,21 +11,34 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.net.toUri
 import chat.rocket.android.R
+import chat.rocket.android.authentication.ui.YTPOAuth
 import chat.rocket.android.util.extensions.decodeUrl
 import chat.rocket.android.util.extensions.toJsonObject
 import kotlinx.android.synthetic.main.activity_web_view.*
 import kotlinx.android.synthetic.main.app_bar.*
 import org.json.JSONObject
 
-fun Context.oauthWebViewIntent(webPageUrl: String, state: String): Intent {
+fun Context.ytpoauthWebViewIntent(ytpOAuth: YTPOAuth): Intent {
     return Intent(this, OauthWebViewActivity::class.java).apply {
-        putExtra(INTENT_WEB_PAGE_URL, webPageUrl)
-        putExtra(INTENT_STATE, state)
+        putExtra(YTP_INTENT_AUTH_URL, ytpOAuth.drupal_idp)
+        putExtra(YTP_INTENT_STATE, ytpOAuth.state)
+        putExtra(YTP_INTENT_BASE_URL, ytpOAuth.chat_server)
+        putExtra(YTP_INTENT_SESSION_COOKIE, ytpOAuth.session_cookie)
     }
 }
 
-private const val INTENT_WEB_PAGE_URL = "web_page_url"
-private const val INTENT_STATE = "state"
+val YTP_INTENT_BASE_URL = "base_url"
+val YTP_INTENT_AUTH_URL = "auth_url"
+val YTP_INTENT_SESSION_COOKIE = "cookie"
+val YTP_INTENT_STATE = "state"
+
+fun Context.oauthWebViewIntent(webPageUrl: String, state: String): Intent {
+    return Intent(this, OauthWebViewActivity::class.java).apply {
+        putExtra(YTP_INTENT_BASE_URL, webPageUrl)
+        putExtra(YTP_INTENT_STATE, state)
+    }
+}
+
 private const val JSON_CREDENTIAL_TOKEN = "credentialToken"
 private const val JSON_CREDENTIAL_SECRET = "credentialSecret"
 const val INTENT_OAUTH_CREDENTIAL_TOKEN = "credential_token"
@@ -41,10 +54,10 @@ class OauthWebViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_view)
 
-        webPageUrl = intent.getStringExtra(INTENT_WEB_PAGE_URL)
+        webPageUrl = intent.getStringExtra(YTP_INTENT_AUTH_URL)
         requireNotNull(webPageUrl) { "no web_page_url provided in Intent extras" }
 
-        state = intent.getStringExtra(INTENT_STATE)
+        state = intent.getStringExtra(YTP_INTENT_STATE)
         requireNotNull(state) { "no state provided in Intent extras" }
 
         // Ensures that the cookies is always removed when opening the webview.
@@ -78,6 +91,9 @@ class OauthWebViewActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
+        val cookieString = intent.getStringExtra(YTP_INTENT_SESSION_COOKIE)
+        val baseUrl = intent.getStringExtra(YTP_INTENT_BASE_URL)
+        CookieManager.getInstance().setCookie(baseUrl, cookieString)
         with(web_view.settings) {
             javaScriptEnabled = true
             domStorageEnabled = true
@@ -92,8 +108,8 @@ class OauthWebViewActivity : AppCompatActivity() {
                 if (url.contains(JSON_CREDENTIAL_TOKEN) && url.contains(JSON_CREDENTIAL_SECRET)) {
                     if (isStateValid(url)) {
                         val jsonResult = url.decodeUrl()
-                            .substringAfter("#")
-                            .toJsonObject()
+                                .substringAfter("#")
+                                .toJsonObject()
                         val credentialToken = getCredentialToken(jsonResult)
                         val credentialSecret = getCredentialSecret(jsonResult)
                         if (credentialToken.isNotEmpty() && credentialSecret.isNotEmpty()) {
@@ -109,25 +125,25 @@ class OauthWebViewActivity : AppCompatActivity() {
 
     // If the states matches, then try to get the code, otherwise the request was created by a third party and the process should be aborted.
     private fun isStateValid(url: String): Boolean =
-        url.substringBefore("#").toUri().getQueryParameter(INTENT_STATE) == state
+            url.substringBefore("#").toUri().getQueryParameter(YTP_INTENT_STATE) == state
 
     private fun getCredentialToken(json: JSONObject): String =
-        json.optString(JSON_CREDENTIAL_TOKEN)
+            json.optString(JSON_CREDENTIAL_TOKEN)
 
     private fun getCredentialSecret(json: JSONObject): String =
-        json.optString(JSON_CREDENTIAL_SECRET)
+            json.optString(JSON_CREDENTIAL_SECRET)
 
     private fun closeView(
-        activityResult: Int = Activity.RESULT_CANCELED,
-        credentialToken: String? = null,
-        credentialSecret: String? = null
+            activityResult: Int = Activity.RESULT_CANCELED,
+            credentialToken: String? = null,
+            credentialSecret: String? = null
     ) {
         setResult(
-            activityResult,
-            Intent().putExtra(INTENT_OAUTH_CREDENTIAL_TOKEN, credentialToken).putExtra(
-                INTENT_OAUTH_CREDENTIAL_SECRET,
-                credentialSecret
-            )
+                activityResult,
+                Intent().putExtra(INTENT_OAUTH_CREDENTIAL_TOKEN, credentialToken).putExtra(
+                        INTENT_OAUTH_CREDENTIAL_SECRET,
+                        credentialSecret
+                )
         )
         finish()
         overridePendingTransition(R.anim.hold, R.anim.slide_down)

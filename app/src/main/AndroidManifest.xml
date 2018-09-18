@@ -24,7 +24,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AuthenticationTheme"
             android:windowSoftInputMode="adjustResize">
-
+            <!--YTP Entry point-->
+            <intent-filter>
+                <action android:name="com.devetry.chat.START"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <!--TODO: Remove this regular entry point-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />

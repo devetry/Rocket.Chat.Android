@@ -12,6 +12,8 @@ import chat.rocket.android.authentication.presentation.AuthenticationPresenter
 import chat.rocket.android.authentication.server.ui.ServerFragment
 import chat.rocket.android.authentication.server.ui.TAG_SERVER_FRAGMENT
 import chat.rocket.android.util.extensions.addFragment
+import chat.rocket.android.util.extensions.encodeToBase64
+import chat.rocket.android.util.extensions.generateRandomString
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -20,6 +22,27 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
+import java.io.Serializable
+
+
+class YTPOAuth constructor(var chat_server: String,
+                           var drupal_idp: String,
+                           var session_cookie: String,
+                           var state: String) : Serializable {
+    companion object {
+        const val INTENT_BASE_URL = "base_url"
+        const val INTENT_AUTH_URL = "auth_url"
+        const val INTENT_SESSION_COOKIE = "cookie"
+
+        operator fun invoke(intent: Intent): YTPOAuth? = with(intent) {
+            val state = "{\"loginStyle\":\"popup\",\"credentialToken\":\"${generateRandomString(40)}\",\"isCordova\":true}".encodeToBase64()
+            YTPOAuth(chat_server = getStringExtra(INTENT_BASE_URL),
+                    drupal_idp = getStringExtra(INTENT_AUTH_URL) + state,
+                    session_cookie = getStringExtra(INTENT_SESSION_COOKIE),
+                    state = state)
+        }
+    }
+}
 
 class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
     @Inject
@@ -37,15 +60,8 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     override fun onStart() {
         super.onStart()
-        val deepLinkInfo = intent.getLoginDeepLinkInfo()
         launch(UI + job) {
-            val newServer = intent.getBooleanExtra(INTENT_ADD_NEW_SERVER, false)
-            // if we got authenticateWithDeepLink information, pass true to newServer also
-            presenter.loadCredentials(newServer || deepLinkInfo != null) { authenticated ->
-                if (!authenticated) {
-                    showServerInput(deepLinkInfo)
-                }
-            }
+            YTPOAuth(intent)?.let { presenter.ytpAuth(it) }
         }
     }
 

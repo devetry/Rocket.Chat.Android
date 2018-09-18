@@ -4,6 +4,7 @@ import DrawableHelper
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +36,7 @@ import dagger.android.HasActivityInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.android.synthetic.main.bottom_nav.*
 import kotlinx.android.synthetic.main.nav_header.view.*
 import javax.inject.Inject
 
@@ -74,6 +76,8 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
         presenter.loadEmojis()
         setupToolbar()
         setupNavigationView()
+
+        setupBottomNavigation()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -230,6 +234,26 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
 
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp)
         toolbar.setNavigationOnClickListener { openDrawer() }
+    }
+    fun setupBottomNavigation(){
+        levelsTab.setOnClickListener {
+            val ytpIntent = Intent("com.devetry.ytp.START")
+            ytpIntent.putExtra("tab", "levels")
+            ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivity(ytpIntent)
+        }
+        careersTab.setOnClickListener {
+            val ytpIntent = Intent("com.devetry.ytp.START")
+            ytpIntent.putExtra("tab", "careers")
+            ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivity(ytpIntent)
+        }
+        coursesTab.setOnClickListener {
+            val ytpIntent = Intent("com.devetry.ytp.START")
+            ytpIntent.putExtra("tab", "courses")
+            ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivity(ytpIntent)
+        }
     }
 
     fun setAvatar(avatarUrl: String) {

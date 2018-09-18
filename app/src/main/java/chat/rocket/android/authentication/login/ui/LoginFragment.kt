@@ -24,6 +24,7 @@ import chat.rocket.android.analytics.event.ScreenViewEvent
 import chat.rocket.android.authentication.domain.model.LoginDeepLinkInfo
 import chat.rocket.android.authentication.login.presentation.LoginPresenter
 import chat.rocket.android.authentication.login.presentation.LoginView
+import chat.rocket.android.authentication.ui.YTPOAuth
 import chat.rocket.android.helper.KeyboardHelper
 import chat.rocket.android.helper.TextHelper
 import chat.rocket.android.helper.getCredentials
@@ -36,9 +37,7 @@ import chat.rocket.android.util.extensions.showToast
 import chat.rocket.android.util.extensions.textContent
 import chat.rocket.android.util.extensions.ui
 import chat.rocket.android.util.extensions.vibrateSmartPhone
-import chat.rocket.android.webview.oauth.ui.INTENT_OAUTH_CREDENTIAL_SECRET
-import chat.rocket.android.webview.oauth.ui.INTENT_OAUTH_CREDENTIAL_TOKEN
-import chat.rocket.android.webview.oauth.ui.oauthWebViewIntent
+import chat.rocket.android.webview.oauth.ui.*
 import chat.rocket.android.webview.sso.ui.INTENT_SSO_TOKEN
 import chat.rocket.android.webview.sso.ui.ssoWebViewIntent
 import chat.rocket.common.util.ifNull
@@ -67,6 +66,15 @@ class LoginFragment : Fragment(), LoginView {
     private var deepLinkInfo: LoginDeepLinkInfo? = null
 
     companion object {
+        const val ARG_YTP_OAUTH = "ytpOAuth"
+        fun newInstance() = LoginFragment()
+
+        fun newInstance(ytpOAuth: YTPOAuth) : LoginFragment {
+            val fragment = LoginFragment()
+            fragment.arguments = Bundle().apply { putSerializable(ARG_YTP_OAUTH, ytpOAuth) }
+            return fragment
+        }
+
         private const val DEEP_LINK_INFO = "DeepLinkInfo"
 
         fun newInstance(deepLinkInfo: LoginDeepLinkInfo? = null) = LoginFragment().apply {
@@ -79,6 +87,10 @@ class LoginFragment : Fragment(), LoginView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
+
+        val ytpAuthData = (arguments?.getSerializable(ARG_YTP_OAUTH) as YTPOAuth)
+        startActivityForResult(activity?.ytpoauthWebViewIntent(ytpAuthData), REQUEST_CODE_FOR_OAUTH)
+
         deepLinkInfo = arguments?.getParcelable(DEEP_LINK_INFO)
     }
 
