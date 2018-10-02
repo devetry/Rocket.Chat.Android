@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="chat.rocket.android.player">
+    package="ytpconnect.rocket.android.player">
 
     <application>
         <activity
-            android:name=".PlayerActivity"
+            android:name="ytpconnect.rocket.android.player.PlayerActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/PlayerTheme" />
     </application>

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="chat.rocket.android.about.ui.AboutFragment">
+    tools:context="ytpconnect.rocket.android.about.ui.AboutFragment">
 
     <ImageView
         android:id="@+id/image_app_name"

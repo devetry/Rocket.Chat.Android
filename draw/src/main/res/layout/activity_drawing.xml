@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".main.ui.DrawingActivity">
 
-    <chat.rocket.android.draw.widget.CustomDrawView
+    <ytpconnect.rocket.android.draw.widget.CustomDrawView
         android:id="@+id/custom_draw_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
