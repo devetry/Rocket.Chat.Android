@@ -3,6 +3,7 @@ package chat.rocket.android.authentication.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import chat.rocket.android.R
@@ -61,6 +62,7 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
     override fun onStart() {
         super.onStart()
         launch(UI + job) {
+
             YTPOAuth(intent)?.let { presenter.ytpAuth(it) }
         }
     }
