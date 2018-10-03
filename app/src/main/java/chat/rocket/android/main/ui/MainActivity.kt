@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
                     setAvatar(userAvatar)
                 }
                 if (serverLogo != null) {
-//                    server_logo.setImageURI(serverLogo)
+                    server_logo.setImageURI(serverLogo)
                 }
                 text_server_url.text = uiModel.serverUrl
             }
@@ -157,15 +157,15 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
             }
         })
 
-
-        headerLayout.account_container.image_account_expand.rotateBy(180f)
-        if (expanded) {
-            accounts_list.fadeOut()
-        } else {
-            accounts_list.fadeIn()
+        headerLayout.account_container.setOnClickListener {
+            it.image_account_expand.rotateBy(180f)
+            if (expanded) {
+                accounts_list.fadeOut()
+            } else {
+                accounts_list.fadeIn()
+            }
+            expanded = !expanded
         }
-        expanded = !expanded
-
 
         headerLayout.image_avatar.setOnClickListener {
             view_navigation.menu.findItem(R.id.menu_action_profile).isChecked = true
@@ -222,7 +222,7 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
     fun setupNavigationView() {
         with (view_navigation.menu) {
             clear()
-//            setupMenu(this)
+            setupMenu(this)
         }
 
         view_navigation.setNavigationItemSelectedListener {

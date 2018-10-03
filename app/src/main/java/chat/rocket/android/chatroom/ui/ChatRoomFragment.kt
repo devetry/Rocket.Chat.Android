@@ -687,13 +687,12 @@ class ChatRoomFragment : Fragment(), ChatRoomView, EmojiKeyboardListener, EmojiR
             val intent = Intent(Intent.ACTION_GET_CONTENT)
 
             // Must set a type otherwise the intent won't resolve
-            intent.type = "image/*"
-
+            intent.type = "*/*"
             intent.addCategory(Intent.CATEGORY_OPENABLE)
 
             // Filter selectable files to those that match the whitelist for this particular server
             if (filter != null) {
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*"))
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, filter)
             }
             startActivityForResult(intent, REQUEST_CODE_FOR_PERFORM_SAF)
         }
