@@ -89,10 +89,10 @@ fi
 echo "CURRENT SHA: $SHA"
 
 # if the tree is not dirty, there is no new commit and the .jars are still there, just skip the build
-if ! check_git_dirty && ! check_last_commit && [ -f "${CURRENT_DIR}"/libs/common-"${SHA}".jar ] && [ -f "${CURRENT_DIR}"/libs/core-"${SHA}".jar ]; then
-	echo "NO BUILD NEEDED"
-	exit 0
-fi
+# if ! check_git_dirty && ! check_last_commit && [ -f "${CURRENT_DIR}"/libs/common-"${SHA}".jar ] && [ -f "${CURRENT_DIR}"/libs/core-"${SHA}".jar ]; then
+# 	echo "NO BUILD NEEDED"
+# 	exit 0
+# fi
 
 cd "${SDK_DIR}" && ./gradlew common:assemble && cd "${CURRENT_DIR}"
 cd "${SDK_DIR}" && ./gradlew core:assemble && cd "${CURRENT_DIR}"

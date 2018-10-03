@@ -1,0 +1,94 @@
+package ytpconnect.rocket.android.main.presentation
+
+import ytpconnect.rocket.android.R
+import ytpconnect.rocket.android.authentication.ui.newServerIntent
+import ytpconnect.rocket.android.chatroom.ui.chatRoomIntent
+import ytpconnect.rocket.android.chatrooms.ui.ChatRoomsFragment
+import ytpconnect.rocket.android.chatrooms.ui.TAG_CHAT_ROOMS_FRAGMENT
+import ytpconnect.rocket.android.createchannel.ui.CreateChannelFragment
+import ytpconnect.rocket.android.createchannel.ui.TAG_CREATE_CHANNEL_FRAGMENT
+import ytpconnect.rocket.android.main.ui.MainActivity
+import ytpconnect.rocket.android.profile.ui.ProfileFragment
+import ytpconnect.rocket.android.profile.ui.TAG_PROFILE_FRAGMENT
+import ytpconnect.rocket.android.server.ui.changeServerIntent
+import ytpconnect.rocket.android.settings.ui.SettingsFragment
+import ytpconnect.rocket.android.settings.ui.TAG_SETTINGS_FRAGMENT
+import ytpconnect.rocket.android.util.extensions.addFragment
+import ytpconnect.rocket.android.webview.adminpanel.ui.AdminPanelWebViewFragment
+
+class MainNavigator(internal val activity: MainActivity) {
+
+    fun toChatList(chatRoomId: String? = null) {
+        activity.addFragment(TAG_CHAT_ROOMS_FRAGMENT, R.id.fragment_container) {
+            ChatRoomsFragment.newInstance(chatRoomId)
+        }
+    }
+
+    fun toCreateChannel() {
+        activity.addFragment(TAG_CREATE_CHANNEL_FRAGMENT, R.id.fragment_container) {
+            CreateChannelFragment.newInstance()
+        }
+    }
+
+    fun toUserProfile() {
+        activity.addFragment(TAG_PROFILE_FRAGMENT, R.id.fragment_container) {
+            ProfileFragment.newInstance()
+        }
+    }
+
+    fun toSettings() {
+        activity.addFragment(TAG_SETTINGS_FRAGMENT, R.id.fragment_container) {
+            SettingsFragment.newInstance()
+        }
+    }
+
+    fun toAdminPanel(webPageUrl: String, userToken: String) {
+        activity.addFragment("AdminPanelWebViewFragment", R.id.fragment_container) {
+            AdminPanelWebViewFragment.newInstance(webPageUrl, userToken)
+        }
+    }
+
+    fun toChatRoom(
+        chatRoomId: String,
+        chatRoomName: String,
+        chatRoomType: String,
+        isReadOnly: Boolean,
+        chatRoomLastSeen: Long,
+        isSubscribed: Boolean,
+        isCreator: Boolean,
+        isFavorite: Boolean
+    ) {
+        activity.startActivity(
+            activity.chatRoomIntent(
+                chatRoomId,
+                chatRoomName,
+                chatRoomType,
+                isReadOnly,
+                chatRoomLastSeen,
+                isSubscribed,
+                isCreator,
+                isFavorite
+            )
+        )
+        activity.overridePendingTransition(R.anim.open_enter, R.anim.open_exit)
+    }
+
+    /**
+     * Switches to a server, given a [serverUrl] or adds a new server (navigating to the
+     * AuthenticationActivity) if the user server list only contains one server and the
+     * user logs out from this server.
+     * NOTE: If the user has more than one server and logs out from the current server, then it will
+     * switch to the first server in the server list.
+     *
+     * @param serverUrl The server URL to switch from, or null in case user logs out from the
+     * current server.
+     */
+    fun switchOrAddNewServer(serverUrl: String? = null) {
+        activity.startActivity(activity.changeServerIntent(serverUrl = serverUrl))
+        activity.finish()
+    }
+
+    fun toServerScreen() {
+        activity.startActivity(activity.newServerIntent())
+    }
+}
