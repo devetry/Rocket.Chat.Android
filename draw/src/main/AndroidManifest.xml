@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ytpconnect.rocket.android.draw">
+    package="chat.rocket.android.draw">
 
-    <application android:name="ytpconnect.rocket.android.draw.DrawApplication">
+    <application android:name=".DrawApplication">
         <activity
-            android:name="ytpconnect.rocket.android.draw.main.ui.DrawingActivity"
+            android:name=".main.ui.DrawingActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 

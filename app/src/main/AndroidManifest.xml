@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="ytpconnect.rocket.android">
+    package="chat.rocket.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="ytpconnect.rocket.android.app.RocketChatApplication"
+        android:name=".app.RocketChatApplication"
         tools:replace="android:name"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_config"
@@ -19,7 +19,7 @@
         android:supportsRtl="true">
 
         <activity
-            android:name="ytpconnect.rocket.android.authentication.ui.AuthenticationActivity"
+            android:name=".authentication.ui.AuthenticationActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/AuthenticationTheme"
@@ -53,46 +53,46 @@
         </activity>
 
         <activity
-            android:name="ytpconnect.rocket.android.server.ui.ChangeServerActivity"
+            android:name=".server.ui.ChangeServerActivity"
             android:theme="@style/AuthenticationTheme" />
 
         <activity
-            android:name="ytpconnect.rocket.android.main.ui.MainActivity"
+            android:name=".main.ui.MainActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
-            android:name="ytpconnect.rocket.android.webview.ui.WebViewActivity"
+            android:name=".webview.ui.WebViewActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
-            android:name="ytpconnect.rocket.android.webview.sso.ui.SsoWebViewActivity"
+            android:name=".webview.sso.ui.SsoWebViewActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
-            android:name="ytpconnect.rocket.android.webview.oauth.ui.OauthWebViewActivity"
+            android:name=".webview.oauth.ui.OauthWebViewActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
-            android:name="ytpconnect.rocket.android.chatroom.ui.ChatRoomActivity"
+            android:name=".chatroom.ui.ChatRoomActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
-            android:name="ytpconnect.rocket.android.chatinformation.ui.MessageInfoActivity"
+            android:name=".chatinformation.ui.MessageInfoActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <!-- TODO: Change to fragment-->
         <activity
-            android:name="ytpconnect.rocket.android.settings.password.ui.PasswordActivity"
+            android:name=".settings.password.ui.PasswordActivity"
             android:theme="@style/AppTheme" />
 
         <receiver
-            android:name="ytpconnect.rocket.android.push.DirectReplyReceiver"
+            android:name=".push.DirectReplyReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -101,7 +101,7 @@
         </receiver>
 
         <service
-            android:name="ytpconnect.rocket.android.chatroom.service.MessageService"
+            android:name=".chatroom.service.MessageService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
