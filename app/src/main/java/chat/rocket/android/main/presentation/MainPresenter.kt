@@ -1,6 +1,7 @@
 package chat.rocket.android.main.presentation
 
 import android.content.Context
+import android.util.Log
 import chat.rocket.android.core.lifecycle.CancelStrategy
 import chat.rocket.android.db.DatabaseManagerFactory
 import chat.rocket.android.emoji.Emoji
@@ -136,6 +137,7 @@ class MainPresenter @Inject constructor(
      * but custom emojis vary according to the its url.
      */
     fun loadEmojis() {
+        Log.d("LOAD_EMOJIS", "Main Presenter")
         launchUI(strategy) {
             EmojiRepository.setCurrentServerUrl(currentServer)
             val customEmojiList = mutableListOf<Emoji>()

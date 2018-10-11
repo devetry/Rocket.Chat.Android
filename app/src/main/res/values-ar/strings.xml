@@ -1,21 +1,10 @@
-<!--
-REMARK:
-
-When adding a new string in this file do not forget to add a proper translation for the
-corresponding supported language - if applicable.
-
-Please, follow the rules as shown here (by adding a new string in the correct section).
-
-Coding style:
-https://github.com/RocketChat/java-code-styles/blob/master/CODING_STYLE.md#strings
--->
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name" translatable="false">Rocket.Chat</string>
 
     <!--
         ROCKET CHAT CODE EDITIED
      -->
-    <string name="general_chat">Connect</string>
+    <string name="general_chat">تواصل</string>
 
     <!-- Titles -->
     <string name="title_sign_in_your_server">Sign in to your server</string>
@@ -304,6 +293,4 @@ https://github.com/RocketChat/java-code-styles/blob/master/CODING_STYLE.md#strin
     <string name="notif_success_sending">Message sent to %1$s!</string>
     <string name="read_by">Read by</string>
     <string name="message_information_title">Message information</string>
-
-    <string name="foss" tools:ignore="MissingTranslation">(FOSS)</string>
 </resources>

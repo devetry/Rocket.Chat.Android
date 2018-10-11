@@ -5,6 +5,7 @@ import android.text.SpannableStringBuilder
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.color
+import androidx.core.util.rangeTo
 import chat.rocket.android.R
 import chat.rocket.android.chatrooms.adapter.model.RoomUiModel
 import chat.rocket.android.db.model.ChatRoom
@@ -72,7 +73,7 @@ class RoomUiModelMapper(
         return with(user) {
             val name = mapName(user.username!!, user.name, false)
             val status = user.status
-            val avatar = serverUrl.avatarUrl(user.username!!)
+            var avatar = serverUrl.avatarUrl(user.username!!)
             val username = user.username!!
 
             RoomUiModel(

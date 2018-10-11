@@ -2,6 +2,11 @@
 <resources>
     <string name="app_name" translatable="false">Rocket.Chat</string>
 
+    <!--
+        ROCKET CHAT CODE EDITIED
+     -->
+    <string name="general_chat">Connect</string>
+
     <!-- Titles -->
     <string name="title_sign_in_your_server">サーバーに接続</string>
     <string name="title_log_in">ログイン</string>

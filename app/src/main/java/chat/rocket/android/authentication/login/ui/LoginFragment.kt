@@ -2,6 +2,7 @@ package chat.rocket.android.authentication.login.ui
 
 import DrawableHelper
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Build
@@ -11,10 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.ScrollView
+import android.widget.*
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
@@ -89,10 +87,17 @@ class LoginFragment : Fragment(), LoginView {
         AndroidSupportInjection.inject(this)
 
         val ytpAuthData = (arguments?.getSerializable(ARG_YTP_OAUTH) as YTPOAuth)
+
+
+
+//        context?.makeToast("SESSION: ${ytpAuthData.session_cookie}, AUTH: ${ytpAuthData.auth_cookie}, AUTHUSER: ${ytpAuthData.auth_user_cookie}")
+
         startActivityForResult(activity?.ytpoauthWebViewIntent(ytpAuthData), REQUEST_CODE_FOR_OAUTH)
 
         deepLinkInfo = arguments?.getParcelable(DEEP_LINK_INFO)
     }
+
+    fun Context.makeToast(text: String) = Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 
     override fun onCreateView(
         inflater: LayoutInflater,

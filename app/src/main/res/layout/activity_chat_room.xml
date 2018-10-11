@@ -16,4 +16,8 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/layout_app_bar" />
 
+    <include layout="@layout/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ytp_bottom_navigation_height"
+        android:layout_below="@id/fragment_container"/>
 </RelativeLayout>
