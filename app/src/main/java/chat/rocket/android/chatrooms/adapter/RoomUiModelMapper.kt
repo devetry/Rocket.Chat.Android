@@ -111,7 +111,7 @@ class RoomUiModelMapper(
             val avatar = if (type is RoomType.DirectMessage) {
                 serverUrl.avatarUrl(name)
             } else {
-                serverUrl.avatarUrl(name, isGroupOrChannel = true)
+                serverUrl.avatarUrl(name, isGroupOrChannel = true, format = "svg")
             }
             val unread = mapUnread(unread)
             val lastMessage = mapLastMessage(lastMessageUserId, chatRoom.lastMessageUserName,
