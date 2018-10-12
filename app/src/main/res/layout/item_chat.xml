@@ -10,7 +10,7 @@
     android:paddingStart="@dimen/screen_edge_left_and_right_padding"
     android:paddingTop="@dimen/chat_item_top_and_bottom_padding">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+<com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/image_avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"

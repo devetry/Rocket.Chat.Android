@@ -136,7 +136,6 @@ class MainPresenter @Inject constructor(
      * but custom emojis vary according to the its url.
      */
     fun loadEmojis() {
-        Log.d("LOAD_EMOJIS", "Main Presenter")
         launchUI(strategy) {
             EmojiRepository.setCurrentServerUrl(currentServer)
             val customEmojiList = mutableListOf<Emoji>()

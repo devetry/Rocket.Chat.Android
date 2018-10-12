@@ -1,6 +1,7 @@
 package chat.rocket.android.util.extensions
 
 import android.graphics.Color
+import android.util.Log
 import android.util.Patterns
 import chat.rocket.common.model.Token
 import okhttp3.HttpUrl
@@ -25,9 +26,9 @@ fun String.avatarUrl(
     format: String = "jpeg"
 ): String {
     return if (isGroupOrChannel) {
-        "${removeTrailingSlash()}/avatar/%23${avatar.removeTrailingSlash()}?format=$format"
+        return "${removeTrailingSlash()}/avatar/%23${avatar.removeTrailingSlash()}?format=$format"
     } else {
-        "${removeTrailingSlash()}/avatar/${avatar.removeTrailingSlash()}?format=$format"
+        return "${removeTrailingSlash()}/avatar/${avatar.removeTrailingSlash()}.svg"//?format=$format"
     }
 }
 
