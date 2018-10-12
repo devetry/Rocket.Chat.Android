@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.webkit.CookieManager
 import android.webkit.WebView
@@ -25,16 +24,12 @@ fun Context.ytpoauthWebViewIntent(ytpOAuth: YTPOAuth): Intent {
         putExtra(YTP_INTENT_STATE, ytpOAuth.state)
         putExtra(YTP_INTENT_BASE_URL, ytpOAuth.chat_server)
         putExtra(YTP_INTENT_SESSION_COOKIE, ytpOAuth.session_cookie)
-        putExtra(YTP_INTENT_AUTH_COOKIE, ytpOAuth.auth_cookie)
-        putExtra(YTP_INTENT_AUTH_USER_COOKIE, ytpOAuth.auth_user_cookie)
     }
 }
 
 val YTP_INTENT_BASE_URL = "base_url"
 val YTP_INTENT_AUTH_URL = "auth_url"
-val YTP_INTENT_SESSION_COOKIE = "sessionCookie"
-val YTP_INTENT_AUTH_COOKIE = "authCookie"
-val YTP_INTENT_AUTH_USER_COOKIE = "authUserCookie"
+val YTP_INTENT_SESSION_COOKIE = "cookie"
 val YTP_INTENT_STATE = "state"
 
 fun Context.oauthWebViewIntent(webPageUrl: String, state: String): Intent {
@@ -60,14 +55,10 @@ class OauthWebViewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_web_view)
 
         webPageUrl = intent.getStringExtra(YTP_INTENT_AUTH_URL)
-        requireNotNull(webPageUrl) {
-            "no web_page_url provided in Intent extras"
-        }
+        requireNotNull(webPageUrl) { "no web_page_url provided in Intent extras" }
 
         state = intent.getStringExtra(YTP_INTENT_STATE)
-        requireNotNull(state) {
-            "no state provided in Intent extras"
-        }
+        requireNotNull(state) { "no state provided in Intent extras" }
 
         // Ensures that the cookies is always removed when opening the webview.
         CookieManager.getInstance().removeAllCookies(null)
@@ -100,19 +91,9 @@ class OauthWebViewActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
-        val sessionCookieString = intent.getStringExtra(YTP_INTENT_SESSION_COOKIE)
-        val authCookieString = intent.getStringExtra(YTP_INTENT_AUTH_COOKIE)
-        val authUserCookieString = intent.getStringExtra(YTP_INTENT_AUTH_USER_COOKIE)
+        val cookieString = intent.getStringExtra(YTP_INTENT_SESSION_COOKIE)
         val baseUrl = intent.getStringExtra(YTP_INTENT_BASE_URL)
-        CookieManager.getInstance().setCookie(baseUrl, sessionCookieString)
-        CookieManager.getInstance().setCookie(baseUrl, authCookieString)
-        CookieManager.getInstance().setCookie(baseUrl, authUserCookieString)
-
-        Log.d("COOKIE", CookieManager.getInstance().getCookie(baseUrl))
-        Log.d("Session", intent.getStringExtra(YTP_INTENT_SESSION_COOKIE))
-        Log.d("Auth", intent.getStringExtra(YTP_INTENT_AUTH_COOKIE))
-        Log.d("AuthUser", intent.getStringExtra(YTP_INTENT_AUTH_USER_COOKIE))
-
+        CookieManager.getInstance().setCookie(baseUrl, cookieString)
         with(web_view.settings) {
             javaScriptEnabled = true
             domStorageEnabled = true
@@ -124,9 +105,6 @@ class OauthWebViewActivity : AppCompatActivity() {
         }
         web_view.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) {
-                Log.d("WEBVIEWPAGELOADED", url)
-                Log.d("WEBVIEWCOOKIE", CookieManager.getInstance().getCookie(baseUrl))
-
                 if (url.contains(JSON_CREDENTIAL_TOKEN) && url.contains(JSON_CREDENTIAL_SECRET)) {
                     if (isStateValid(url)) {
                         val jsonResult = url.decodeUrl()

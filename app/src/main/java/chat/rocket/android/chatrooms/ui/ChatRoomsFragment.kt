@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -169,7 +168,7 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
 
         sortView = menu.findItem(R.id.action_sort)
 
-        var searchItem = menu.findItem(R.id.action_search)
+        val searchItem = menu.findItem(R.id.action_search)
         searchView = searchItem?.actionView as? SearchView
         searchView?.setIconifiedByDefault(false)
         searchView?.maxWidth = Integer.MAX_VALUE
@@ -179,22 +178,6 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 // Simply setting sortView to visible won't work, so we invalidate the options
                 // to recreate the entire menu...
-                /**
-                 * ROCKET CHAT CODE EDITIED
-                 *
-                 * DESCRIPTION: Querying for the letter `a` as a default search
-                 *
-                 * AUTHOR: Tanner Juby
-                 * DATE: 10/11/18
-                 *
-                 * START OF EDIT
-                 */
-                updateSort()
-                /**
-                 * END OF EDIT
-                 *
-                 * PREVIOUS CODE: n/a
-                 */
                 activity?.invalidateOptionsMenu()
                 return true
             }
@@ -362,30 +345,10 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
 
     private fun queryChatRoomsByName(name: String?): Boolean {
         if (name.isNullOrEmpty()) {
-            /**
-             * ROCKET CHAT CODE EDITIED
-             *
-             * DESCRIPTION: Querying for the letter `a` as a default search
-             *
-             * AUTHOR: Tanner Juby
-             * DATE: 10/11/18
-             *
-             * START OF EDIT
-             */
-            viewModel.setQuery(Query.Search("a"))
-            /**
-             * END OF EDIT
-             *
-             * PREVIOUS CODE:
-             *
-             * updateSort()
-             *
-             */
-
+            updateSort()
         } else {
             viewModel.setQuery(Query.Search(name!!))
         }
         return true
     }
-
 }

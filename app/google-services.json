@@ -65,7 +65,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:673693445664:android:16da2e50aff9f0c9",
         "android_client_info": {
-          "package_name": "chat.rocket.ytpconnect"
+          "package_name": "chat.rocket.android"
         }
       },
       "oauth_client": [
@@ -73,7 +73,7 @@
           "client_id": "673693445664-k0mvosdjoe5dbvqce3b377ckabb5dgu8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "chat.rocket.ytpconnect",
+            "package_name": "chat.rocket.android",
             "certificate_hash": "33fa8582794176014a59054192e261bfad0e5273"
           }
         },
@@ -81,7 +81,7 @@
           "client_id": "673693445664-hrjftksij02vqtd467ln2cubvu48ft5j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "chat.rocket.ytpconnect",
+            "package_name": "chat.rocket.android",
             "certificate_hash": "41cf750df786a6d9da712a98a629d0c8391876d6"
           }
         },
@@ -148,7 +148,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:673693445664:android:1551054db195f705",
         "android_client_info": {
-          "package_name": "chat.rocket.ytpconnect.dev"
+          "package_name": "chat.rocket.android.dev"
         }
       },
       "oauth_client": [
@@ -156,7 +156,7 @@
           "client_id": "673693445664-t5aeku0oie010npd40a0tgn27c418vk7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "chat.rocket.ytpconnect.dev",
+            "package_name": "chat.rocket.android.dev",
             "certificate_hash": "41cf750df786a6d9da712a98a629d0c8391876d6"
           }
         },
@@ -164,7 +164,7 @@
           "client_id": "673693445664-iml14ln4vccuu7liclrpt2k671fkjs38.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "chat.rocket.ytpconnect.dev",
+            "package_name": "chat.rocket.android.dev",
             "certificate_hash": "33fa8582794176014a59054192e261bfad0e5273"
           }
         },

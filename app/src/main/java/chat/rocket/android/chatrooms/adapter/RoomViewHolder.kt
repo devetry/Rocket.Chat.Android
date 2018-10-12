@@ -2,7 +2,6 @@ package chat.rocket.android.chatrooms.adapter
 
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.View
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -28,9 +27,7 @@ class RoomViewHolder(itemView: View, private val listener: (RoomUiModel) -> Unit
     override fun bindViews(data: RoomItemHolder) {
         val room = data.data
         with(itemView) {
-            val newAvatar = room.avatar.replace("%23", "")
-
-            image_avatar.setImageURI(newAvatar)
+            image_avatar.setImageURI(room.avatar)
             text_chat_name.text = room.name
 
             if (room.lastMessage != null) {
