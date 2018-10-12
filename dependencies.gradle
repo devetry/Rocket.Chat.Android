@@ -142,14 +142,5 @@ ext {
             espressoIntents       : "androidx.test.espresso:espresso-intents:${versions.espresso}",
             roomTest              : "android.arch.persistence.room:testing:${versions.room}",
             truth                 : "com.google.truth:truth:${versions.truth}"
-
-            appCompat           : "com.android.support:appcompat-v7:${versions.support}",
-            annotations         : "com.android.support:support-annotations:${versions.support}",
-            recyclerview        : "com.android.support:recyclerview-v7:${versions.support}",
-            design              : "com.android.support:design:${versions.support}",
-            constraintLayout    : "com.android.support.constraint:constraint-layout:${versions.constraintLayout}",å
-
-            androidSvg          : "com.caverock:androidsvg:${versions.androidSvg}",
-
     ]
 }
