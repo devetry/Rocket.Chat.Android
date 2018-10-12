@@ -1,6 +1,5 @@
 ext {
     versions = [
-<<<<<<< HEAD
             // For project configuration
             java                  : JavaVersion.VERSION_1_8,
             compileSdk            : 28,
@@ -39,35 +38,6 @@ ext {
 
             moshi                 : '1.6.0',
             okhttp                : '3.11.0',
-=======
-        java              : JavaVersion.VERSION_1_8,
-        compileSdk        : 27,
-        targetSdk         : 27,
-        buildTools        : '27.0.0',
-        kotlin            : '1.2.0',
-
-        // Main dependencies
-        support           : '27.0.0',
-        constraintLayout  : '1.0.2',
-        dagger            : '2.11',
-        room              : '1.0.0-beta1',
-        rxjava            : '2.1.4',
-        rxandroid         : '2.0.1',
-        moshi             : '1.5.0',
-        okhttp            : '3.9.0',
-        fresco            : '1.5.0',
-        timber            : '4.5.1',
-        threeTenABP       : '1.0.5',
-        floatingSearchView: '2.1.1',
-        androidSvg        : '1.2.1',
-
-        // For testing
-        junit             : '4.12',
-        truth             : '0.36',
-        expresso          : '3.0.1',
-        mockito           : '2.10.0'
-    ]
->>>>>>> 13bc2acc... Add androidSvg library.
 
             timber                : '4.7.1',
             threeTenABP           : '1.1.0',
@@ -94,7 +64,6 @@ ext {
             mockito               : '2.21.0'
     ]
     libraries = [
-<<<<<<< HEAD
             kotlin                : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}",
             coroutines            : "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutine}",
             coroutinesAndroid     : "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutine}",
@@ -182,49 +151,5 @@ ext {
 
             androidSvg          : "com.caverock:androidsvg:${versions.androidSvg}",
 
-=======
-        kotlin              : "org.jetbrains.kotlin:kotlin-stdlib-jre7:${versions.kotlin}",
-
-        appCompat           : "com.android.support:appcompat-v7:${versions.support}",
-        annotations         : "com.android.support:support-annotations:${versions.support}",
-        recyclerview        : "com.android.support:recyclerview-v7:${versions.support}",
-        design              : "com.android.support:design:${versions.support}",
-        constraintLayout    : "com.android.support.constraint:constraint-layout:${versions.constraintLayout}",
-
-        dagger              : "com.google.dagger:dagger:${versions.dagger}",
-        daggerSupport       : "com.google.dagger:dagger-android-support:${versions.dagger}",
-        daggerProcessor     : "com.google.dagger:dagger-compiler:${versions.dagger}",
-        daggerAndroidApt    : "com.google.dagger:dagger-android-processor:${versions.dagger}",
-
-        room                : "android.arch.persistence.room:runtime:${versions.room}",
-        roomProcessor       : "android.arch.persistence.room:compiler:${versions.room}",
-        roomRxjava          : "android.arch.persistence.room:rxjava2:${versions.room}",
-
-        rxjava              : "io.reactivex.rxjava2:rxjava:${versions.rxjava}",
-        rxandroid           : "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}",
-
-        moshi               : "com.squareup.moshi:moshi:${versions.moshi}",
-        okhttp              : "com.squareup.okhttp3:okhttp:${versions.okhttp}",
-        okhttpLogger        : "com.squareup.okhttp3:logging-interceptor:${versions.okhttp}",
-
-        fresco              : "com.facebook.fresco:fresco:${versions.fresco}",
-        frescoAnimatedGif   : "com.facebook.fresco:animated-gif:${versions.fresco}",
-        frescoWebP          : "com.facebook.fresco:webpsupport:${versions.fresco}",
-        frescoAnimatedWebP  : "com.facebook.fresco:animated-webp:${versions.fresco}",
-
-        timber              : "com.jakewharton.timber:timber:${versions.timber}",
-        threeTenABP         : "com.jakewharton.threetenabp:threetenabp:${versions.threeTenABP}",
-
-        floatingSearchView  : "com.github.arimorty:floatingsearchview:${versions.floatingSearchView}",
-
-        androidSvg          : "com.caverock:androidsvg:${versions.androidSvg}",
-
-        // For testing
-        toolsJar      : files(Jvm.current().getToolsJar()),
-        junit         : "junit:junit:$versions.junit",
-        expressoCore  : "com.android.support.test.espresso:espresso-core:${versions.expresso}",
-        roomTest      : "android.arch.persistence.room:testing:${versions.room}",
-        truth         : "com.google.truth:truth:$versions.truth",
->>>>>>> 13bc2acc... Add androidSvg library.
     ]
 }
