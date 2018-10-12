@@ -108,6 +108,11 @@ class OauthWebViewActivity : AppCompatActivity() {
         CookieManager.getInstance().setCookie(baseUrl, authCookieString)
         CookieManager.getInstance().setCookie(baseUrl, authUserCookieString)
 
+        Log.d("COOKIE", CookieManager.getInstance().getCookie(baseUrl))
+        Log.d("Session", intent.getStringExtra(YTP_INTENT_SESSION_COOKIE))
+        Log.d("Auth", intent.getStringExtra(YTP_INTENT_AUTH_COOKIE))
+        Log.d("AuthUser", intent.getStringExtra(YTP_INTENT_AUTH_USER_COOKIE))
+
         with(web_view.settings) {
             javaScriptEnabled = true
             domStorageEnabled = true
@@ -119,6 +124,8 @@ class OauthWebViewActivity : AppCompatActivity() {
         }
         web_view.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) {
+                Log.d("WEBVIEWPAGELOADED", url)
+                Log.d("WEBVIEWCOOKIE", CookieManager.getInstance().getCookie(baseUrl))
 
                 if (url.contains(JSON_CREDENTIAL_TOKEN) && url.contains(JSON_CREDENTIAL_SECRET)) {
                     if (isStateValid(url)) {

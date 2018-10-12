@@ -1,6 +1,5 @@
 package chat.rocket.android.chatrooms.adapter
 
-import android.app.Activity
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.util.Log
@@ -13,18 +12,6 @@ import chat.rocket.common.model.RoomType
 import chat.rocket.common.model.UserStatus
 import kotlinx.android.synthetic.main.item_chat.view.*
 import kotlinx.android.synthetic.main.unread_messages_badge.view.*
-import android.graphics.BitmapFactory
-import android.graphics.Bitmap
-import android.widget.ImageView
-import java.io.*
-import java.net.MalformedURLException
-import java.net.URL
-import android.graphics.drawable.PictureDrawable
-import com.bumptech.glide.Glide
-import androidx.core.view.ViewCompat.animate
-
-
-
 
 class RoomViewHolder(itemView: View, private val listener: (RoomUiModel) -> Unit) : ViewHolder<RoomItemHolder>(itemView) {
 
@@ -38,13 +25,12 @@ class RoomViewHolder(itemView: View, private val listener: (RoomUiModel) -> Unit
     private val busy: Drawable = resources.getDrawable(R.drawable.ic_status_busy_12dp)
     private val offline: Drawable = resources.getDrawable(R.drawable.ic_status_invisible_12dp)
 
-
-
     override fun bindViews(data: RoomItemHolder) {
         val room = data.data
         with(itemView) {
+            val newAvatar = room.avatar.replace("%23", "")
 
-            image_avatar.setImageURI(room.avatar)
+            image_avatar.setImageURI(newAvatar)
             text_chat_name.text = room.name
 
             if (room.lastMessage != null) {
