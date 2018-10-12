@@ -3,6 +3,7 @@ package chat.rocket.android.authentication.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import android.view.Menu
 import android.view.MenuItem
@@ -27,21 +28,36 @@ import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 import java.io.Serializable
 
-
 class YTPOAuth constructor(var chat_server: String,
                            var drupal_idp: String,
                            var session_cookie: String,
+                           var auth_cookie: String,
+                           var auth_user_cookie: String,
                            var state: String) : Serializable {
     companion object {
         const val INTENT_BASE_URL = "base_url"
         const val INTENT_AUTH_URL = "auth_url"
-        const val INTENT_SESSION_COOKIE = "cookie"
+        const val INTENT_SESSION_COOKIE = "sessionCookie"
+        const val INTENT_AUTH_COOKIE = "authCookie"
+        const val INTENT_AUTH_USER_COOKIE = "authUserCookie"
+
+//        operator fun invoke(intent: Intent): YTPOAuth? = with(intent) {
+//            val state = "{\"loginStyle\":\"popup\",\"credentialToken\":\"${generateRandomString(40)}\",\"isCordova\":true}".encodeToBase64()
+//            YTPOAuth(chat_server = getStringExtra(INTENT_BASE_URL),
+//                    drupal_idp = getStringExtra(INTENT_AUTH_URL) + state,
+//                    session_cookie = getStringExtra(INTENT_SESSION_COOKIE),
+//                    auth_cookie = getStringExtra(INTENT_AUTH_COOKIE),
+//                    auth_user_cookie = getStringExtra(INTENT_AUTH_USER_COOKIE),
+//                    state = state)
+//        }
 
         operator fun invoke(intent: Intent): YTPOAuth? = with(intent) {
             val state = "{\"loginStyle\":\"popup\",\"credentialToken\":\"${generateRandomString(40)}\",\"isCordova\":true}".encodeToBase64()
-            YTPOAuth(chat_server = getStringExtra(INTENT_BASE_URL),
-                    drupal_idp = getStringExtra(INTENT_AUTH_URL) + state,
-                    session_cookie = getStringExtra(INTENT_SESSION_COOKIE),
+            YTPOAuth(chat_server = "http://yt-portal.raccoongang.com:3000/",
+                    drupal_idp = "http://yt-portal.raccoongang.com/en/oauth2/authorize?destination=oauth2/authorize&client_id=F9D848A32AA9C6552E1AB7F90C03B749FBF1300B&redirect_uri=http://yt-portal.raccoongang.com:3000/_oauth/drupal?close&response_type=code&scope=gender%20email%20openid%20profile%20offline_access&state=" + state,
+                    session_cookie = "SESSbe80cad36eaa53a63ac1dcf71b5f6448=qcwezobiEFD7w7t3VJs0PUaNFenNWI5SzpMc1xZJJoY",
+                    auth_cookie = "authenticated=1; expires=Thu, 10-Oct-2019 19:53:26 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
+                    auth_user_cookie = "authenticated_user=TannerJuby; expires=Thu, 10-Oct-2019 19:53:26 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
                     state = state)
         }
     }
@@ -64,8 +80,11 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     override fun onStart() {
         super.onStart()
+
         launch(UI + job) {
-            YTPOAuth(intent)?.let { presenter.ytpAuth(it) }
+            YTPOAuth(intent)?.let {
+                presenter.ytpAuth(it)
+            }
         }
     }
 

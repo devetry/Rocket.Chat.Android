@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Worker
@@ -194,6 +195,7 @@ class RocketChatApplication : Application(), HasActivityInjector, HasServiceInje
      * but custom emojis vary according to the its url.
      */
     fun loadEmojis() {
+        Log.d("LOAD_EMOJIS", "RocketChatApplication")
         EmojiRepository.init(this)
         val currentServer = getCurrentServerInteractor.get()
         currentServer?.let { server ->

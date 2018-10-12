@@ -13,7 +13,7 @@ android {
     buildToolsVersion versions.buildTools
 
     defaultConfig {
-        applicationId "chat.rocket.android"
+        applicationId "chat.rocket.ytpconnect"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
         versionCode 2043
@@ -34,9 +34,9 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('/Users/TannerJuby/Desktop/devetry_keystore.dms')
+            storeFile file('/Users/TannerJuby/Devetry/Projects/YTP/Android/Keystore/ytp_connect_keystore')
             storePassword 'devetry123'
-            keyAlias 'ytpkey'
+            keyAlias 'ytpconnectalias'
             keyPassword 'devetry123'
         }
         debug {

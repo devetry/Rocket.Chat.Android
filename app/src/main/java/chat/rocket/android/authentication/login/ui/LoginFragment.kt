@@ -1,6 +1,7 @@
 package chat.rocket.android.authentication.login.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,18 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 
 import android.view.ViewTreeObserver
-<<<<<<< HEAD
 import android.widget.*
 
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 
-=======
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.ScrollView
->>>>>>> parent of 7268f2c8... Fixed Authentication
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import chat.rocket.android.R
@@ -116,10 +110,7 @@ class LoginFragment : Fragment(), LoginView {
         AndroidSupportInjection.inject(this)
 
         val ytpAuthData = (arguments?.getSerializable(ARG_YTP_OAUTH) as YTPOAuth)
-<<<<<<< HEAD
 
-=======
->>>>>>> parent of 7268f2c8... Fixed Authentication
         startActivityForResult(activity?.ytpoauthWebViewIntent(ytpAuthData), REQUEST_CODE_FOR_OAUTH)
 
         val bundle = arguments
@@ -128,6 +119,8 @@ class LoginFragment : Fragment(), LoginView {
         }
 
     }
+
+    fun Context.makeToast(text: String) = Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 
     override fun onCreateView(
         inflater: LayoutInflater,

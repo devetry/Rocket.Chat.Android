@@ -1,5 +1,10 @@
 <resources>
 
+    <!--
+        ROCKET CHAT CODE EDITIED
+     -->
+    <string name="general_chat">Connect</string>
+
     <!-- Titles -->
     <string name="title_sign_in_your_server">Faça login no seu servidor</string>
     <string name="title_log_in">Entrar</string>
