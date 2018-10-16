@@ -55,9 +55,9 @@ class YTPOAuth constructor(var chat_server: String,
             val state = "{\"loginStyle\":\"popup\",\"credentialToken\":\"${generateRandomString(40)}\",\"isCordova\":true}".encodeToBase64()
             YTPOAuth(chat_server = "http://yt-portal.raccoongang.com:3000/",
                     drupal_idp = "http://yt-portal.raccoongang.com/en/oauth2/authorize?destination=oauth2/authorize&client_id=F9D848A32AA9C6552E1AB7F90C03B749FBF1300B&redirect_uri=http://yt-portal.raccoongang.com:3000/_oauth/drupal?close&response_type=code&scope=gender%20email%20openid%20profile%20offline_access&state=" + state,
-                    session_cookie = "SESSbe80cad36eaa53a63ac1dcf71b5f6448=qcwezobiEFD7w7t3VJs0PUaNFenNWI5SzpMc1xZJJoY",
-                    auth_cookie = "authenticated=1; expires=Thu, 10-Oct-2019 19:53:26 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
-                    auth_user_cookie = "authenticated_user=TannerJuby; expires=Thu, 10-Oct-2019 19:53:26 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
+                    session_cookie = "SESSbe80cad36eaa53a63ac1dcf71b5f6448=j2k90FtxhfGJhz1VI73swd2ehuG9QkJXOIDoEL6tw2o; expires=Thu, 08-Nov-2018 18:32:45 GMT; Max-Age=2000000; path=/; domain=.yt-portal.raccoongang.com; HttpOnly",
+                    auth_cookie = "authenticated=1; expires=Wed, 16-Oct-2019 14:59:25 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
+                    auth_user_cookie = "authenticated_user=TannerJuby; expires=Wed, 16-Oct-2019 14:59:25 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
                     state = state)
         }
     }
@@ -75,7 +75,7 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
         setupToolbar()
-        loadCredentials()
+//        loadCredentials()
     }
 
     override fun onStart() {
@@ -121,6 +121,12 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     private fun loadCredentials() {
         intent.getLoginDeepLinkInfo()?.let {
+
+            launch(UI + job) {
+                YTPOAuth(intent)?.let {
+                    presenter.ytpAuth(it)
+                }
+            }
             showServerFragment(it)
         }.ifNull {
             val newServer = intent.getBooleanExtra(INTENT_ADD_NEW_SERVER, false)

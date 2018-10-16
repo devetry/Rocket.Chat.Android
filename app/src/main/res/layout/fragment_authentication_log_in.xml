@@ -12,6 +12,7 @@
         android:id="@+id/text_login"
         style="@style/Authentication.TextView.Headline"
         android:text="@string/title_log_in"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,7 +26,8 @@
         android:inputType="textEmailAddress|text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_login" />
+        app:layout_constraintTop_toBottomOf="@+id/text_login"
+        android:visibility="invisible"/>
 
     <EditText
         android:id="@+id/text_password"
@@ -37,7 +39,8 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_username_or_email" />
+        app:layout_constraintTop_toBottomOf="@+id/text_username_or_email"
+        android:visibility="invisible"/>
 
     <Button
         android:id="@+id/button_log_in"
@@ -48,18 +51,18 @@
         android:text="@string/title_log_in"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_password" />
+        app:layout_constraintTop_toBottomOf="@id/text_password"
+        android:visibility="invisible"/>
 
     <Button
         android:id="@+id/button_forgot_your_password"
         style="@style/Authentication.Button.Borderless"
         android:layout_marginTop="10dp"
         android:text="@string/msg_forgot__your_password"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_log_in"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@id/button_log_in" />
 
     <com.wang.avi.AVLoadingIndicatorView
         android:id="@+id/view_loading"

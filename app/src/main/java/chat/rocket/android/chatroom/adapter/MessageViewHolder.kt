@@ -13,7 +13,9 @@ import chat.rocket.android.emoji.EmojiReactionListener
 import chat.rocket.core.model.isSystemMessage
 import com.bumptech.glide.load.resource.gif.GifDrawable
 import kotlinx.android.synthetic.main.avatar.view.*
+import kotlinx.android.synthetic.main.avatar_profile.*
 import kotlinx.android.synthetic.main.item_message.view.*
+import java.util.*
 
 class MessageViewHolder(
     itemView: View,
@@ -49,6 +51,10 @@ class MessageViewHolder(
             }
 
             text_content.text_content.text = data.content
+
+            val rnd = Random()
+            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+            image_avatar.setBackgroundColor(color)
 
             image_avatar.setImageURI(data.avatar)
             text_content.setTextColor(if (data.isTemporary) Color.GRAY else Color.BLACK)

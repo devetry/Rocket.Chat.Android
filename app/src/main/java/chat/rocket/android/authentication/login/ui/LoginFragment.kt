@@ -14,15 +14,20 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 
+import chat.rocket.android.authentication.loginoptions.presentation.LoginOptionsPresenter
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import chat.rocket.android.R
 import chat.rocket.android.analytics.AnalyticsManager
+import chat.rocket.android.analytics.event.AuthenticationEvent
 import chat.rocket.android.analytics.event.ScreenViewEvent
 import chat.rocket.android.authentication.domain.model.LoginDeepLinkInfo
 import chat.rocket.android.authentication.login.presentation.LoginPresenter
 import chat.rocket.android.authentication.login.presentation.LoginView
+//import chat.rocket.android.authentication.loginoptions.presentation.
+import chat.rocket.android.authentication.loginoptions.ui.REQUEST_CODE_FOR_CAS
 import chat.rocket.android.authentication.loginoptions.ui.REQUEST_CODE_FOR_OAUTH
+import chat.rocket.android.authentication.loginoptions.ui.REQUEST_CODE_FOR_SAML
 
 import chat.rocket.android.authentication.ui.YTPOAuth
 import chat.rocket.android.helper.KeyboardHelper
@@ -138,19 +143,13 @@ class LoginFragment : Fragment(), LoginView {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                when (requestCode) {
-                    REQUEST_CODE_FOR_MULTIPLE_ACCOUNTS_RESOLUTION ->
-                        getCredentials(data)?.let {
-                            onCredentialRetrieved(it.first, it.second)
-                        }
-                    REQUEST_CODE_FOR_SIGN_IN_REQUIRED ->
-                        getCredentials(data)?.let { credential ->
-                            text_username_or_email.setText(credential.first)
-                            text_password.setText(credential.second)
-                        }
-                    REQUEST_CODE_FOR_SAVE_RESOLUTION -> showMessage(getString(R.string.message_credentials_saved_successfully))
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            when (requestCode) {
+                REQUEST_CODE_FOR_OAUTH -> {
+                    presenter.authenticateWithOauth(
+                            data.getStringExtra(INTENT_OAUTH_CREDENTIAL_TOKEN),
+                            data.getStringExtra(INTENT_OAUTH_CREDENTIAL_SECRET)
+                    )
                 }
             }
         }

@@ -28,7 +28,7 @@ fun String.avatarUrl(
     return if (isGroupOrChannel) {
         return "${removeTrailingSlash()}/avatar/%23${avatar.removeTrailingSlash()}?format=$format"
     } else {
-        return "${removeTrailingSlash()}/avatar/${avatar.removeTrailingSlash()}.svg"//?format=$format"
+        return "${removeTrailingSlash()}/avatar/${avatar.removeTrailingSlash()}?format=$format"
     }
 }
 

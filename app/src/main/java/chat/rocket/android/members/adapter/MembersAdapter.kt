@@ -1,5 +1,6 @@
 package chat.rocket.android.members.adapter
 
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,7 +9,9 @@ import chat.rocket.android.members.uimodel.MemberUiModel
 import chat.rocket.android.util.extensions.content
 import chat.rocket.android.util.extensions.inflate
 import kotlinx.android.synthetic.main.avatar.view.*
+import kotlinx.android.synthetic.main.avatar_profile.*
 import kotlinx.android.synthetic.main.item_member.view.*
+import java.util.*
 
 class MembersAdapter(private val listener: (MemberUiModel) -> Unit) :
     RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
@@ -41,6 +44,9 @@ class MembersAdapter(private val listener: (MemberUiModel) -> Unit) :
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(memberUiModel: MemberUiModel, listener: (MemberUiModel) -> Unit) = with(itemView) {
+            val rnd = Random()
+            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+            image_avatar.setBackgroundColor(color)
             image_avatar.setImageURI(memberUiModel.avatarUri)
             text_member.content = memberUiModel.displayName
             setOnClickListener { listener(memberUiModel) }

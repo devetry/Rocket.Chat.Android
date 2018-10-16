@@ -24,10 +24,13 @@ class AuthenticationPresenter @Inject constructor(
         private val getAccountInteractor: GetAccountInteractor,
         private val settingsRepository: SettingsRepository,
         private val localRepository: LocalRepository,
-        private val tokenRepository: TokenRepository
+        private val tokenRepository: TokenRepository,
+        private val saveConnectingServerInteractor: SaveConnectingServerInteractor
 ) {
     suspend fun ytpAuth(ytpOAuth: YTPOAuth) {
         saveServerInteractor.save(ytpOAuth.chat_server)
+        saveConnectingServerInteractor.save(ytpOAuth.chat_server)
+
         val account = getAccountInteractor.get(ytpOAuth.chat_server)
 
         account?.let {

@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.item_chat.view.*
 import kotlinx.android.synthetic.main.unread_messages_badge.view.*
 import android.graphics.BitmapFactory
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.widget.ImageView
 import java.io.*
 import java.net.MalformedURLException
@@ -22,8 +23,8 @@ import java.net.URL
 import android.graphics.drawable.PictureDrawable
 import com.bumptech.glide.Glide
 import androidx.core.view.ViewCompat.animate
-
-
+import kotlinx.android.synthetic.main.avatar_profile.*
+import java.util.*
 
 
 class RoomViewHolder(itemView: View, private val listener: (RoomUiModel) -> Unit) : ViewHolder<RoomItemHolder>(itemView) {
@@ -43,6 +44,10 @@ class RoomViewHolder(itemView: View, private val listener: (RoomUiModel) -> Unit
     override fun bindViews(data: RoomItemHolder) {
         val room = data.data
         with(itemView) {
+
+            val rnd = Random()
+            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+            image_avatar.setBackgroundColor(color)
 
             image_avatar.setImageURI(room.avatar)
             text_chat_name.text = room.name

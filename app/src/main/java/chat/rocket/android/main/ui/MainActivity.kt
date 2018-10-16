@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
@@ -36,8 +37,10 @@ import dagger.android.HasActivityInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.android.synthetic.main.avatar_profile.*
 import kotlinx.android.synthetic.main.bottom_nav.*
 import kotlinx.android.synthetic.main.nav_header.view.*
+import java.util.*
 import javax.inject.Inject
 
 private const val CURRENT_STATE = "current_state"
@@ -257,6 +260,9 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
     }
 
     fun setAvatar(avatarUrl: String) {
+        val rnd = Random()
+        val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+        image_avatar.setBackgroundColor(color)
         headerLayout.image_avatar.setImageURI(avatarUrl)
     }
 

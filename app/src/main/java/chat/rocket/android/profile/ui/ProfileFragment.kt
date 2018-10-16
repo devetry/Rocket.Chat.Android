@@ -4,6 +4,7 @@ import DrawableHelper
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -36,6 +37,7 @@ import io.reactivex.rxkotlin.Observables
 import kotlinx.android.synthetic.main.avatar_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.update_avatar_options.*
+import java.util.*
 import javax.inject.Inject
 
 internal const val TAG_PROFILE_FRAGMENT = "ProfileFragment"
@@ -100,6 +102,11 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
 
     override fun showProfile(avatarUrl: String, name: String, username: String, email: String?) {
         ui {
+
+            val rnd = Random()
+            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+            image_avatar.setBackgroundColor(color)
+
             image_avatar.setImageURI(avatarUrl)
             text_name.textContent = name
             text_username.textContent = username
@@ -115,6 +122,11 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
 
     override fun reloadUserAvatar(avatarUrl: String) {
         Fresco.getImagePipeline().evictFromCache(avatarUrl.toUri())
+
+        val rnd = Random()
+        val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+        image_avatar.setBackgroundColor(color)
+
         image_avatar.setImageURI(avatarUrl)
         (activity as MainActivity).setAvatar(avatarUrl)
     }

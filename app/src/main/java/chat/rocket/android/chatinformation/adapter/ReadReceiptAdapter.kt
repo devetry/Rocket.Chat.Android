@@ -1,5 +1,6 @@
 package chat.rocket.android.chatinformation.adapter
 
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,7 +9,9 @@ import chat.rocket.android.chatinformation.adapter.ReadReceiptAdapter.ReadReceip
 import chat.rocket.android.chatinformation.viewmodel.ReadReceiptViewModel
 import chat.rocket.android.util.extensions.inflate
 import kotlinx.android.synthetic.main.avatar.view.*
+import kotlinx.android.synthetic.main.avatar_profile.*
 import kotlinx.android.synthetic.main.item_read_receipt.view.*
+import java.util.*
 
 class ReadReceiptAdapter : RecyclerView.Adapter<ReadReceiptViewHolder>() {
     private val data = ArrayList<ReadReceiptViewModel>()
@@ -39,6 +42,9 @@ class ReadReceiptAdapter : RecyclerView.Adapter<ReadReceiptViewHolder>() {
 
         fun bind(readReceipt: ReadReceiptViewModel) {
             with(itemView) {
+                val rnd = Random()
+                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+                image_avatar.setBackgroundColor(color)
                 image_avatar.setImageURI(readReceipt.avatar)
                 receipt_name.text = readReceipt.name
                 receipt_time.text = readReceipt.time

@@ -25,6 +25,7 @@ import chat.rocket.android.util.extensions.avatarUrl
 import chat.rocket.android.util.extensions.isEmail
 import chat.rocket.android.util.extensions.serverLogoUrl
 import chat.rocket.android.util.retryIO
+import chat.rocket.common.RocketChatAuthException
 import chat.rocket.common.RocketChatException
 import chat.rocket.common.RocketChatTwoFactorException
 import chat.rocket.common.model.Email
@@ -32,11 +33,16 @@ import chat.rocket.common.model.Token
 import chat.rocket.common.model.User
 import chat.rocket.common.util.ifNull
 import chat.rocket.core.RocketChatClient
-import chat.rocket.core.internal.rest.login
-import chat.rocket.core.internal.rest.loginWithEmail
-import chat.rocket.core.internal.rest.loginWithLdap
-import chat.rocket.core.internal.rest.me
+import chat.rocket.core.internal.rest.*
+import kotlinx.coroutines.experimental.delay
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
+
+/**
+ * CODE EDITED IN ROCKET CHAT
+ */
+private const val TYPE_LOGIN_OAUTH = 1
 
 class LoginPresenter @Inject constructor(
     private val view: LoginView,
@@ -149,4 +155,70 @@ class LoginPresenter @Inject constructor(
     }
 
     private fun saveToken(token: Token) = tokenRepository.save(currentServer, token)
+
+
+    /**
+     * CODE EDITED IN ROCKET CHAT
+     */
+    private lateinit var credentialToken: String
+    private lateinit var credentialSecret: String
+    private lateinit var loginMethod: AuthenticationEvent
+
+    fun authenticateWithOauth(oauthToken: String, oauthSecret: String) {
+        credentialToken = oauthToken
+        credentialSecret = oauthSecret
+        loginMethod = AuthenticationEvent.AuthenticationWithOauth
+        doAuthentication(TYPE_LOGIN_OAUTH)
+    }
+
+    private fun doAuthentication(loginType: Int) {
+        launchUI(strategy) {
+            view.showLoading()
+            try {
+                val token = retryIO("login") {
+                    when (loginType) {
+                        TYPE_LOGIN_OAUTH -> client.loginWithOauth(credentialToken, credentialSecret)
+                        else -> {
+                            throw IllegalStateException(
+                                    "Expected TYPE_LOGIN_USER_EMAIL, " +
+                                            "TYPE_LOGIN_CAS,TYPE_LOGIN_SAML, TYPE_LOGIN_OAUTH or " +
+                                            "TYPE_LOGIN_DEEP_LINK"
+                            )
+                        }
+                    }
+                }
+                val myself = retryIO("me()") { client.me() }
+                myself.username?.let { username ->
+                    val user = User(
+                            id = myself.id,
+                            roles = myself.roles,
+                            status = myself.status,
+                            name = myself.name,
+                            emails = myself.emails?.map { Email(it.address ?: "", it.verified) },
+                            username = myself.username,
+                            utcOffset = myself.utcOffset
+                    )
+                    localRepository.saveCurrentUser(url = currentServer, user = user)
+                    saveCurrentServer.save(currentServer)
+                    saveAccount(username)
+                    saveToken(token)
+                    analyticsManager.logLogin(loginMethod, true)
+                    navigator.toChatList()
+                }.ifNull {
+                    if (loginType == TYPE_LOGIN_OAUTH) {
+                        navigator.toRegisterUsername(token.userId, token.authToken)
+                    }
+                }
+            } catch (exception: RocketChatException) {
+                analyticsManager.logLogin(loginMethod, false)
+                exception.message?.let {
+                    view.showMessage(it)
+                }.ifNull {
+                    view.showGenericErrorMessage()
+                }
+            } finally {
+                view.hideLoading()
+            }
+        }
+    }
 }
