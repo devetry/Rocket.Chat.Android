@@ -103,11 +103,19 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
     override fun showProfile(avatarUrl: String, name: String, username: String, email: String?) {
         ui {
 
-            val rnd = Random()
-            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-            image_avatar.setBackgroundColor(color)
+            if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?")) {
+                image_avatar.visibility = View.VISIBLE
+                image_avatar_text_view.visibility = View.INVISIBLE
+                image_avatar.setImageURI(avatarUrl)
+            } else {
+                image_avatar.visibility = View.INVISIBLE
+                image_avatar_text_view.visibility = View.VISIBLE
+                image_avatar_text_view.text = name.substring(0, 2).toUpperCase()
+                val rnd = Random()
+                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+                image_avatar_text_view.setBackgroundColor(color)
+            }
 
-            image_avatar.setImageURI(avatarUrl)
             text_name.textContent = name
             text_username.textContent = username
             text_email.textContent = email ?: ""
@@ -120,15 +128,22 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
         }
     }
 
-    override fun reloadUserAvatar(avatarUrl: String) {
+    override fun reloadUserAvatar(avatarUrl: String, name: String) {
         Fresco.getImagePipeline().evictFromCache(avatarUrl.toUri())
 
-        val rnd = Random()
-        val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-        image_avatar.setBackgroundColor(color)
-
-        image_avatar.setImageURI(avatarUrl)
-        (activity as MainActivity).setAvatar(avatarUrl)
+        if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?")) {
+            image_avatar.visibility = View.VISIBLE
+            image_avatar_text_view.visibility = View.INVISIBLE
+            image_avatar.setImageURI(avatarUrl)
+        } else {
+            image_avatar.visibility = View.INVISIBLE
+            image_avatar_text_view.visibility = View.VISIBLE
+            image_avatar_text_view.text = name.substring(0, 2).toUpperCase()
+            val rnd = Random()
+            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+            image_avatar_text_view.setBackgroundColor(color)
+        }
+        (activity as MainActivity).setAvatar(avatarUrl, name)
     }
 
     override fun showProfileUpdateSuccessfullyMessage() {

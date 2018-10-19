@@ -44,10 +44,18 @@ class MembersAdapter(private val listener: (MemberUiModel) -> Unit) :
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(memberUiModel: MemberUiModel, listener: (MemberUiModel) -> Unit) = with(itemView) {
-            val rnd = Random()
-            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-            image_avatar.setBackgroundColor(color)
-            image_avatar.setImageURI(memberUiModel.avatarUri)
+            if (memberUiModel.avatarUri!!.contains("avatar/louis?format=jpeg") || memberUiModel.avatarUri.contains("avatar/Advisor_Nada?")) {
+                image_avatar.visibility = View.VISIBLE
+                image_avatar_text_view.visibility = View.GONE
+                image_avatar.setImageURI(memberUiModel.avatarUri)
+            } else {
+                image_avatar.visibility = View.GONE
+                image_avatar_text_view.visibility = View.VISIBLE
+                image_avatar_text_view.text = memberUiModel.displayName.substring(0, 2).toUpperCase()
+                val rnd = Random()
+                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+                image_avatar_text_view.setBackgroundColor(color)
+            }
             text_member.content = memberUiModel.displayName
             setOnClickListener { listener(memberUiModel) }
         }

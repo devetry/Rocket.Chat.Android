@@ -168,7 +168,7 @@ class MainPresenter @Inject constructor(
      */
     fun logout() {
         launchUI(strategy) {
-            view.showProgress()
+//            view.showProgress()
             try {
                 clearTokens()
                 retryIO("logout") { client.logout() }
@@ -187,11 +187,11 @@ class MainPresenter @Inject constructor(
                 tokenRepository.remove(currentServer)
 
                 withContext(CommonPool) { dbManager.logout() }
-                navigator.switchOrAddNewServer()
+//                navigator.switchOrAddNewServer()
             } catch (ex: Exception) {
                 Timber.d(ex, "Error cleaning up the session...")
             }
-            view.hideProgress()
+//            view.hideProgress()
         }
     }
 

@@ -52,11 +52,19 @@ class MessageViewHolder(
 
             text_content.text_content.text = data.content
 
-            val rnd = Random()
-            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-            image_avatar.setBackgroundColor(color)
+            if (data.avatar.contains("avatar/louis?format=jpeg") || data.avatar.contains("avatar/Advisor_Nada?")) {
+                image_avatar.visibility = View.VISIBLE
+                image_avatar_text_view.visibility = View.GONE
+                image_avatar.setImageURI(data.avatar)
+            } else {
+                image_avatar.visibility = View.GONE
+                image_avatar_text_view.visibility = View.VISIBLE
+                image_avatar_text_view.text = data.senderName.substring(0, 2).toUpperCase()
+                val rnd = Random()
+                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+                image_avatar_text_view.setBackgroundColor(color)
+            }
 
-            image_avatar.setImageURI(data.avatar)
             text_content.setTextColor(if (data.isTemporary) Color.GRAY else Color.BLACK)
 
             data.message.let {

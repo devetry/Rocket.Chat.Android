@@ -10,7 +10,7 @@ apply plugin: "com.github.ben-manes.versions"
 
 android {
     compileSdkVersion versions.compileSdk
-    buildToolsVersion versions.buildTools
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "chat.rocket.ytpconnect"
@@ -144,6 +144,9 @@ dependencies {
     testImplementation libraries.truth
     androidTestImplementation libraries.espressoCore
     androidTestImplementation libraries.espressoIntents
+
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.pixplicity.sharp:library:1.1.0'
 }
 
 kotlin {

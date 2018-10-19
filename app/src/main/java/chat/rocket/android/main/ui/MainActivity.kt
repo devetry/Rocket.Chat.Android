@@ -7,6 +7,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -104,6 +105,7 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
     override fun onDestroy() {
         super.onDestroy()
         if (isFinishing) {
+            presenter.logout()
             presenter.disconnect()
         }
     }
@@ -134,7 +136,7 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
                     text_user_name.text = userDisplayName
                 }
                 if (userAvatar != null) {
-                    setAvatar(userAvatar)
+                    setAvatar(userAvatar, userDisplayName!!)
                 }
                 if (serverLogo != null) {
 //                    server_logo.setImageURI(serverLogo)
@@ -240,18 +242,21 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
     }
     fun setupBottomNavigation(){
         levelsTab.setOnClickListener {
+            presenter.logout()
             val ytpIntent = Intent("com.devetry.ytp.START")
             ytpIntent.putExtra("tab", "levels")
             ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             startActivity(ytpIntent)
         }
         careersTab.setOnClickListener {
+            presenter.logout()
             val ytpIntent = Intent("com.devetry.ytp.START")
             ytpIntent.putExtra("tab", "careers")
             ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             startActivity(ytpIntent)
         }
         coursesTab.setOnClickListener {
+            presenter.logout()
             val ytpIntent = Intent("com.devetry.ytp.START")
             ytpIntent.putExtra("tab", "courses")
             ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
@@ -259,10 +264,24 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
         }
     }
 
-    fun setAvatar(avatarUrl: String) {
+    fun setAvatar(avatarUrl: String, name: String) {
         val rnd = Random()
         val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
         image_avatar.setBackgroundColor(color)
+        if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?")) {
+            image_avatar.visibility = View.VISIBLE
+            image_avatar_text_view.visibility = View.INVISIBLE
+            image_avatar.setImageURI(avatarUrl)
+        } else {
+            image_avatar.visibility = View.INVISIBLE
+            if (image_avatar_text_view != null) {
+                image_avatar_text_view.visibility = View.VISIBLE
+                image_avatar_text_view.text = name.substring(0, 2).toUpperCase()
+                val rnd = Random()
+                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+                image_avatar_text_view.setBackgroundColor(color)
+            }
+        }
         headerLayout.image_avatar.setImageURI(avatarUrl)
     }
 

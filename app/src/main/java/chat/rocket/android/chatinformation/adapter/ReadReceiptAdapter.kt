@@ -42,10 +42,18 @@ class ReadReceiptAdapter : RecyclerView.Adapter<ReadReceiptViewHolder>() {
 
         fun bind(readReceipt: ReadReceiptViewModel) {
             with(itemView) {
-                val rnd = Random()
-                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-                image_avatar.setBackgroundColor(color)
-                image_avatar.setImageURI(readReceipt.avatar)
+                if (readReceipt.avatar.contains("avatar/louis?format=jpeg") || readReceipt.avatar.contains("avatar/Advisor_Nada?")) {
+                    image_avatar.visibility = View.VISIBLE
+                    image_avatar_text_view.visibility = View.GONE
+                    image_avatar.setImageURI(readReceipt.avatar)
+                } else {
+                    image_avatar.visibility = View.GONE
+                    image_avatar_text_view.visibility = View.VISIBLE
+                    image_avatar_text_view.text = readReceipt.name.substring(0, 2).toUpperCase()
+                    val rnd = Random()
+                    val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+                    image_avatar_text_view.setBackgroundColor(color)
+                }
                 receipt_name.text = readReceipt.name
                 receipt_time.text = readReceipt.time
             }

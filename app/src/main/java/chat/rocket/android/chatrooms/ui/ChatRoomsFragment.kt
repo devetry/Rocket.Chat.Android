@@ -45,6 +45,7 @@ import chat.rocket.core.internal.realtime.socket.model.State
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_chat_rooms.*
 import timber.log.Timber
+import java.text.SimpleDateFormat
 import javax.inject.Inject
 
 internal const val TAG_CHAT_ROOMS_FRAGMENT = "ChatRoomsFragment"

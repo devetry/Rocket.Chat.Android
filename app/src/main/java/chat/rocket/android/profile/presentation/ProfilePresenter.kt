@@ -90,7 +90,7 @@ class ProfilePresenter @Inject constructor(
                         uriInteractor.getInputStream(uri)
                     }
                 }
-                view.reloadUserAvatar(serverUrl.avatarUrl(myselfUsername))
+                view.reloadUserAvatar(serverUrl.avatarUrl(myselfUsername), myselfName)
             } catch (exception: RocketChatException) {
                 exception.message?.let {
                     view.showMessage(it)
@@ -117,7 +117,7 @@ class ProfilePresenter @Inject constructor(
                         byteArray?.inputStream()
                     }
                 }
-                view.reloadUserAvatar(serverUrl.avatarUrl(myselfUsername))
+                view.reloadUserAvatar(serverUrl.avatarUrl(myselfUsername), myselfName)
             } catch (exception: RocketChatException) {
                 exception.message?.let {
                     view.showMessage(it)
@@ -135,7 +135,7 @@ class ProfilePresenter @Inject constructor(
             view.showLoading()
             try {
                 retryIO { client.resetAvatar(myselfId) }
-                view.reloadUserAvatar(serverUrl.avatarUrl(myselfUsername))
+                view.reloadUserAvatar(serverUrl.avatarUrl(myselfUsername), myselfName)
             } catch (exception: RocketChatException) {
                 exception.message?.let {
                     view.showMessage(it)

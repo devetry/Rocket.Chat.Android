@@ -13,6 +13,7 @@ import android.widget.*
 
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isGone
 
 import chat.rocket.android.authentication.loginoptions.presentation.LoginOptionsPresenter
 import androidx.core.view.isVisible
@@ -217,7 +218,7 @@ class LoginFragment : Fragment(), LoginView {
 
     override fun showForgotPasswordView() {
         ui { _ ->
-            button_forgot_your_password.isVisible = true
+            button_forgot_your_password.isGone = true
             button_forgot_your_password.setOnClickListener { presenter.forgotPassword() }
 
         }
@@ -245,7 +246,7 @@ class LoginFragment : Fragment(), LoginView {
 
     override fun enableButtonForgetPassword() {
         context?.let {
-            button_forgot_your_password.isEnabled = true
+            button_forgot_your_password.isEnabled = false
             button_forgot_your_password.setTextColor(
                 ContextCompat.getColorStateList(it, R.color.colorAccent)
             )

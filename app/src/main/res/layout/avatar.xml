@@ -8,8 +8,18 @@
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/image_avatar"
         android:layout_width="40dp"
+        android:layout_height="40dp" />
+
+    <TextView
+        android:id="@+id/image_avatar_text_view"
+        android:layout_width="40dp"
         android:layout_height="40dp"
-        app:roundedCornerRadius="3dp" />
+        android:background="@color/magenta"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:textColor="@color/white"
+        android:text="TJ" />
 
 
 </LinearLayout>

@@ -41,25 +41,35 @@ class YTPOAuth constructor(var chat_server: String,
         const val INTENT_AUTH_COOKIE = "authCookie"
         const val INTENT_AUTH_USER_COOKIE = "authUserCookie"
 
+        operator fun invoke(intent: Intent): YTPOAuth? = with(intent) {
+            val state = "{\"loginStyle\":\"popup\",\"credentialToken\":\"${generateRandomString(40)}\",\"isCordova\":true}".encodeToBase64()
+            YTPOAuth(chat_server = getStringExtra(INTENT_BASE_URL),
+                    drupal_idp = getStringExtra(INTENT_AUTH_URL) + state,
+                    session_cookie = getStringExtra(INTENT_SESSION_COOKIE),
+                    auth_cookie = getStringExtra(INTENT_AUTH_COOKIE),
+                    auth_user_cookie = getStringExtra(INTENT_AUTH_USER_COOKIE),
+                    state = state)
+        }
+
 //        operator fun invoke(intent: Intent): YTPOAuth? = with(intent) {
 //            val state = "{\"loginStyle\":\"popup\",\"credentialToken\":\"${generateRandomString(40)}\",\"isCordova\":true}".encodeToBase64()
-//            YTPOAuth(chat_server = getStringExtra(INTENT_BASE_URL),
-//                    drupal_idp = getStringExtra(INTENT_AUTH_URL) + state,
-//                    session_cookie = getStringExtra(INTENT_SESSION_COOKIE),
-//                    auth_cookie = getStringExtra(INTENT_AUTH_COOKIE),
-//                    auth_user_cookie = getStringExtra(INTENT_AUTH_USER_COOKIE),
+//            YTPOAuth(chat_server = "http://yt-portal.raccoongang.com:3000/",
+//                    drupal_idp = "http://yt-portal.raccoongang.com/en/oauth2/authorize?destination=oauth2/authorize&client_id=F9D848A32AA9C6552E1AB7F90C03B749FBF1300B&redirect_uri=http://yt-portal.raccoongang.com:3000/_oauth/drupal?close&response_type=code&scope=gender%20email%20openid%20profile%20offline_access&state=" + state,
+//                    session_cookie = "SESSbe80cad36eaa53a63ac1dcf71b5f6448=vOkTdmV560Dem_vxWxCLjsdfZxrkbUEFburpeDQ8dyw; expires=Fri, 09-Nov-2018 18:44:08 GMT; Max-Age=2000000; path=/; domain=.yt-portal.raccoongang.com; HttpOnly",
+//                    auth_cookie = "authenticated=1; expires=Thu, 17-Oct-2019 15:10:48 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
+//                    auth_user_cookie = "authenticated_user=TannerJuby; expires=Thu, 17-Oct-2019 15:10:48 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
 //                    state = state)
 //        }
 
-        operator fun invoke(intent: Intent): YTPOAuth? = with(intent) {
-            val state = "{\"loginStyle\":\"popup\",\"credentialToken\":\"${generateRandomString(40)}\",\"isCordova\":true}".encodeToBase64()
-            YTPOAuth(chat_server = "http://yt-portal.raccoongang.com:3000/",
-                    drupal_idp = "http://yt-portal.raccoongang.com/en/oauth2/authorize?destination=oauth2/authorize&client_id=F9D848A32AA9C6552E1AB7F90C03B749FBF1300B&redirect_uri=http://yt-portal.raccoongang.com:3000/_oauth/drupal?close&response_type=code&scope=gender%20email%20openid%20profile%20offline_access&state=" + state,
-                    session_cookie = "SESSbe80cad36eaa53a63ac1dcf71b5f6448=j2k90FtxhfGJhz1VI73swd2ehuG9QkJXOIDoEL6tw2o; expires=Thu, 08-Nov-2018 18:32:45 GMT; Max-Age=2000000; path=/; domain=.yt-portal.raccoongang.com; HttpOnly",
-                    auth_cookie = "authenticated=1; expires=Wed, 16-Oct-2019 14:59:25 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
-                    auth_user_cookie = "authenticated_user=TannerJuby; expires=Wed, 16-Oct-2019 14:59:25 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
-                    state = state)
-        }
+//        operator fun invoke(intent: Intent): YTPOAuth? = with(intent) {
+//            val state = "{\"loginStyle\":\"popup\",\"credentialToken\":\"${generateRandomString(40)}\",\"isCordova\":true}".encodeToBase64()
+//            YTPOAuth(chat_server = "https://chat.youngthinker.org",
+//                    drupal_idp = "http://chat.youngthinker.org/en/oauth2/authorize?destination=oauth2/authorize&client_id=F9D848A32AA9C6552E1AB7F90C03B749FBF1300B&redirect_uri=http://chat.youngthinker.org/_oauth/drupal?close&response_type=code&scope=gender%20email%20openid%20profile%20offline_access&state=" + state,
+//                    session_cookie = "SSESS5b2b596e3c8f92c08fa6d8668d02934b=wzE0N43fbLzeQirquubcHqh4L9-mzgnFjGjQ24sBH3M; expires=Fri, 09-Nov-2018 19:59:12 GMT; Max-Age=2000000; path=/; domain=.youngthinker.org; secure; HttpOnly",
+//                    auth_cookie = "authenticated=1; expires=Thu, 17-Oct-2019 16:25:52 GMT; Max-Age=31536000; path=/; domain=youngthinker.org",
+//                    auth_user_cookie = "authenticated_user=TannerJuby; expires=Thu, 17-Oct-2019 16:25:52 GMT; Max-Age=31536000; path=/; domain=youngthinker.org",
+//                    state = state)
+//        }
     }
 }
 
@@ -81,9 +91,22 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
     override fun onStart() {
         super.onStart()
 
-        launch(UI + job) {
-            YTPOAuth(intent)?.let {
-                presenter.ytpAuth(it)
+        if (intent.getStringExtra(YTPOAuth.INTENT_BASE_URL) == null ||
+                intent.getStringExtra(YTPOAuth.INTENT_AUTH_URL) == null ||
+                intent.getStringExtra(YTPOAuth.INTENT_SESSION_COOKIE) == null ||
+                intent.getStringExtra(YTPOAuth.INTENT_AUTH_COOKIE) == null ||
+                intent.getStringExtra(YTPOAuth.INTENT_AUTH_USER_COOKIE) == null) {
+
+            val ytpIntent = Intent("com.devetry.ytp.START")
+            ytpIntent.putExtra("tab", "careers")
+            ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivity(ytpIntent)
+
+        } else {
+            launch(UI + job) {
+                YTPOAuth(intent)?.let {
+                    presenter.ytpAuth(it)
+                }
             }
         }
     }

@@ -20,7 +20,7 @@ interface ProfileView : LoadingView, MessageView {
      *
      * @param avatarUrl The user avatar URL.
      */
-    fun reloadUserAvatar(avatarUrl: String)
+    fun reloadUserAvatar(avatarUrl: String, name: String)
 
     /**
      * Shows a profile update successfully message
