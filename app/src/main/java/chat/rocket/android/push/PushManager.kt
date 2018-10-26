@@ -281,7 +281,7 @@ class PushManager @Inject constructor(
 
     private fun getSiteName(host: String): String {
         val settings = getSettingsInteractor.get(host)
-        return settings.siteName() ?: "Rocket.Chat"
+        return settings.siteName() ?: "YTP"
     }
 
     private fun getTitle(messageCount: Int, title: String): CharSequence {
@@ -360,14 +360,14 @@ class PushManager @Inject constructor(
     private fun NotificationCompat.Builder.setMessageNotification(): NotificationCompat.Builder {
         val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val res = context.resources
-        val smallIcon = res.getIdentifier(
-            "rocket_chat_notification", "drawable", context.packageName)
+//        val smallIcon = res.getIdentifier(
+//            "rocket_chat_notification", "drawable", context.packageName)
         with(this) {
             setAutoCancel(true)
             setShowWhen(true)
             color = ContextCompat.getColor(context, R.color.colorPrimary)
             setDefaults(Notification.DEFAULT_ALL)
-            setSmallIcon(smallIcon)
+            setSmallIcon(R.mipmap.ic_launcher)
             setSound(alarmSound)
         }
         return this

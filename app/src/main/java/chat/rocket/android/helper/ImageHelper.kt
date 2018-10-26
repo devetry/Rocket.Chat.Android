@@ -27,8 +27,10 @@ import com.facebook.imagepipeline.request.ImageRequest
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.google.android.material.appbar.AppBarLayout
 import com.stfalcon.frescoimageviewer.ImageViewer
+import kotlinx.android.synthetic.main.app_bar_chat_room.*
 import timber.log.Timber
 import java.io.File
+import java.util.*
 
 object ImageHelper {
     private var cacheKey: CacheKey? = null
@@ -73,7 +75,8 @@ object ImageHelper {
             }
 
             val backArrowView = ImageView(context).also {
-                it.setImageResource(R.drawable.ic_arrow_back_white_24dp)
+                if (Locale.getDefault().language == "ar") it.setImageResource(R.drawable.ic_arrow_back_white_24dp_ar)
+                else it.setImageResource(R.drawable.ic_arrow_back_white_24dp)
                 it.setOnClickListener { imageViewer?.onDismiss() }
                 it.setPadding(0, pad, pad, pad)
             }

@@ -51,4 +51,10 @@
 
     <dimen name="quote_collapsed_height">32dp</dimen>
 
+    <!-- YTP -->
+    <dimen name="item_margin">16dp</dimen>
+    <dimen name="item_margin_large">32dp</dimen>
+    <dimen name="view_padding">16dp</dimen>
+    <dimen name="button_width">175dp</dimen>
+
 </resources>

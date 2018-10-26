@@ -13,6 +13,7 @@ import chat.rocket.android.main.ui.MainActivity
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.fragment_about.*
+import java.util.*
 import javax.inject.Inject
 
 internal const val TAG_ABOUT_FRAGMENT = "AboutFragment"
@@ -51,7 +52,8 @@ class AboutFragment : Fragment() {
     private fun setupToolbar() {
         with((activity as MainActivity).toolbar) {
             title = getString(R.string.title_about)
-            setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            if (Locale.getDefault().language == "ar") setNavigationIcon(R.drawable.ic_arrow_back_white_24dp_ar)
+            else setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
             setNavigationOnClickListener { activity?.onBackPressed() }
         }
     }

@@ -1,5 +1,6 @@
 package chat.rocket.android.chatroom.adapter
 
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.MenuItem
 import android.view.View
@@ -40,6 +41,7 @@ abstract class BaseViewHolder<T : BaseUiModel<*>>(
 
     private fun bindReactions() {
         data?.let {
+            Log.d("BIND_REACTIONS", itemView.toString())
             val recyclerView = itemView.findViewById(R.id.recycler_view_reactions) as RecyclerView
             val adapter: MessageReactionsAdapter
             if (recyclerView.adapter == null) {

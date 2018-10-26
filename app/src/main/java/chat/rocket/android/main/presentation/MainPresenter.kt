@@ -168,7 +168,7 @@ class MainPresenter @Inject constructor(
      */
     fun logout() {
         launchUI(strategy) {
-//            view.showProgress()
+            //            view.showProgress()
             try {
                 clearTokens()
                 retryIO("logout") { client.logout() }

@@ -2,12 +2,15 @@ package chat.rocket.android.authentication.ui
 
 import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import chat.rocket.android.R
 import chat.rocket.android.analytics.event.ScreenViewEvent
 import chat.rocket.android.authentication.domain.model.LoginDeepLinkInfo
@@ -16,6 +19,7 @@ import chat.rocket.android.authentication.presentation.AuthenticationPresenter
 import chat.rocket.android.util.extensions.addFragment
 import chat.rocket.android.util.extensions.encodeToBase64
 import chat.rocket.android.util.extensions.generateRandomString
+import chat.rocket.android.util.extensions.setVisible
 import chat.rocket.common.util.ifNull
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
@@ -27,6 +31,7 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 import java.io.Serializable
+import java.util.*
 
 class YTPOAuth constructor(var chat_server: String,
                            var drupal_idp: String,
@@ -54,10 +59,10 @@ class YTPOAuth constructor(var chat_server: String,
 //        operator fun invoke(intent: Intent): YTPOAuth? = with(intent) {
 //            val state = "{\"loginStyle\":\"popup\",\"credentialToken\":\"${generateRandomString(40)}\",\"isCordova\":true}".encodeToBase64()
 //            YTPOAuth(chat_server = "http://yt-portal.raccoongang.com:3000/",
-//                    drupal_idp = "http://yt-portal.raccoongang.com/en/oauth2/authorize?destination=oauth2/authorize&client_id=F9D848A32AA9C6552E1AB7F90C03B749FBF1300B&redirect_uri=http://yt-portal.raccoongang.com:3000/_oauth/drupal?close&response_type=code&scope=gender%20email%20openid%20profile%20offline_access&state=" + state,
-//                    session_cookie = "SESSbe80cad36eaa53a63ac1dcf71b5f6448=vOkTdmV560Dem_vxWxCLjsdfZxrkbUEFburpeDQ8dyw; expires=Fri, 09-Nov-2018 18:44:08 GMT; Max-Age=2000000; path=/; domain=.yt-portal.raccoongang.com; HttpOnly",
-//                    auth_cookie = "authenticated=1; expires=Thu, 17-Oct-2019 15:10:48 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
-//                    auth_user_cookie = "authenticated_user=TannerJuby; expires=Thu, 17-Oct-2019 15:10:48 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
+//                    drupal_idp = "http://yt-portal.raccoongang.com/ar/oauth2/authorize?destination=oauth2/authorize&client_id=F9D848A32AA9C6552E1AB7F90C03B749FBF1300B&redirect_uri=http://yt-portal.raccoongang.com:3000/_oauth/drupal?close&response_type=code&scope=gender%20email%20openid%20profile%20offline_access&state=" + state,
+//                    session_cookie = "SESSbe80cad36eaa53a63ac1dcf71b5f6448=KBesgNR6QeGUmS_JtvRGfUz-kreg1BLgnpCKeE7KUiI; expires=Mon, 12-Nov-2018 20:51:09 GMT; Max-Age=2000000; path=/; domain=.yt-portal.raccoongang.com; HttpOnly",
+//                    auth_cookie = "authenticated=1; expires=Sun, 20-Oct-2019 17:17:49 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
+//                    auth_user_cookie = "authenticated_user=TannerJuby; expires=Sun, 20-Oct-2019 17:17:49 GMT; Max-Age=31536000; path=/; domain=raccoongang.com",
 //                    state = state)
 //        }
 
@@ -65,9 +70,9 @@ class YTPOAuth constructor(var chat_server: String,
 //            val state = "{\"loginStyle\":\"popup\",\"credentialToken\":\"${generateRandomString(40)}\",\"isCordova\":true}".encodeToBase64()
 //            YTPOAuth(chat_server = "https://chat.youngthinker.org",
 //                    drupal_idp = "http://chat.youngthinker.org/en/oauth2/authorize?destination=oauth2/authorize&client_id=F9D848A32AA9C6552E1AB7F90C03B749FBF1300B&redirect_uri=http://chat.youngthinker.org/_oauth/drupal?close&response_type=code&scope=gender%20email%20openid%20profile%20offline_access&state=" + state,
-//                    session_cookie = "SSESS5b2b596e3c8f92c08fa6d8668d02934b=wzE0N43fbLzeQirquubcHqh4L9-mzgnFjGjQ24sBH3M; expires=Fri, 09-Nov-2018 19:59:12 GMT; Max-Age=2000000; path=/; domain=.youngthinker.org; secure; HttpOnly",
-//                    auth_cookie = "authenticated=1; expires=Thu, 17-Oct-2019 16:25:52 GMT; Max-Age=31536000; path=/; domain=youngthinker.org",
-//                    auth_user_cookie = "authenticated_user=TannerJuby; expires=Thu, 17-Oct-2019 16:25:52 GMT; Max-Age=31536000; path=/; domain=youngthinker.org",
+//                    session_cookie = "SSESS5b2b596e3c8f92c08fa6d8668d02934b=0VEvzKJ8rWVcOx9QoluzRyCnhvA3O3vfFbU8bSrq9xU; expires=Mon, 12-Nov-2018 19:54:06 GMT; Max-Age=2000000; path=/; domain=.youngthinker.org; secure; HttpOnly",
+//                    auth_cookie = "authenticated=1; expires=Sun, 20-Oct-2019 16:20:46 GMT; Max-Age=31536000; path=/; domain=youngthinker.org",
+//                    auth_user_cookie = "authenticated_user=TannerJuby; expires=Sun, 20-Oct-2019 16:20:46 GMT; Max-Age=31536000; path=/; domain=youngthinker.org",
 //                    state = state)
 //        }
     }
@@ -98,9 +103,22 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
                 intent.getStringExtra(YTPOAuth.INTENT_AUTH_USER_COOKIE) == null) {
 
             val ytpIntent = Intent("com.devetry.ytp.START")
-            ytpIntent.putExtra("tab", "careers")
-            ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-            startActivity(ytpIntent)
+
+            if (ytpIntent.resolveActivity(packageManager) != null) {
+                ytpIntent.putExtra("tab", "careers")
+                ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                startActivity(ytpIntent)
+                finish()
+            } else {
+                toolbar.visibility = View.INVISIBLE
+                addFragment(
+                        ScreenViewEvent.OnBoarding.screenName,
+                        R.id.fragment_container,
+                        allowStateLoss = true
+                ) {
+                    chat.rocket.android.authentication.installytp.ui.newInstance()
+                }
+            }
 
         } else {
             launch(UI + job) {
@@ -114,7 +132,8 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
     private fun setupToolbar() {
         with(toolbar) {
             setSupportActionBar(this)
-            setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            if (Locale.getDefault().language == "ar") setNavigationIcon(R.drawable.ic_arrow_back_white_24dp_ar)
+            else setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
             setNavigationOnClickListener { onBackPressed() }
         }
         supportActionBar?.setDisplayShowTitleEnabled(false)

@@ -15,6 +15,7 @@ import chat.rocket.core.model.Message
 import chat.rocket.core.model.isSystemMessage
 import timber.log.Timber
 import java.security.InvalidParameterException
+import java.util.*
 
 class ChatRoomAdapter(
     private val roomId: String? = null,
@@ -33,8 +34,14 @@ class ChatRoomAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
         return when (viewType.toViewType()) {
             BaseUiModel.ViewType.MESSAGE -> {
-                val view = parent.inflate(R.layout.item_message)
-                MessageViewHolder(view, actionsListener, reactionListener)
+                if (Locale.getDefault().language == "ar") {
+                    val view = parent.inflate(R.layout.item_message_ar)
+                    MessageViewHolder(view, actionsListener, reactionListener)
+                }
+                else {
+                    val view = parent.inflate(R.layout.item_message)
+                    MessageViewHolder(view, actionsListener, reactionListener)
+                }
             }
             BaseUiModel.ViewType.IMAGE_ATTACHMENT -> {
                 val view = parent.inflate(R.layout.message_attachment)

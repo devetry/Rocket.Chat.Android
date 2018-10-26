@@ -13,6 +13,7 @@ import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.app_bar_chat_room.*
+import java.util.*
 import javax.inject.Inject
 
 fun Context.messageInformationIntent(messageId: String): Intent {
@@ -48,7 +49,8 @@ class MessageInfoActivity : AppCompatActivity(), HasSupportFragmentInjector {
         text_room_name.textContent = getString(R.string.message_information_title)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        if (Locale.getDefault().language == "ar") toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp_ar)
+        else toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         toolbar.setNavigationOnClickListener { finishActivity() }
     }
 

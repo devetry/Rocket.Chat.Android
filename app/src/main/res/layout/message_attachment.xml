@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:visibility="visible"
-        fresco:actualImageScaleType="centerCrop"
+        fresco:actualImageScaleType="fitCenter"
         fresco:placeholderImage="@drawable/image_dummy" />
 
     <FrameLayout

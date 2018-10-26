@@ -67,6 +67,7 @@ class ChatRoomsViewModel(
                     }
                 }
             } else {
+
                 repository.getChatRooms(query.asSortingOrder())
                         .nonNull()
                         .distinct()

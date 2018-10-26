@@ -7,6 +7,7 @@
     android:background="@color/blue"
     android:layout_width="match_parent"
     android:layout_height="@dimen/ytp_bottom_navigation_height"
+    android:layoutDirection="ltr"
     tools:showIn="@layout/activity_main">
 
     <LinearLayout
@@ -18,6 +19,7 @@
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/levelsTabIcon"
             android:layout_width="@dimen/image_icon_size"
             android:layout_height="@dimen/image_icon_size"
             app:srcCompat="@drawable/ic_levels" />

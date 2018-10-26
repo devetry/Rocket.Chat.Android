@@ -241,22 +241,21 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
         toolbar.setNavigationOnClickListener { openDrawer() }
     }
     fun setupBottomNavigation(){
+        if (Locale.getDefault().language == "ar") levelsTabIcon.setImageDrawable(getDrawable(R.drawable.ic_levels_ar))
+        else levelsTabIcon.setImageDrawable(getDrawable(R.drawable.ic_levels))
         levelsTab.setOnClickListener {
-            presenter.logout()
             val ytpIntent = Intent("com.devetry.ytp.START")
             ytpIntent.putExtra("tab", "levels")
             ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             startActivity(ytpIntent)
         }
         careersTab.setOnClickListener {
-            presenter.logout()
             val ytpIntent = Intent("com.devetry.ytp.START")
             ytpIntent.putExtra("tab", "careers")
             ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             startActivity(ytpIntent)
         }
         coursesTab.setOnClickListener {
-            presenter.logout()
             val ytpIntent = Intent("com.devetry.ytp.START")
             ytpIntent.putExtra("tab", "courses")
             ytpIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)

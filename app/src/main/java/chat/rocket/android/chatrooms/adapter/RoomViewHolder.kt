@@ -47,8 +47,6 @@ class RoomViewHolder(itemView: View, private val listener: (RoomUiModel) -> Unit
         val room = data.data
         with(itemView) {
 
-            Log.d("AVATAR_URL", room.avatar)
-
             if (room.avatar.contains("avatar/louis?") || room.avatar.contains("avatar/Advisor_Nada?")) {
                 image_avatar.visibility = View.VISIBLE
                 image_avatar_text_view.visibility = View.INVISIBLE

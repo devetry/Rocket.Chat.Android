@@ -3,10 +3,13 @@ package chat.rocket.android.chatroom.ui
 import DrawableHelper
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import chat.rocket.android.R
+import chat.rocket.android.app.RocketChatApplication
 import chat.rocket.android.chatroom.presentation.ChatRoomNavigator
 import chat.rocket.android.server.domain.GetCurrentServerInteractor
 import chat.rocket.android.server.infraestructure.ConnectionManagerFactory
@@ -19,6 +22,7 @@ import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.app_bar_chat_room.*
+import java.util.*
 import javax.inject.Inject
 
 fun Context.chatRoomIntent(
@@ -70,6 +74,7 @@ class ChatRoomActivity : AppCompatActivity(), HasSupportFragmentInjector {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_chat_room)
 
         // Workaround for when we are coming to the app via the recents app and the app was killed.
@@ -132,7 +137,8 @@ class ChatRoomActivity : AppCompatActivity(), HasSupportFragmentInjector {
     private fun setupToolbar() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        if (Locale.getDefault().language == "ar") toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp_ar)
+        else toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         toolbar.setNavigationOnClickListener { finishActivity() }
     }
 

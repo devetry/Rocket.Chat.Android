@@ -152,6 +152,7 @@ class DatabaseManager(val context: Application,
     }
 
     fun processRooms(rooms: List<ChatRoom>) {
+        chatRoomDao().delete()
         launch(dbContext) {
             val entities = rooms.map { mapChatRoom(it) }
             chatRoomDao().insertOrReplace(entities)

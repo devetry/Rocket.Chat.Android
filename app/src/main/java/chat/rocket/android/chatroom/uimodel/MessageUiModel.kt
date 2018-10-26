@@ -2,6 +2,7 @@ package chat.rocket.android.chatroom.uimodel
 
 import chat.rocket.android.R
 import chat.rocket.core.model.Message
+import java.util.*
 
 data class MessageUiModel(
     override val message: Message,
@@ -26,5 +27,8 @@ data class MessageUiModel(
         get() = BaseUiModel.ViewType.MESSAGE.viewType
 
     override val layoutId: Int
-        get() = R.layout.item_message
+        get() {
+            return if (Locale.getDefault().language == "ar") R.layout.item_message_ar
+            else R.layout.item_message
+        }
 }

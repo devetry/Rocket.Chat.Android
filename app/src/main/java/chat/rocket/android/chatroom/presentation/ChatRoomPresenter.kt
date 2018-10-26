@@ -2,6 +2,7 @@ package chat.rocket.android.chatroom.presentation
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import chat.rocket.android.R
 import chat.rocket.android.analytics.AnalyticsManager
 import chat.rocket.android.analytics.event.SubscriptionTypeEvent
@@ -68,10 +69,7 @@ import chat.rocket.core.internal.rest.unpinMessage
 import chat.rocket.core.internal.rest.unstarMessage
 import chat.rocket.core.internal.rest.updateMessage
 import chat.rocket.core.internal.rest.uploadFile
-import chat.rocket.core.model.ChatRoom
-import chat.rocket.core.model.ChatRoomRole
-import chat.rocket.core.model.Command
-import chat.rocket.core.model.Message
+import chat.rocket.core.model.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.android.UI
@@ -174,7 +172,23 @@ class ChatRoomPresenter @Inject constructor(
             view.showLoading()
             try {
                 if (offset == 0L) {
-                    val localMessages = messagesRepository.getByRoomId(chatRoomId)
+                    val oldLocalMessages = messagesRepository.getByRoomId(chatRoomId)
+                    /**
+                     * CODE EDITED
+                     */
+                    var localMessages = mutableListOf<Message>()
+                    for (message in oldLocalMessages) {
+                        var isValid = true
+                        if (message.type is MessageType.UserJoined ||
+                                message.type is MessageType.UserLeft ||
+                                message.type is MessageType.UserAdded ||
+                                message.type is MessageType.UserRemoved ||
+                                message.type is MessageType.UserMuted ||
+                                message.type is MessageType.UserUnMuted) {
+                            isValid = false
+                        }
+                        if (isValid) localMessages.add(message)
+                    }
                     val oldMessages = mapper.map(
                         localMessages, RoomUiModel(
                         roles = chatRoles,
@@ -220,31 +234,50 @@ class ChatRoomPresenter @Inject constructor(
         offset: Long = 0,
         clearDataSet: Boolean
     ) {
-        val messages =
-            retryIO("loadAndShowMessages($chatRoomId, $chatRoomType, $offset") {
-                client.messages(chatRoomId, roomTypeOf(chatRoomType), offset, 30).result
-            }
-        messagesRepository.saveAll(messages)
+            val messages =
+                    retryIO("loadAndShowMessages($chatRoomId, $chatRoomType, $offset") {
+                        client.messages(chatRoomId, roomTypeOf(chatRoomType), offset, 30).result
+                    }
 
-        //we are saving last sync date of latest synced chat room message
-        if (offset == 0L) {
-            //if success - saving last synced time
-            if (messages.isEmpty()) {
-                //chat history is empty - just saving current date
-                messagesRepository.saveLastSyncDate(chatRoomId, System.currentTimeMillis())
-            } else {
-                //assume that BE returns ordered messages, the first message is the latest one
-                messagesRepository.saveLastSyncDate(chatRoomId, messages.first().timestamp)
-            }
-        }
+            /**
+             * CODE EDITED
+             */
+//            var messages = mutableListOf<Message>()
+//            for (message in originalMessages) {
+//                var isValid = true
+//                if (message.type is MessageType.UserJoined ||
+//                        message.type is MessageType.UserLeft ||
+//                        message.type is MessageType.UserAdded ||
+//                        message.type is MessageType.UserRemoved ||
+//                        message.type is MessageType.UserMuted ||
+//                        message.type is MessageType.UserUnMuted) {
+//                    isValid = false
+//                }
+//                if (isValid) messages.add(message)
+//            }
 
-        view.showMessages(
-            mapper.map(
-                messages,
-                RoomUiModel(roles = chatRoles, isBroadcast = chatIsBroadcast, isRoom = true)
-            ),
-            clearDataSet
-        )
+
+            messagesRepository.saveAll(messages)
+
+            //we are saving last sync date of latest synced chat room message
+            if (offset == 0L) {
+                //if success - saving last synced time
+                if (messages.isEmpty()) {
+                    //chat history is empty - just saving current date
+                    messagesRepository.saveLastSyncDate(chatRoomId, System.currentTimeMillis())
+                } else {
+                    //assume that BE returns ordered messages, the first message is the latest one
+                    messagesRepository.saveLastSyncDate(chatRoomId, messages.first().timestamp)
+                }
+            }
+
+            view.showMessages(
+                    mapper.map(
+                            messages,
+                            RoomUiModel(roles = chatRoles, isBroadcast = chatIsBroadcast, isRoom = true)
+                    ),
+                    clearDataSet
+            )
     }
 
     fun searchMessages(chatRoomId: String, searchText: String) {

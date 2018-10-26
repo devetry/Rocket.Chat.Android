@@ -19,7 +19,6 @@ class FetchChatRoomsInteractor(
     suspend fun refreshChatRooms() {
         val rooms = retryIO("fetch chatRooms", times = 10,
             initialDelay = 200, maxDelay = 2000) {
-            Log.d("HEYHEY", System.currentTimeMillis().toString())
 
             client.chatRooms().update
         }

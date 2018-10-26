@@ -29,12 +29,12 @@ internal fun ChatRoomFragment.setupMenu(menu: Menu) {
     )
 
     if (chatRoomType != RoomType.DIRECT_MESSAGE && !disableMenu) {
-        menu.add(
-            Menu.NONE,
-            MENU_ACTION_MEMBER,
-            Menu.NONE,
-            R.string.title_members_list
-        )
+//        menu.add(
+//            Menu.NONE,
+//            MENU_ACTION_MEMBER,
+//            Menu.NONE,
+//            R.string.title_members_list
+//        )
 
         menu.add(
             Menu.NONE,
