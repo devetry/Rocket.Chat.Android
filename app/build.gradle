@@ -16,7 +16,7 @@ android {
         applicationId "chat.rocket.ytpconnect"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 2049
+        versionCode 2050
         versionName "1.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

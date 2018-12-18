@@ -269,7 +269,7 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
         image_avatar.setBackgroundColor(color)
         if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?")) {
             image_avatar.visibility = View.VISIBLE
-            image_avatar_text_view.visibility = View.INVISIBLE
+            if (image_avatar_text_view != null) image_avatar_text_view.visibility = View.INVISIBLE
             image_avatar.setImageURI(avatarUrl)
         } else {
             image_avatar.visibility = View.INVISIBLE
