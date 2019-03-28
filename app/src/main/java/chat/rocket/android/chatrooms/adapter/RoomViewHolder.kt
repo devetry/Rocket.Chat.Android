@@ -62,12 +62,13 @@ class RoomViewHolder(itemView: View, private val listener: (RoomUiModel) -> Unit
 
             text_chat_name.text = room.name
 
-            if (room.lastMessage != null) {
-                text_last_message.isVisible = true
-                text_last_message.text = room.lastMessage
-            } else {
-                text_last_message.isGone = true
-            }
+            text_last_message.isGone = true
+//            if (room.lastMessage != null) {
+//                text_last_message.isVisible = true
+//                text_last_message.text = room.lastMessage
+//            } else {
+//                text_last_message.isGone = true
+//            }
 
             if (room.date != null) {
                 text_last_message_date_time.isVisible = true

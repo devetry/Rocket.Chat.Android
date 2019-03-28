@@ -173,7 +173,7 @@ appear here.</string>
     <string name="notif_action_reply_hint">REPLY</string>
     <string name="notif_error_sending">Reply has failed. Please try again.</string>
     <string name="notif_success_sending">Message sent to %1$s!</string>
-    <string name="general_chat">Connect</string>
+    <string name="general_chat">Advice</string>
     <string name="title_reset_password">Reset password</string>
     <string name="title_preferences">Preferences</string>
     <string name="title_change_password">Change Password</string>
