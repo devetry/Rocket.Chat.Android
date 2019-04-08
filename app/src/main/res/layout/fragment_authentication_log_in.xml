@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_username_or_email"
         android:visibility="invisible"/>
 
-    <Button
+    <android.widget.Button
         android:id="@+id/button_log_in"
         style="@style/Authentication.Button"
         android:layout_marginTop="20dp"
@@ -54,7 +54,7 @@
         app:layout_constraintTop_toBottomOf="@id/text_password"
         android:visibility="invisible"/>
 
-    <Button
+    <android.widget.Button
         android:id="@+id/button_forgot_your_password"
         style="@style/Authentication.Button.Borderless"
         android:layout_marginTop="10dp"

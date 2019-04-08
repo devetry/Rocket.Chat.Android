@@ -12,8 +12,8 @@ import chat.rocket.android.server.infraestructure.RocketChatClientFactory
 import chat.rocket.android.server.presentation.CheckServerPresenter
 import chat.rocket.android.util.extension.launchUI
 import chat.rocket.android.util.extensions.isValidUrl
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ServerPresenter @Inject constructor(
@@ -25,7 +25,13 @@ class ServerPresenter @Inject constructor(
     private val getAccountsInteractor: GetAccountsInteractor,
     val settingsInteractor: GetSettingsInteractor,
     val factory: RocketChatClientFactory
-) : CheckServerPresenter(strategy, factory, settingsInteractor, view) {
+) : CheckServerPresenter(
+    strategy = strategy,
+    factory = factory,
+    settingsInteractor = settingsInteractor,
+    versionCheckView = view,
+    refreshSettingsInteractor = refreshSettingsInteractor
+) {
 
     fun checkServer(server: String) {
         if (!server.isValidUrl()) {
@@ -53,6 +59,9 @@ class ServerPresenter @Inject constructor(
                     wordpressOauthUrl,
                     casLoginUrl,
                     casToken,
+                    casServiceName,
+                    casServiceNameTextColor,
+                    casServiceButtonColor,
                     customOauthUrl,
                     customOauthServiceName,
                     customOauthServiceNameTextColor,
@@ -89,12 +98,9 @@ class ServerPresenter @Inject constructor(
                 }
                 view.showLoading()
                 try {
-                    withContext(DefaultDispatcher) {
-                        refreshSettingsInteractor.refresh(serverUrl)
-
-                        setupConnectionInfo(serverUrl)
-
+                    withContext(Dispatchers.Default) {
                         // preparing next fragment before showing it
+                        refreshServerAccounts()
                         checkEnabledAccounts(serverUrl)
                         checkIfLoginFormIsEnabled()
                         checkIfCreateNewAccountIsEnabled()
@@ -111,5 +117,4 @@ class ServerPresenter @Inject constructor(
             }
         }
     }
-
 }

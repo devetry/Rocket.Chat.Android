@@ -94,20 +94,20 @@ class LoginPresenter @Inject constructor(
                     }
                 }
                 val myself = retryIO("me()") { client.me() }
-                if (myself.username != null) {
+                myself.username?.let { username ->
                     val user = User(
                         id = myself.id,
                         roles = myself.roles,
                         status = myself.status,
                         name = myself.name,
                         emails = myself.emails?.map { Email(it.address ?: "", it.verified) },
-                        username = myself.username,
+                        username = username,
                         utcOffset = myself.utcOffset
                     )
                     localRepository.saveCurrentUser(currentServer, user)
                     saveCurrentServer.save(currentServer)
-                    localRepository.save(LocalRepository.CURRENT_USERNAME_KEY, myself.username)
-                    saveAccount(myself.username!!)
+                    localRepository.save(LocalRepository.CURRENT_USERNAME_KEY, username)
+                    saveAccount(username)
                     saveToken(token)
                     analyticsManager.logLogin(
                         AuthenticationEvent.AuthenticationWithUserAndPassword,
@@ -142,7 +142,7 @@ class LoginPresenter @Inject constructor(
 
     fun forgotPassword() = navigator.toForgotPassword()
 
-    private suspend fun saveAccount(username: String) {
+    private fun saveAccount(username: String) {
         val icon = settings.favicon()?.let {
             currentServer.serverLogoUrl(it)
         }

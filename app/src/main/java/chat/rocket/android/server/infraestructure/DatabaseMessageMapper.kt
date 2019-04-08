@@ -1,36 +1,23 @@
 package chat.rocket.android.server.infraestructure
 
 import chat.rocket.android.db.DatabaseManager
-import chat.rocket.android.db.model.AttachmentActionEntity
-import chat.rocket.android.db.model.AttachmentEntity
-import chat.rocket.android.db.model.FullMessage
-import chat.rocket.android.db.model.ReactionEntity
-import chat.rocket.android.db.model.UrlEntity
-import chat.rocket.android.db.model.UserEntity
+import chat.rocket.android.db.model.*
+import chat.rocket.android.util.retryDB
 import chat.rocket.common.model.SimpleRoom
 import chat.rocket.common.model.SimpleUser
 import chat.rocket.core.model.Message
 import chat.rocket.core.model.Reactions
 import chat.rocket.core.model.attachment.Attachment
-import chat.rocket.core.model.attachment.AudioAttachment
-import chat.rocket.core.model.attachment.AuthorAttachment
 import chat.rocket.core.model.attachment.Color
-import chat.rocket.core.model.attachment.ColorAttachment
-import chat.rocket.core.model.attachment.DEFAULT_COLOR_STR
 import chat.rocket.core.model.attachment.Field
-import chat.rocket.core.model.attachment.GenericFileAttachment
-import chat.rocket.core.model.attachment.ImageAttachment
-import chat.rocket.core.model.attachment.MessageAttachment
-import chat.rocket.core.model.attachment.VideoAttachment
 import chat.rocket.core.model.attachment.actions.Action
-import chat.rocket.core.model.attachment.actions.ActionsAttachment
 import chat.rocket.core.model.attachment.actions.ButtonAction
 import chat.rocket.core.model.messageTypeOf
 import chat.rocket.core.model.url.Meta
 import chat.rocket.core.model.url.ParsedUrl
 import chat.rocket.core.model.url.Url
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class DatabaseMessageMapper(private val dbManager: DatabaseManager) {
     suspend fun map(message: FullMessage): Message? = map(listOf(message)).firstOrNull()
@@ -65,7 +52,8 @@ class DatabaseMessageMapper(private val dbManager: DatabaseManager) {
                 val attachments = this.attachments?.let { mapAttachments(it).asReversed() }
                 val messageType = messageTypeOf(this.message.type)
 
-                list.add(Message(
+                list.add(
+                    Message(
                         id = this.message.id,
                         roomId = this.message.roomId,
                         message = this.message.message,
@@ -89,7 +77,8 @@ class DatabaseMessageMapper(private val dbManager: DatabaseManager) {
                         role = this.message.role,
                         synced = this.message.synced,
                         unread = this.message.unread
-                ))
+                    )
+                )
             }
         }
 
@@ -113,13 +102,19 @@ class DatabaseMessageMapper(private val dbManager: DatabaseManager) {
             val parsedUrl = url.hostname?.let {
                 ParsedUrl(host = it)
             }
-            val meta = if (!url.description.isNullOrEmpty() || !url.imageUrl.isNullOrEmpty() || !url.title.isNullOrEmpty()) {
-                val raw = HashMap<String, String>()
-                if (url.description != null) raw["ogDescription"] = url.description
-                if (url.title != null) raw["ogTitle"] = url.title
-                if (url.imageUrl != null) raw["ogImage"] = url.imageUrl
-                Meta(title = url.title,description = url.description, imageUrl = url.imageUrl, raw = raw)
-            } else null
+            val meta =
+                if (!url.description.isNullOrEmpty() || !url.imageUrl.isNullOrEmpty() || !url.title.isNullOrEmpty()) {
+                    val raw = HashMap<String, String>()
+                    if (url.description != null) raw["ogDescription"] = url.description
+                    if (url.title != null) raw["ogTitle"] = url.title
+                    if (url.imageUrl != null) raw["ogImage"] = url.imageUrl
+                    Meta(
+                        title = url.title,
+                        description = url.description,
+                        imageUrl = url.imageUrl,
+                        raw = raw
+                    )
+                } else null
 
             list.add(Url(url = url.url, meta = meta, parsedUrl = parsedUrl))
         }
@@ -141,81 +136,69 @@ class DatabaseMessageMapper(private val dbManager: DatabaseManager) {
         val list = mutableListOf<Attachment>()
         attachments.forEach { attachment ->
             with(attachment) {
-                when {
-                    imageUrl != null -> {
-                        ImageAttachment(title, description, text, titleLink, titleLinkDownload, imageUrl, type, imageSize)
-                    }
-                    videoUrl != null -> {
-                        VideoAttachment(title, description, text, titleLink, titleLinkDownload, videoUrl, type, videoSize)
-                    }
-                    audioUrl != null -> {
-                        AudioAttachment(title, description, text, titleLink, titleLinkDownload, audioUrl, type, audioSize)
-                    }
-                    titleLink != null -> {
-                        GenericFileAttachment(title, description, text, titleLink, titleLink, titleLinkDownload)
-                    }
-                    text != null && color != null && fallback != null -> {
-                        ColorAttachment(Color.Custom(color), text, fallback)
-                    }
-                    text != null -> {
-                        // TODO how to model message with attachments
-                        MessageAttachment(authorName, authorIcon, text, thumbUrl,
-                                color?.let { Color.Custom(it) }, messageLink, null, timestamp)
-                    }
-                    authorLink != null -> {
-                        mapAuthorAttachment(this)
-                    }
-                    hasFields -> {
-                        mapColorAttachmentWithFields(this)
-                    }
-                    hasActions -> {
-                        mapActionAttachment(this)
-                    }
-                    else -> null
-                }?.let { list.add(it) }
+                val fields = if (hasFields) {
+                    withContext(Dispatchers.IO) {
+                        retryDB("getAttachmentFields(${attachment._id})") {
+                            dbManager.messageDao().getAttachmentFields(attachment._id)
+                        }
+                    }.map { Field(it.title, it.value) }
+                } else {
+                    null
+                }
+                val actions = if (hasActions) {
+                    withContext(Dispatchers.IO) {
+                        retryDB("getAttachmentActions(${attachment._id})") {
+                            dbManager.messageDao().getAttachmentActions(attachment._id)
+                        }
+                    }.mapNotNull { mapAction(it) }
+                } else {
+                    null
+                }
+                list.add(
+                    Attachment(
+                        title = title,
+                        type = type,
+                        description = description,
+                        authorName = authorName,
+                        text = text,
+                        thumbUrl = thumbUrl,
+                        color = color?.let { Color.Custom(color) },
+                        titleLink = titleLink,
+                        titleLinkDownload = titleLinkDownload,
+                        imageUrl = imageUrl,
+                        imageType = imageType,
+                        imageSize = imageSize,
+                        videoUrl = videoUrl,
+                        videoType = videoType,
+                        videoSize = videoSize,
+                        audioUrl = audioUrl,
+                        audioType = audioType,
+                        audioSize = audioSize,
+                        messageLink = messageLink,
+                        attachments = null, // HOW TO MAP THIS
+                        timestamp = timestamp,
+                        authorIcon = authorIcon,
+                        authorLink = authorLink,
+                        fields = fields,
+                        fallback = fallback,
+                        buttonAlignment = if (actions != null && actions.isNotEmpty()) buttonAlignment
+                            ?: "vertical" else null,
+                        actions = actions
+                    )
+                )
             }
         }
         return list
     }
 
-    private suspend fun mapColorAttachmentWithFields(entity: AttachmentEntity): ColorAttachment {
-        val fields = withContext(CommonPool) {
-            dbManager.messageDao().getAttachmentFields(entity._id)
-        }.map { Field(it.title, it.value) }
-        return with(entity) {
-            ColorAttachment(
-                color = Color.Custom(color ?: DEFAULT_COLOR_STR),
-                text = text ?: "",
-                fallback = fallback,
-                fields = fields)
-        }
-    }
-
-    private suspend fun mapActionAttachment(attachment: AttachmentEntity): ActionsAttachment {
-        val actions = withContext(CommonPool) {
-            dbManager.messageDao().getAttachmentActions(attachment._id)
-        }.mapNotNull { mapAction(it) }
-        return with(attachment) {
-            // TODO - remove the default "vertical" value from here...
-            ActionsAttachment(title, actions, buttonAlignment ?: "vertical")
-        }
-    }
-
     private fun mapAction(action: AttachmentActionEntity): Action? {
         return when (action.type) {
-            "button" -> ButtonAction(action.type, action.text, action.url, action.isWebView,
-                    action.webViewHeightRatio, action.imageUrl, action.message,
-                    action.isMessageInChatWindow)
+            "button" -> ButtonAction(
+                action.type, action.text, action.url, action.isWebView,
+                action.webViewHeightRatio, action.imageUrl, action.message,
+                action.isMessageInChatWindow
+            )
             else -> null
-        }
-    }
-
-    private suspend fun mapAuthorAttachment(attachment: AttachmentEntity): AuthorAttachment {
-        val fields = withContext(CommonPool) {
-            dbManager.messageDao().getAttachmentFields(attachment._id)
-        }.map { Field(it.title, it.value) }
-        return with(attachment) {
-            AuthorAttachment(authorLink!!, authorIcon, authorName, fields)
         }
     }
 }

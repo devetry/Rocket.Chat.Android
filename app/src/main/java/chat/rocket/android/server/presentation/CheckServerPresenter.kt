@@ -3,7 +3,11 @@ package chat.rocket.android.server.presentation
 import chat.rocket.android.BuildConfig
 import chat.rocket.android.authentication.server.presentation.VersionCheckView
 import chat.rocket.android.core.lifecycle.CancelStrategy
+import chat.rocket.android.db.DatabaseManager
+import chat.rocket.android.db.DatabaseManagerFactory
 import chat.rocket.android.helper.OauthHelper
+import chat.rocket.android.infrastructure.LocalRepository
+import chat.rocket.android.main.presentation.MainNavigator
 import chat.rocket.android.server.domain.GetSettingsInteractor
 import chat.rocket.android.server.domain.PublicSettings
 import chat.rocket.android.server.domain.casLoginUrl
@@ -18,6 +22,12 @@ import chat.rocket.android.server.domain.isLoginFormEnabled
 import chat.rocket.android.server.domain.isRegistrationEnabledForNewUsers
 import chat.rocket.android.server.domain.isWordpressAuthenticationEnabled
 import chat.rocket.android.server.domain.wordpressUrl
+import chat.rocket.android.server.domain.GetCurrentServerInteractor
+import chat.rocket.android.server.domain.RemoveAccountInteractor
+import chat.rocket.android.server.domain.TokenRepository
+import chat.rocket.android.server.domain.RefreshSettingsInteractor
+import chat.rocket.android.server.infraestructure.ConnectionManager
+import chat.rocket.android.server.infraestructure.ConnectionManagerFactory
 import chat.rocket.android.server.infraestructure.RocketChatClientFactory
 import chat.rocket.android.util.VersionInfo
 import chat.rocket.android.util.extension.launchUI
@@ -30,9 +40,15 @@ import chat.rocket.common.RocketChatException
 import chat.rocket.common.RocketChatInvalidProtocolException
 import chat.rocket.common.model.ServerInfo
 import chat.rocket.core.RocketChatClient
+import chat.rocket.core.internal.rest.logout
 import chat.rocket.core.internal.rest.serverInfo
 import chat.rocket.core.internal.rest.settingsOauth
-import kotlinx.coroutines.experimental.Job
+import chat.rocket.core.internal.rest.unregisterPushToken
+import chat.rocket.core.model.Myself
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 private const val SERVICE_NAME_FACEBOOK = "facebook"
@@ -42,16 +58,26 @@ private const val SERVICE_NAME_LINKEDIN = "linkedin"
 private const val SERVICE_NAME_GILAB = "gitlab"
 private const val SERVICE_NAME_WORDPRESS = "wordpress"
 
-
 abstract class CheckServerPresenter constructor(
     private val strategy: CancelStrategy,
     private val factory: RocketChatClientFactory,
     private val settingsInteractor: GetSettingsInteractor? = null,
-    private val view: VersionCheckView? = null
+    private val serverInteractor: GetCurrentServerInteractor? = null,
+    private val localRepository: LocalRepository? = null,
+    private val removeAccountInteractor: RemoveAccountInteractor? = null,
+    private val tokenRepository: TokenRepository? = null,
+    private val managerFactory: ConnectionManagerFactory? = null,
+    private val dbManagerFactory: DatabaseManagerFactory? = null,
+    private val versionCheckView: VersionCheckView? = null,
+    private val tokenView: TokenView? = null,
+    private val navigator: MainNavigator? = null,
+    private val refreshSettingsInteractor: RefreshSettingsInteractor? = null
 ) {
     private lateinit var currentServer: String
     private lateinit var client: RocketChatClient
     private lateinit var settings: PublicSettings
+    private lateinit var manager: ConnectionManager
+    private lateinit var dbManager: DatabaseManager
     internal var state: String = ""
     internal var facebookOauthUrl: String? = null
     internal var githubOauthUrl: String? = null
@@ -61,6 +87,9 @@ abstract class CheckServerPresenter constructor(
     internal var wordpressOauthUrl: String? = null
     internal var casLoginUrl: String? = null
     internal var casToken: String? = null
+    internal var casServiceName: String? = null
+    internal var casServiceNameTextColor: Int = 0
+    internal var casServiceButtonColor: Int = 0
     internal var customOauthUrl: String? = null
     internal var customOauthServiceName: String? = null
     internal var customOauthServiceNameTextColor: Int = 0
@@ -75,10 +104,47 @@ abstract class CheckServerPresenter constructor(
     internal var isNewAccountCreationEnabled = false
 
     internal fun setupConnectionInfo(serverUrl: String) {
-        settingsInteractor?.get(serverUrl)?.let {
+        currentServer = serverUrl
+        client = factory.create(serverUrl)
+        managerFactory?.create(serverUrl)?.let {
+            manager = it
+        }
+        dbManagerFactory?.create(serverUrl)?.let {
+            dbManager = it
+        }
+    }
+
+    internal suspend fun refreshServerAccounts() {
+        refreshSettingsInteractor?.refresh(currentServer)
+
+        settingsInteractor?.get(currentServer)?.let {
             settings = it
         }
-        client = factory.create(serverUrl)
+
+        state = ""
+        facebookOauthUrl = null
+        githubOauthUrl = null
+        googleOauthUrl = null
+        linkedinOauthUrl = null
+        gitlabOauthUrl = null
+        wordpressOauthUrl = null
+        casLoginUrl = null
+        casToken = null
+        casServiceName = null
+        casServiceNameTextColor = 0
+        casServiceButtonColor = 0
+        customOauthUrl = null
+        customOauthServiceName = null
+        customOauthServiceNameTextColor = 0
+        customOauthServiceButtonColor= 0
+        samlUrl = null
+        samlToken = null
+        samlServiceName = null
+        samlServiceNameTextColor = 0
+        samlServiceButtonColor = 0
+        totalSocialAccountsEnabled = 0
+        isLoginFormEnabled = false
+        isNewAccountCreationEnabled = false
     }
 
     internal fun checkServerInfo(serverUrl: String): Job {
@@ -89,28 +155,28 @@ abstract class CheckServerPresenter constructor(
                     client.serverInfo()
                 }
                 if (serverInfo.redirected) {
-                    view?.updateServerUrl(serverInfo.url)
+                    versionCheckView?.updateServerUrl(serverInfo.url)
                 }
                 val version = checkServerVersion(serverInfo)
                 when (version) {
                     is Version.VersionOk -> {
                         Timber.i("Your version is nice! (Requires: 0.62.0, Yours: ${version.version})")
-                        view?.versionOk()
+                        versionCheckView?.versionOk()
                     }
                     is Version.RecommendedVersionWarning -> {
                         Timber.i("Your server ${version.version} is bellow recommended version ${BuildConfig.RECOMMENDED_SERVER_VERSION}")
-                        view?.alertNotRecommendedVersion()
+                        versionCheckView?.alertNotRecommendedVersion()
                     }
                     is Version.OutOfDateError -> {
                         Timber.i("Oops. Looks like your server ${version.version} is out-of-date! Minimum server version required ${BuildConfig.REQUIRED_SERVER_VERSION}!")
-                        view?.blockAndAlertNotRequiredVersion()
+                        versionCheckView?.blockAndAlertNotRequiredVersion()
                     }
                 }
             } catch (ex: Exception) {
                 Timber.d(ex, "Error getting server info")
                 when (ex) {
-                    is RocketChatInvalidProtocolException -> view?.errorInvalidProtocol()
-                    else -> view?.errorCheckingServerVersion()
+                    is RocketChatInvalidProtocolException -> versionCheckView?.errorInvalidProtocol()
+                    else -> versionCheckView?.errorCheckingServerVersion()
                 }
             }
         }
@@ -124,166 +190,240 @@ abstract class CheckServerPresenter constructor(
 
             if (services.isNotEmpty()) {
                 state = OauthHelper.getState()
-
-                // OAuth accounts.
-                if (settings.isFacebookAuthenticationEnabled()) {
-                    getServiceMap(services, SERVICE_NAME_FACEBOOK)?.let { serviceMap ->
-                        getOauthClientId(serviceMap)?.let { clientId ->
-                            facebookOauthUrl =
-                                    OauthHelper.getFacebookOauthUrl(clientId, serverUrl, state)
-                            totalSocialAccountsEnabled++
-                        }
-                    }
-                }
-
-                if (settings.isGithubAuthenticationEnabled()) {
-                    getServiceMap(services, SERVICE_NAME_GITHUB)?.let { serviceMap ->
-                        getOauthClientId(serviceMap)?.let { clientId ->
-                            githubOauthUrl =
-                                    OauthHelper.getGithubOauthUrl(clientId, state)
-                            totalSocialAccountsEnabled++
-                        }
-                    }
-                }
-
-                if (settings.isGoogleAuthenticationEnabled()) {
-                    getServiceMap(services, SERVICE_NAME_GOOGLE)?.let { serviceMap ->
-                        getOauthClientId(serviceMap)?.let { clientId ->
-                            googleOauthUrl =
-                                    OauthHelper.getGoogleOauthUrl(clientId, serverUrl, state)
-                            totalSocialAccountsEnabled++
-                        }
-                    }
-                }
-
-                if (settings.isLinkedinAuthenticationEnabled()) {
-                    getServiceMap(services, SERVICE_NAME_LINKEDIN)?.let { serviceMap ->
-                        getOauthClientId(serviceMap)?.let { clientId ->
-                            linkedinOauthUrl =
-                                    OauthHelper.getLinkedinOauthUrl(clientId, serverUrl, state)
-                            totalSocialAccountsEnabled++
-                        }
-                    }
-                }
-
-                if (settings.isGitlabAuthenticationEnabled()) {
-                    getServiceMap(services, SERVICE_NAME_GILAB)?.let { serviceMap ->
-                        getOauthClientId(serviceMap)?.let { clientId ->
-                            gitlabOauthUrl = if (settings.gitlabUrl() != null) {
-                                OauthHelper.getGitlabOauthUrl(
-                                    host = settings.gitlabUrl(),
-                                    clientId = clientId,
-                                    serverUrl = serverUrl,
-                                    state = state
-                                )
-                            } else {
-                                OauthHelper.getGitlabOauthUrl(
-                                    clientId = clientId,
-                                    serverUrl = serverUrl,
-                                    state = state
-                                )
-                            }
-                            totalSocialAccountsEnabled++
-                        }
-                    }
-                }
-
-                if (settings.isWordpressAuthenticationEnabled()) {
-                    getServiceMap(services, SERVICE_NAME_WORDPRESS)?.let { serviceMap ->
-                        getOauthClientId(serviceMap)?.let { clientId ->
-                            wordpressOauthUrl =
-                                    if (settings.wordpressUrl().isNullOrEmpty()) {
-                                        OauthHelper.getWordpressComOauthUrl(
-                                            clientId,
-                                            serverUrl,
-                                            state
-                                        )
-                                    } else {
-                                        OauthHelper.getWordpressCustomOauthUrl(
-                                            getCustomOauthHost(serviceMap)
-                                                ?: "https://public-api.wordpress.com",
-                                            getCustomOauthAuthorizePath(serviceMap)
-                                                ?: "/oauth/authorize",
-                                            clientId,
-                                            serverUrl,
-                                            SERVICE_NAME_WORDPRESS,
-                                            state,
-                                            getCustomOauthScope(serviceMap) ?: "openid"
-                                        )
-                                    }
-                            totalSocialAccountsEnabled++
-                        }
-                    }
-                }
-
-                // CAS account.
-                if (settings.isCasAuthenticationEnabled()) {
-                    casToken = generateRandomString(17)
-                    casLoginUrl = settings.casLoginUrl().casUrl(serverUrl, casToken.toString())
-                    totalSocialAccountsEnabled++
-                }
-
-                // Custom OAuth account.
-                getCustomOauthServices(services).let {
-                    for (serviceMap in it) {
-                        customOauthServiceName = getCustomOauthServiceName(serviceMap)
-                        val host = getCustomOauthHost(serviceMap)
-                        val authorizePath = getCustomOauthAuthorizePath(serviceMap)
-                        val clientId = getOauthClientId(serviceMap)
-                        val scope = getCustomOauthScope(serviceMap)
-                        val serviceNameTextColor =
-                            getServiceNameColorForCustomOauthOrSaml(serviceMap)
-                        val serviceButtonColor = getServiceButtonColor(serviceMap)
-                        if (customOauthServiceName != null &&
-                            host != null &&
-                            authorizePath != null &&
-                            clientId != null &&
-                            scope != null &&
-                            serviceNameTextColor != null &&
-                            serviceButtonColor != null
-                        ) {
-
-                            customOauthUrl = OauthHelper.getCustomOauthUrl(
-                                host,
-                                authorizePath,
-                                clientId,
-                                serverUrl,
-                                customOauthServiceName.toString(),
-                                state,
-                                scope
-                            )
-                            customOauthServiceNameTextColor = serviceNameTextColor
-                            customOauthServiceButtonColor = serviceButtonColor
-                            totalSocialAccountsEnabled++
-                        }
-                    }
-                }
-
-                // SAML account.
-                getSamlServices(services).let {
-                    samlToken = generateRandomString(17)
-                    for (serviceMap in it) {
-                        val provider = getSamlProvider(serviceMap)
-                        samlServiceName = getSamlServiceName(serviceMap)
-                        val serviceNameTextColor =
-                            getServiceNameColorForCustomOauthOrSaml(serviceMap)
-                        val serviceButtonColor = getServiceButtonColor(serviceMap)
-
-                        if (provider != null &&
-                            samlServiceName != null &&
-                            serviceNameTextColor != null &&
-                            serviceButtonColor != null
-                        ) {
-                            samlUrl = serverUrl.samlUrl(provider, samlToken.toString())
-                            samlServiceNameTextColor = serviceNameTextColor
-                            samlServiceButtonColor = serviceButtonColor
-                            totalSocialAccountsEnabled++
-                        }
-                    }
-                }
+                checkEnabledOauthAccounts(services, serverUrl)
+                checkEnabledCasAccounts(services, serverUrl)
+                checkEnabledCustomOauthAccounts(services, serverUrl)
+                checkEnabledSamlAccounts(services, serverUrl)
             }
         } catch (exception: RocketChatException) {
             Timber.e(exception)
+        }
+    }
+
+    /**
+     * Logout the user from the current server.
+     *
+     * @param userDataChannel the user data channel to stop listening to changes (if currently subscribed).
+     */
+    internal fun logout(userDataChannel: Channel<Myself>?) {
+        launchUI(strategy) {
+            try {
+                clearTokens()
+                retryIO("logout") { client.logout() }
+            } catch (exception: RocketChatException) {
+                Timber.e(exception, "Error calling logout")
+            }
+
+            try {
+                if (userDataChannel != null) {
+                    disconnect(userDataChannel)
+                }
+                removeAccountInteractor?.remove(currentServer)
+                tokenRepository?.remove(currentServer)
+                withContext(Dispatchers.IO) { dbManager.logout() }
+                navigator?.switchOrAddNewServer()
+            } catch (ex: Exception) {
+                Timber.e(ex, "Error cleaning up the session...")
+            }
+        }
+    }
+
+    /**
+     * Stops listening to user data changes and disconnects the user.
+     *
+     * @param userDataChannel the user data channel to stop listening to changes.
+     */
+    fun disconnect(userDataChannel: Channel<Myself>) {
+        manager.removeUserDataChannel(userDataChannel)
+        manager.disconnect()
+    }
+
+    private suspend fun clearTokens() {
+        serverInteractor?.clear()
+        val pushToken = localRepository?.get(LocalRepository.KEY_PUSH_TOKEN)
+        if (pushToken != null) {
+            try {
+                retryIO("unregisterPushToken") { client.unregisterPushToken(pushToken) }
+                tokenView?.invalidateToken(pushToken)
+            } catch (ex: Exception) {
+                Timber.e(ex, "Error unregistering push token")
+            }
+        }
+        localRepository?.clearAllFromServer(currentServer)
+    }
+
+    private fun checkEnabledOauthAccounts(services: List<Map<String,Any>>, serverUrl: String) {
+        if (settings.isFacebookAuthenticationEnabled()) {
+            getServiceMap(services, SERVICE_NAME_FACEBOOK)?.let { serviceMap ->
+                getOauthClientId(serviceMap)?.let { clientId ->
+                    facebookOauthUrl =
+                            OauthHelper.getFacebookOauthUrl(clientId, serverUrl, state)
+                    totalSocialAccountsEnabled++
+                }
+            }
+        }
+
+        if (settings.isGithubAuthenticationEnabled()) {
+            getServiceMap(services, SERVICE_NAME_GITHUB)?.let { serviceMap ->
+                getOauthClientId(serviceMap)?.let { clientId ->
+                    githubOauthUrl =
+                            OauthHelper.getGithubOauthUrl(clientId, state)
+                    totalSocialAccountsEnabled++
+                }
+            }
+        }
+
+        if (settings.isGoogleAuthenticationEnabled()) {
+            getServiceMap(services, SERVICE_NAME_GOOGLE)?.let { serviceMap ->
+                getOauthClientId(serviceMap)?.let { clientId ->
+                    googleOauthUrl =
+                            OauthHelper.getGoogleOauthUrl(clientId, serverUrl, state)
+                    totalSocialAccountsEnabled++
+                }
+            }
+        }
+
+        if (settings.isLinkedinAuthenticationEnabled()) {
+            getServiceMap(services, SERVICE_NAME_LINKEDIN)?.let { serviceMap ->
+                getOauthClientId(serviceMap)?.let { clientId ->
+                    linkedinOauthUrl =
+                            OauthHelper.getLinkedinOauthUrl(clientId, serverUrl, state)
+                    totalSocialAccountsEnabled++
+                }
+            }
+        }
+
+        if (settings.isGitlabAuthenticationEnabled()) {
+            getServiceMap(services, SERVICE_NAME_GILAB)?.let { serviceMap ->
+                getOauthClientId(serviceMap)?.let { clientId ->
+                    gitlabOauthUrl = if (settings.gitlabUrl() != null) {
+                        OauthHelper.getGitlabOauthUrl(
+                            host = settings.gitlabUrl(),
+                            clientId = clientId,
+                            serverUrl = serverUrl,
+                            state = state
+                        )
+                    } else {
+                        OauthHelper.getGitlabOauthUrl(
+                            clientId = clientId,
+                            serverUrl = serverUrl,
+                            state = state
+                        )
+                    }
+                    totalSocialAccountsEnabled++
+                }
+            }
+        }
+
+        if (settings.isWordpressAuthenticationEnabled()) {
+            getServiceMap(services, SERVICE_NAME_WORDPRESS)?.let { serviceMap ->
+                getOauthClientId(serviceMap)?.let { clientId ->
+                    wordpressOauthUrl =
+                            if (settings.wordpressUrl().isNullOrEmpty()) {
+                                OauthHelper.getWordpressComOauthUrl(
+                                    clientId,
+                                    serverUrl,
+                                    state
+                                )
+                            } else {
+                                OauthHelper.getWordpressCustomOauthUrl(
+                                    getCustomOauthHost(serviceMap)
+                                        ?: "https://public-api.wordpress.com",
+                                    getCustomOauthAuthorizePath(serviceMap)
+                                        ?: "/oauth/authorize",
+                                    clientId,
+                                    serverUrl,
+                                    SERVICE_NAME_WORDPRESS,
+                                    state,
+                                    getCustomOauthScope(serviceMap) ?: "openid"
+                                )
+                            }
+                    totalSocialAccountsEnabled++
+                }
+            }
+        }
+    }
+
+    private fun checkEnabledCasAccounts(services: List<Map<String,Any>>, serverUrl: String) {
+        if (settings.isCasAuthenticationEnabled()) {
+            casToken = generateRandomString(17)
+            casLoginUrl = settings.casLoginUrl().casUrl(serverUrl, casToken.toString())
+            getCasServices(services).let {
+                for (serviceMap in it) {
+                    casServiceName = getServiceName(serviceMap)
+                    val serviceNameTextColor = getServiceNameColor(serviceMap)
+                    val serviceButtonColor = getServiceButtonColor(serviceMap)
+                    if (casServiceName != null &&
+                        serviceNameTextColor != null &&
+                        serviceButtonColor != null
+                    ) {
+                        casServiceNameTextColor = serviceNameTextColor
+                        casServiceButtonColor = serviceButtonColor
+                        totalSocialAccountsEnabled++
+                    }
+                }
+            }
+        }
+    }
+
+    private fun checkEnabledCustomOauthAccounts(services: List<Map<String,Any>>, serverUrl: String) {
+        getCustomOauthServices(services).let {
+            for (serviceMap in it) {
+                customOauthServiceName = getCustomOauthServiceName(serviceMap)
+                val host = getCustomOauthHost(serviceMap)
+                val authorizePath = getCustomOauthAuthorizePath(serviceMap)
+                val clientId = getOauthClientId(serviceMap)
+                val scope = getCustomOauthScope(serviceMap)
+                val serviceNameTextColor =
+                    getServiceNameColor(serviceMap)
+                val serviceButtonColor = getServiceButtonColor(serviceMap)
+
+                if (customOauthServiceName != null &&
+                    host != null &&
+                    authorizePath != null &&
+                    clientId != null &&
+                    scope != null &&
+                    serviceNameTextColor != null &&
+                    serviceButtonColor != null
+                ) {
+                    customOauthUrl = OauthHelper.getCustomOauthUrl(
+                        host,
+                        authorizePath,
+                        clientId,
+                        serverUrl,
+                        customOauthServiceName.toString(),
+                        state,
+                        scope
+                    )
+                    customOauthServiceNameTextColor = serviceNameTextColor
+                    customOauthServiceButtonColor = serviceButtonColor
+                    totalSocialAccountsEnabled++
+                }
+            }
+        }
+    }
+
+    private fun checkEnabledSamlAccounts(services: List<Map<String,Any>>, serverUrl: String) {
+        getSamlServices(services).let {
+            samlToken = generateRandomString(17)
+            for (serviceMap in it) {
+                val provider = getSamlProvider(serviceMap)
+                samlServiceName = getServiceName(serviceMap)
+                val serviceNameTextColor =
+                    getServiceNameColor(serviceMap)
+                val serviceButtonColor = getServiceButtonColor(serviceMap)
+
+                if (provider != null &&
+                    samlServiceName != null &&
+                    serviceNameTextColor != null &&
+                    serviceButtonColor != null
+                ) {
+                    samlUrl = serverUrl.samlUrl(provider, samlToken.toString())
+                    samlServiceNameTextColor = serviceNameTextColor
+                    samlServiceButtonColor = serviceButtonColor
+                    totalSocialAccountsEnabled++
+                }
+            }
         }
     }
 
@@ -362,6 +502,14 @@ abstract class CheckServerPresenter constructor(
         serviceMap["service"] as? String
 
     /**
+     * Returns a CAS service list.
+     *
+     * @return A CAS service list, otherwise an empty list if there is no CAS service.
+     */
+    private fun getCasServices(listMap: List<Map<String, Any>>): List<Map<String, Any>> =
+        listMap.filter { map -> map["service"] == "cas" }
+
+    /**
      * Returns a SAML OAuth service list.
      *
      * @return A SAML service list, otherwise an empty list if there is no SAML OAuth service.
@@ -380,26 +528,27 @@ abstract class CheckServerPresenter constructor(
 
     /**
      * Returns the text of the SAML service.
+     * REMARK: This can be used SAML or CAS.
      *
      * @param serviceMap The service map to get the text of the SAML service.
      * @return The text of the SAML service, otherwise null.
      */
-    private fun getSamlServiceName(serviceMap: Map<String, Any>): String? =
+    private fun getServiceName(serviceMap: Map<String, Any>): String? =
         serviceMap["buttonLabelText"] as? String
 
     /**
      * Returns the text color of the service name.
-     * REMARK: This can be used for custom OAuth or SAML.
+     * REMARK: This can be used for custom OAuth, SAML or CAS.
      *
      * @param serviceMap The service map to get the text color from.
      * @return The text color of the service (custom OAuth or SAML), otherwise null.
      */
-    private fun getServiceNameColorForCustomOauthOrSaml(serviceMap: Map<String, Any>): Int? =
+    private fun getServiceNameColor(serviceMap: Map<String, Any>): Int? =
         (serviceMap["buttonLabelColor"] as? String)?.parseColor()
 
     /**
      * Returns the button color of the service name.
-     * REMARK: This can be used for custom OAuth or SAML.
+     * REMARK: This can be used for custom OAuth, SAML or CAS.
      *
      * @param serviceMap The service map to get the button color from.
      * @return The button color of the service (custom OAuth or SAML), otherwise null.

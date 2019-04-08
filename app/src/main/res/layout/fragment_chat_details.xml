@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/whitesmoke">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/colorWhite"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/name"
+                style="@style/ChatDetails.Title.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="#important" />
+
+            <TextView
+                android:id="@+id/title_description"
+                style="@style/ChatDetails.Title.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/name"
+                android:layout_marginTop="20dp"
+                android:text="@string/title_description" />
+
+            <TextView
+                android:id="@+id/content_description"
+                style="@style/ChatDetails.Content.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_description"
+                android:text="@string/msg_no_description" />
+
+            <TextView
+                android:id="@+id/title_topic"
+                style="@style/ChatDetails.Title.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/content_description"
+                android:layout_marginTop="20dp"
+                android:text="@string/title_topic" />
+
+            <TextView
+                android:id="@+id/content_topic"
+                style="@style/ChatDetails.Content.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_topic"
+                android:text="@string/msg_no_topic" />
+
+            <TextView
+                android:id="@+id/title_announcement"
+                style="@style/ChatDetails.Title.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/content_topic"
+                android:layout_marginTop="20dp"
+                android:text="@string/title_announcement" />
+
+            <TextView
+                android:id="@+id/content_announcement"
+                style="@style/ChatDetails.Content.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_announcement"
+                android:text="@string/msg_no_announcement" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/options"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

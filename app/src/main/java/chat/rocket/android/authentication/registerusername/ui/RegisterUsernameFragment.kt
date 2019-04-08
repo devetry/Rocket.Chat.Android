@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import chat.rocket.android.R
 import chat.rocket.android.analytics.AnalyticsManager
@@ -16,7 +17,6 @@ import chat.rocket.android.authentication.registerusername.presentation.Register
 import chat.rocket.android.authentication.registerusername.presentation.RegisterUsernameView
 import chat.rocket.android.util.extension.asObservable
 import chat.rocket.android.util.extensions.inflate
-import chat.rocket.android.util.extensions.setVisible
 import chat.rocket.android.util.extensions.showKeyboard
 import chat.rocket.android.util.extensions.showToast
 import chat.rocket.android.util.extensions.textContent
@@ -31,12 +31,10 @@ import javax.inject.Inject
 private const val BUNDLE_USER_ID = "user_id"
 private const val BUNDLE_AUTH_TOKEN = "auth_token"
 
-fun newInstance(userId: String, authToken: String): Fragment {
-    return RegisterUsernameFragment().apply {
-        arguments = Bundle(2).apply {
-            putString(BUNDLE_USER_ID, userId)
-            putString(BUNDLE_AUTH_TOKEN, authToken)
-        }
+fun newInstance(userId: String, authToken: String): Fragment = RegisterUsernameFragment().apply {
+    arguments = Bundle(2).apply {
+        putString(BUNDLE_USER_ID, userId)
+        putString(BUNDLE_AUTH_TOKEN, authToken)
     }
 }
 
@@ -53,13 +51,10 @@ class RegisterUsernameFragment : Fragment(), RegisterUsernameView {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
 
-        val bundle = arguments
-        if (bundle != null) {
-            userId = bundle.getString(BUNDLE_USER_ID)
-            authToken = bundle.getString(BUNDLE_AUTH_TOKEN)
-        } else {
-            requireNotNull(bundle) { "no arguments supplied when the fragment was instantiated" }
-        }
+        arguments?.run {
+            userId = getString(BUNDLE_USER_ID, "")
+            authToken = getString(BUNDLE_AUTH_TOKEN, "")
+        } ?: requireNotNull(arguments) { "no arguments supplied when the fragment was instantiated" }
     }
 
     override fun onCreateView(
@@ -113,13 +108,13 @@ class RegisterUsernameFragment : Fragment(), RegisterUsernameView {
     override fun showLoading() {
         ui {
             disableUserInput()
-            view_loading.setVisible(true)
+            view_loading.isVisible = true
         }
     }
 
     override fun hideLoading() {
         ui {
-            view_loading.setVisible(false)
+            view_loading.isVisible = false
             enableUserInput()
         }
     }

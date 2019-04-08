@@ -2,6 +2,7 @@ package chat.rocket.android.profile.ui
 
 import DrawableHelper
 import android.app.Activity
+import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -12,6 +13,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.MenuInflater
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.core.net.toUri
@@ -30,6 +33,7 @@ import chat.rocket.android.util.extensions.inflate
 import chat.rocket.android.util.extensions.showToast
 import chat.rocket.android.util.extensions.textContent
 import chat.rocket.android.util.extensions.ui
+import chat.rocket.android.util.invalidateFirebaseToken
 import com.facebook.drawee.backends.pipeline.Fresco
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.CompositeDisposable
@@ -63,6 +67,7 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -91,13 +96,34 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-        if (resultData != null && resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_CODE_FOR_PERFORM_SAF) {
-                presenter.updateAvatar(resultData.data)
-            } else if (requestCode == REQUEST_CODE_FOR_PERFORM_CAMERA) {
-                presenter.preparePhotoAndUpdateAvatar(resultData.extras["data"] as Bitmap)
+        resultData?.run {
+            if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == REQUEST_CODE_FOR_PERFORM_SAF) {
+                    data?.let { presenter.updateAvatar(it) }
+                } else if (requestCode == REQUEST_CODE_FOR_PERFORM_CAMERA) {
+                    extras?.get("data")?.let { presenter.preparePhotoAndUpdateAvatar(it as Bitmap) }
+                }
             }
         }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        if (actionMode != null) {
+            menu.clear()
+        }
+        super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.profile, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_delete_account -> showDeleteAccountDialog()
+        }
+        return true
     }
 
     override fun showProfile(avatarUrl: String, name: String, username: String, email: String?) {
@@ -150,6 +176,8 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
         showMessage(getString(R.string.msg_profile_update_successfully))
     }
 
+    override fun invalidateToken(token: String) = invalidateFirebaseToken(token)
+
     override fun showLoading() {
         enableUserInput(false)
         ui { view_loading.isVisible = true }
@@ -175,7 +203,7 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
     override fun showGenericErrorMessage() = showMessage(getString(R.string.msg_generic_error))
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-        mode.menuInflater.inflate(R.menu.profile, menu)
+        mode.menuInflater.inflate(R.menu.action_mode_profile, menu)
         mode.title = getString(R.string.title_update_profile)
         return true
     }
@@ -204,8 +232,7 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
     }
 
     private fun setupToolbar() {
-        (activity as AppCompatActivity?)?.supportActionBar?.title =
-                getString(R.string.title_profile)
+        (activity as AppCompatActivity?)?.supportActionBar?.title = getString(R.string.title_profile)
     }
 
     private fun setupListeners() {
@@ -218,7 +245,7 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
             hideUpdateAvatarOptions()
         }
 
-        button_take_photo.setOnClickListener {
+        button_take_a_photo.setOnClickListener {
             dispatchTakePicture(REQUEST_CODE_FOR_PERFORM_CAMERA)
             hideUpdateAvatarOptions()
         }
@@ -266,6 +293,7 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
                     text_username.toString() != currentUsername ||
                     text_email.toString() != currentEmail)
         }.subscribe { isValid ->
+            activity?.invalidateOptionsMenu()
             if (isValid) {
                 startActionMode()
             } else {
@@ -289,6 +317,18 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
             text_username.isEnabled = value
             text_username.isEnabled = value
             text_email.isEnabled = value
+        }
+    }
+
+    fun showDeleteAccountDialog() {
+        context?.let {
+            val passwordEText = EditText(context);
+            val mDialogView = LayoutInflater.from(it).inflate(R.layout.item_account_delete, null)
+            val mBuilder = AlertDialog.Builder(it)
+
+            mBuilder.setView(mDialogView).setPositiveButton(R.string.action_delete_account) { _, _ ->
+                presenter.deleteAccount(passwordEText.text.toString())
+            }.setNegativeButton(android.R.string.no) { dialog, _ -> dialog.cancel() }.create().show()
         }
     }
 }

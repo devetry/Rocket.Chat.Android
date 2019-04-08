@@ -18,18 +18,18 @@ import chat.rocket.android.members.adapter.MembersAdapter
 import chat.rocket.android.members.presentation.MembersPresenter
 import chat.rocket.android.members.presentation.MembersView
 import chat.rocket.android.members.uimodel.MemberUiModel
+import chat.rocket.android.util.extensions.clearLightStatusBar
 import chat.rocket.android.util.extensions.inflate
 import chat.rocket.android.util.extensions.showToast
 import chat.rocket.android.util.extensions.ui
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.app_bar_chat_room.*
 import kotlinx.android.synthetic.main.fragment_members.*
 import javax.inject.Inject
 
-fun newInstance(chatRoomId: String): Fragment {
-    return MembersFragment().apply {
-        arguments = Bundle(1).apply {
-            putString(BUNDLE_CHAT_ROOM_ID, chatRoomId)
-        }
+fun newInstance(chatRoomId: String): Fragment = MembersFragment().apply {
+    arguments = Bundle(1).apply {
+        putString(BUNDLE_CHAT_ROOM_ID, chatRoomId)
     }
 }
 
@@ -50,12 +50,9 @@ class MembersFragment : Fragment(), MembersView {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
 
-        val bundle = arguments
-        if (bundle != null) {
-            chatRoomId = bundle.getString(BUNDLE_CHAT_ROOM_ID)
-        } else {
-            requireNotNull(bundle) { "no arguments supplied when the fragment was instantiated" }
-        }
+        arguments?.run {
+            chatRoomId = getString(BUNDLE_CHAT_ROOM_ID, "")
+        } ?: requireNotNull(arguments) { "no arguments supplied when the fragment was instantiated" }
     }
 
     override fun onCreateView(
@@ -66,6 +63,7 @@ class MembersFragment : Fragment(), MembersView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupToolbar()
         setupRecyclerView()
         presenter.loadChatRoomsMembers(chatRoomId)
 
@@ -77,7 +75,7 @@ class MembersFragment : Fragment(), MembersView {
             setupToolbar(total)
             if (adapter.itemCount == 0) {
                 adapter.prependData(dataSet)
-                if (dataSet.size >= 59) { // TODO Check why the API retorns the specified count -1
+                if (dataSet.size >= 59) { // TODO Check why the API returns the specified count -1
                     recycler_view.addOnScrollListener(object :
                         EndlessRecyclerViewScrollListener(linearLayoutManager) {
                         override fun onLoadMore(
@@ -119,16 +117,26 @@ class MembersFragment : Fragment(), MembersView {
 
     private fun setupRecyclerView() {
         ui {
-            recycler_view.layoutManager = linearLayoutManager
-            recycler_view.addItemDecoration(DividerItemDecoration(it, DividerItemDecoration.HORIZONTAL))
+            recycler_view.layoutManager = LinearLayoutManager(context)
+            recycler_view.addItemDecoration(
+                DividerItemDecoration(
+                    it,
+                    DividerItemDecoration.HORIZONTAL
+                )
+            )
             recycler_view.adapter = adapter
         }
     }
 
-    private fun setupToolbar(totalMembers: Long) {
-        (activity as ChatRoomActivity).let {
-            it.showToolbarTitle(getString(R.string.title_members, totalMembers))
-            it.hideToolbarChatRoomIcon()
+    private fun setupToolbar(totalMembers: Long? = null) {
+        with((activity as ChatRoomActivity)) {
+            if (totalMembers != null) {
+                setupToolbarTitle((getString(R.string.title_counted_members, totalMembers)))
+            } else {
+                setupToolbarTitle((getString(R.string.title_members)))
+            }
+            this.clearLightStatusBar()
+            toolbar.isVisible = true
         }
     }
 }

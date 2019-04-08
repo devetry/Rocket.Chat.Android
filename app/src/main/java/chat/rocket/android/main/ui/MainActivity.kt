@@ -2,7 +2,7 @@ package chat.rocket.android.main.ui
 
 import DrawableHelper
 import android.app.Activity
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Color
@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import chat.rocket.android.BuildConfig
 import chat.rocket.android.R
+import chat.rocket.android.chatrooms.ui.ChatRoomsFragment
 import chat.rocket.android.main.adapter.AccountsAdapter
 import chat.rocket.android.main.adapter.Selector
 import chat.rocket.android.main.presentation.MainPresenter
@@ -43,6 +44,9 @@ import kotlinx.android.synthetic.main.bottom_nav.*
 import kotlinx.android.synthetic.main.nav_header.view.*
 import java.util.*
 import javax.inject.Inject
+import android.app.NotificationManager
+import android.content.Context
+
 
 private const val CURRENT_STATE = "current_state"
 
@@ -68,10 +72,7 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
         setContentView(R.layout.activity_main)
 
         refreshPushToken()
-
         chatRoomId = intent.getStringExtra(INTENT_CHAT_ROOM_ID)
-
-        println("ChatRoomId: $chatRoomId")
         presenter.clearNotificationsForChatroom(chatRoomId)
 
         presenter.connect()
@@ -100,6 +101,9 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
             presenter.toChatList(chatRoomId)
             isFragmentAdded = true
         }
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
+                as NotificationManager
+        notificationManager.cancelAll()
     }
 
     override fun onDestroy() {
@@ -107,6 +111,21 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
         if (isFinishing) {
             presenter.logout()
             presenter.disconnect()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            closeDrawer()
+        } else {
+            supportFragmentManager.findFragmentById(R.id.fragment_container)?.let {
+                if (it !is ChatRoomsFragment && supportFragmentManager.backStackEntryCount == 0) {
+                    presenter.toChatList(chatRoomId)
+                    setCheckedNavDrawerItem(R.id.menu_action_chats)
+                } else {
+                    super.onBackPressed()
+                }
+            }
         }
     }
 
@@ -192,7 +211,7 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
                     BuildConfig.RECOMMENDED_SERVER_VERSION
                 )
             )
-            .setPositiveButton(R.string.msg_ok, null)
+            .setPositiveButton(android.R.string.ok, null)
             .create()
             .show()
     }
@@ -206,13 +225,12 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
                 )
             )
             .setOnDismissListener { presenter.logout() }
-            .setPositiveButton(R.string.msg_ok, null)
+            .setPositiveButton(android.R.string.ok, null)
             .create()
             .show()
     }
 
-    override fun invalidateToken(token: String) =
-        invalidateFirebaseToken(token)
+    override fun invalidateToken(token: String) = invalidateFirebaseToken(token)
 
     override fun showMessage(resId: Int) = showToast(resId)
 
@@ -263,24 +281,37 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
         }
     }
 
-    fun setAvatar(avatarUrl: String, name: String) {
-        val rnd = Random()
-        val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-        image_avatar.setBackgroundColor(color)
-        if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?")) {
-            image_avatar.visibility = View.VISIBLE
-            if (image_avatar_text_view != null) image_avatar_text_view.visibility = View.INVISIBLE
-            image_avatar.setImageURI(avatarUrl)
-        } else {
-            image_avatar.visibility = View.INVISIBLE
-            if (image_avatar_text_view != null) {
-                image_avatar_text_view.visibility = View.VISIBLE
-                image_avatar_text_view.text = name.substring(0, 2).toUpperCase()
-                val rnd = Random()
-                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-                image_avatar_text_view.setBackgroundColor(color)
-            }
-        }
+// CONFLICT: HEAD
+//    fun setAvatar(avatarUrl: String, name: String) {
+//        val rnd = Random()
+//        val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+//        image_avatar.setBackgroundColor(color)
+//        if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?")) {
+//            image_avatar.visibility = View.VISIBLE
+//            if (image_avatar_text_view != null) image_avatar_text_view.visibility = View.INVISIBLE
+//            image_avatar.setImageURI(avatarUrl)
+//        } else {
+//            image_avatar.visibility = View.INVISIBLE
+//            if (image_avatar_text_view != null) {
+//                image_avatar_text_view.visibility = View.VISIBLE
+//                image_avatar_text_view.text = name.substring(0, 2).toUpperCase()
+//                val rnd = Random()
+//                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+//                image_avatar_text_view.setBackgroundColor(color)
+//            }
+//        }
+    // CONFLICT: MERGE
+    fun showLogoutDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.title_are_you_sure)
+            .setPositiveButton(R.string.action_logout) { _, _ -> presenter.logout()}
+            .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.cancel() }
+            .create()
+            .show()
+    }
+
+    fun setAvatar(avatarUrl: String) {
+// CONFLICT: END
         headerLayout.image_avatar.setImageURI(avatarUrl)
     }
 

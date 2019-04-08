@@ -31,8 +31,7 @@ import chat.rocket.core.internal.rest.loginWithCas
 import chat.rocket.core.internal.rest.loginWithOauth
 import chat.rocket.core.internal.rest.loginWithSaml
 import chat.rocket.core.internal.rest.me
-import kotlinx.coroutines.experimental.delay
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 private const val TYPE_LOGIN_OAUTH = 1
@@ -68,6 +67,7 @@ class LoginOptionsPresenter @Inject constructor(
     fun toLoginWithEmail() = navigator.toLogin(currentServer)
 
     fun authenticateWithOauth(oauthToken: String, oauthSecret: String) {
+        setupConnectionInfo(currentServer)
         credentialToken = oauthToken
         credentialSecret = oauthSecret
         loginMethod = AuthenticationEvent.AuthenticationWithOauth
@@ -75,12 +75,14 @@ class LoginOptionsPresenter @Inject constructor(
     }
 
     fun authenticateWithCas(casToken: String) {
+        setupConnectionInfo(currentServer)
         credentialToken = casToken
         loginMethod = AuthenticationEvent.AuthenticationWithCas
         doAuthentication(TYPE_LOGIN_CAS)
     }
 
     fun authenticateWithSaml(samlToken: String) {
+        setupConnectionInfo(currentServer)
         credentialToken = samlToken
         loginMethod = AuthenticationEvent.AuthenticationWithSaml
         doAuthentication(TYPE_LOGIN_SAML)
@@ -106,11 +108,11 @@ class LoginOptionsPresenter @Inject constructor(
                     when (loginType) {
                         TYPE_LOGIN_OAUTH -> client.loginWithOauth(credentialToken, credentialSecret)
                         TYPE_LOGIN_CAS -> {
-                            delay(3, TimeUnit.SECONDS)
+                            delay(3000)
                             client.loginWithCas(credentialToken)
                         }
                         TYPE_LOGIN_SAML -> {
-                            delay(3, TimeUnit.SECONDS)
+                            delay(3000)
                             client.loginWithSaml(credentialToken)
                         }
                         TYPE_LOGIN_DEEP_LINK -> {
@@ -171,7 +173,7 @@ class LoginOptionsPresenter @Inject constructor(
         settings = settingsInteractor.get(currentServer)
     }
 
-    private suspend fun saveAccount(username: String) {
+    private fun saveAccount(username: String) {
         val icon = settings.favicon()?.let {
             currentServer.serverLogoUrl(it)
         }

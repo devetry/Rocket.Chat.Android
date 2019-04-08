@@ -20,15 +20,16 @@ import chat.rocket.core.model.SpotlightResult
 import com.shopify.livedataktx.distinct
 import com.shopify.livedataktx.map
 import com.shopify.livedataktx.nonNull
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.isActive
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.newSingleThreadContext
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.security.InvalidParameterException
-import kotlin.coroutines.experimental.coroutineContext
+import java.lang.IllegalArgumentException
+import kotlin.coroutines.coroutineContext
 
 class ChatRoomsViewModel(
     private val connectionManager: ConnectionManager,
@@ -41,9 +42,11 @@ class ChatRoomsViewModel(
     private val runContext = newSingleThreadContext("chat-rooms-view-model")
     private val client = connectionManager.client
     private var loaded = false
+    var showLastMessage = true
 
     fun getChatRooms(): LiveData<RoomsModel> {
         return Transformations.switchMap(query) { query ->
+
             return@switchMap if (query.isSearch()) {
                 this@ChatRoomsViewModel.query.wrap(runContext) { _, data: MutableLiveData<RoomsModel> ->
                     val string = (query as Query.Search).query
@@ -53,11 +56,13 @@ class ChatRoomsViewModel(
                     // TODO - find a better way for cancellation checking
                     if (!coroutineContext.isActive) return@wrap
 
-                    val rooms = repository.search(string).let { mapper.map(it) }
+                    val rooms = repository.search(string).let { mapper.map(it, showLastMessage = this.showLastMessage) }
                     data.postValue(rooms.toMutableList() + LoadingItemHolder())
+
+
                     if (!coroutineContext.isActive) return@wrap
 
-                    val spotlight = spotlight(query.query)?.let { mapper.map(it) }
+                    val spotlight = spotlight(query.query)?.let { mapper.map(it, showLastMessage = this.showLastMessage) }
                     if (!coroutineContext.isActive) return@wrap
 
                     spotlight?.let {
@@ -73,7 +78,7 @@ class ChatRoomsViewModel(
                         .distinct()
                         .transform(runContext) { rooms ->
                             val mappedRooms = rooms?.let {
-                                mapper.map(rooms, query.isGrouped())
+                                mapper.map(rooms, query.isGrouped(), this.showLastMessage)
                             }
                             if (loaded && mappedRooms?.isEmpty() == true) {
                                 loadingState.postValue(LoadingState.Loaded(0))
@@ -103,7 +108,7 @@ class ChatRoomsViewModel(
     }
 
     private fun fetchRooms() {
-        launch {
+        GlobalScope.launch {
             setLoadingState(LoadingState.Loading(repository.count()))
             try {
                 interactor.refreshChatRooms()
@@ -121,7 +126,7 @@ class ChatRoomsViewModel(
     }
 
     private suspend fun setLoadingState(state: LoadingState) {
-        withContext(UI) {
+        withContext(Dispatchers.Main) {
             loadingState.value = state
         }
     }
@@ -167,6 +172,6 @@ fun Query.asSortingOrder(): ChatRoomsRepository.Order {
                 ChatRoomsRepository.Order.ACTIVITY
             }
         }
-        else -> throw InvalidParameterException("Should be ByName or ByActivity")
+        else -> throw IllegalArgumentException("Should be ByName or ByActivity")
     }
 }

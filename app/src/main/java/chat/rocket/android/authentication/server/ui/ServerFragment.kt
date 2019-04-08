@@ -1,15 +1,18 @@
 package chat.rocket.android.authentication.server.ui
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ScrollView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -50,10 +53,14 @@ class ServerFragment : Fragment(), ServerView {
     lateinit var analyticsManager: AnalyticsManager
     private var deepLinkInfo: LoginDeepLinkInfo? = null
     private var protocol = "https://"
+    private var isDomainAppended = false
+    private var appendedText = ""
     private lateinit var serverUrlDisposable: Disposable
     private val layoutListener = ViewTreeObserver.OnGlobalLayoutListener {
-        text_server_url.isCursorVisible =
-                KeyboardHelper.isSoftKeyboardShown(scroll_view.rootView)
+        if (KeyboardHelper.isSoftKeyboardShown(scroll_view.rootView)) {
+            scroll_view.fullScroll(ScrollView.FOCUS_DOWN)
+            text_server_url.isCursorVisible = true
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,7 +135,7 @@ class ServerFragment : Fragment(), ServerView {
     }
 
     private fun setupOnClickListener() =
-        ui { _ ->
+        ui {
             button_connect.setOnClickListener {
                 presenter.checkServer("$protocol${text_server_url.textContent.sanitize()}")
             }
@@ -241,16 +248,41 @@ class ServerFragment : Fragment(), ServerView {
     private fun subscribeEditText() {
         serverUrlDisposable = text_server_url.asObservable()
             .filter { it.isNotBlank() }
-            .subscribe {
-                if (it.toString().isValidUrl()) {
-                    enableButtonConnect()
-                } else {
-                    disableButtonConnect()
-                }
-            }
+            .subscribe { processUserInput(it.toString()) }
     }
 
     private fun unsubscribeEditText() = serverUrlDisposable.dispose()
+
+    private fun processUserInput(text: String) {
+        if (text.last().toString() == "." && !isDomainAppended) {
+            addDomain()
+        } else if (isDomainAppended && text != appendedText) {
+            removeDomain()
+        }
+
+        if ("$protocol$text".isValidUrl()) {
+            enableButtonConnect()
+        } else {
+            disableButtonConnect()
+        }
+    }
+
+    private fun addDomain() {
+        val cursorPosition = text_server_url.length()
+        text_server_url.append(SpannableStringBuilder()
+            .color(R.color.colorAuthenticationSecondaryText) { append("rocket.chat") })
+        text_server_url.setSelection(cursorPosition)
+        appendedText = text_server_url.text.toString()
+        isDomainAppended = true
+    }
+
+    private fun removeDomain() {
+        text_server_url.setText(
+            text_server_url.text.toString().substring(0, text_server_url.selectionEnd)
+        )
+        text_server_url.setSelection(text_server_url.length())
+        isDomainAppended = false
+    }
 
     private fun enableUserInput() {
         enableButtonConnect()

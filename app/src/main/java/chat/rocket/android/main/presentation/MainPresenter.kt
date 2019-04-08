@@ -36,13 +36,9 @@ import chat.rocket.common.model.UserStatus
 import chat.rocket.common.util.ifNull
 import chat.rocket.core.RocketChatClient
 import chat.rocket.core.internal.rest.getCustomEmojis
-import chat.rocket.core.internal.rest.logout
 import chat.rocket.core.internal.rest.me
-import chat.rocket.core.internal.rest.unregisterPushToken
 import chat.rocket.core.model.Myself
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.channels.Channel
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -51,23 +47,33 @@ class MainPresenter @Inject constructor(
     private val strategy: CancelStrategy,
     private val navigator: MainNavigator,
     private val tokenRepository: TokenRepository,
-    private val serverInteractor: GetCurrentServerInteractor,
     private val refreshSettingsInteractor: RefreshSettingsInteractor,
     private val refreshPermissionsInteractor: RefreshPermissionsInteractor,
-    private val localRepository: LocalRepository,
     private val navHeaderMapper: NavHeaderUiModelMapper,
     private val saveAccountInteractor: SaveAccountInteractor,
     private val getAccountsInteractor: GetAccountsInteractor,
-    private val removeAccountInteractor: RemoveAccountInteractor,
-    factory: RocketChatClientFactory,
     private val groupedPush: GroupedPush,
+    serverInteractor: GetCurrentServerInteractor,
+    localRepository: LocalRepository,
+    removeAccountInteractor: RemoveAccountInteractor,
+    factory: RocketChatClientFactory,
     dbManagerFactory: DatabaseManagerFactory,
     getSettingsInteractor: GetSettingsInteractor,
     managerFactory: ConnectionManagerFactory
-) : CheckServerPresenter(strategy, factory, view = view) {
+) : CheckServerPresenter(
+    strategy = strategy,
+    factory = factory,
+    serverInteractor = serverInteractor,
+    localRepository = localRepository,
+    removeAccountInteractor = removeAccountInteractor,
+    tokenRepository = tokenRepository,
+    managerFactory = managerFactory,
+    dbManagerFactory = dbManagerFactory,
+    tokenView = view,
+    navigator = navigator
+) {
     private val currentServer = serverInteractor.get()!!
     private val manager = managerFactory.create(currentServer)
-    private val dbManager = dbManagerFactory.create(currentServer)
     private val client: RocketChatClient = factory.create(currentServer)
     private var settings: PublicSettings = getSettingsInteractor.get(serverInteractor.get()!!)
     private val userDataChannel = Channel<Myself>()
@@ -105,6 +111,7 @@ class MainPresenter @Inject constructor(
     }
 
     fun loadCurrentInfo() {
+        setupConnectionInfo(currentServer)
         checkServerInfo(currentServer)
         launchUI(strategy) {
             try {
@@ -114,9 +121,7 @@ class MainPresenter @Inject constructor(
                 view.setupUserAccountInfo(model)
             } catch (ex: Exception) {
                 when (ex) {
-                    is RocketChatAuthException -> {
-                        logout()
-                    }
+                    is RocketChatAuthException -> logout()
                     else -> {
                         Timber.d(ex, "Error loading my information for navheader")
                         ex.message?.let {
@@ -163,36 +168,38 @@ class MainPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Logout from current server.
-     */
     fun logout() {
-        launchUI(strategy) {
-            //            view.showProgress()
-            try {
-                clearTokens()
-                retryIO("logout") { client.logout() }
-            } catch (exception: RocketChatException) {
-                Timber.d(exception, "Error calling logout")
-                exception.message?.let {
-                    view.showMessage(it)
-                }.ifNull {
-                    view.showGenericErrorMessage()
-                }
-            }
-
-            try {
-                disconnect()
-                removeAccountInteractor.remove(currentServer)
-                tokenRepository.remove(currentServer)
-
-                withContext(CommonPool) { dbManager.logout() }
-//                navigator.switchOrAddNewServer()
-            } catch (ex: Exception) {
-                Timber.d(ex, "Error cleaning up the session...")
-            }
-//            view.hideProgress()
-        }
+// CONFLICT: HEAD
+//        launchUI(strategy) {
+//            //            view.showProgress()
+//            try {
+//                clearTokens()
+//                retryIO("logout") { client.logout() }
+//            } catch (exception: RocketChatException) {
+//                Timber.d(exception, "Error calling logout")
+//                exception.message?.let {
+//                    view.showMessage(it)
+//                }.ifNull {
+//                    view.showGenericErrorMessage()
+//                }
+//            }
+//
+//            try {
+//                disconnect()
+//                removeAccountInteractor.remove(currentServer)
+//                tokenRepository.remove(currentServer)
+//
+//                withContext(CommonPool) { dbManager.logout() }
+////                navigator.switchOrAddNewServer()
+//            } catch (ex: Exception) {
+//                Timber.d(ex, "Error cleaning up the session...")
+//            }
+////            view.hideProgress()
+//        }
+// CONFLICT: MERGE
+        setupConnectionInfo(currentServer)
+        super.logout(userDataChannel)
+// CONFLICT: END
     }
 
     fun connect() {
@@ -202,8 +209,8 @@ class MainPresenter @Inject constructor(
     }
 
     fun disconnect() {
-        manager.removeUserDataChannel(userDataChannel)
-        manager.disconnect()
+        setupConnectionInfo(currentServer)
+        super.disconnect(userDataChannel)
     }
 
     fun changeServer(serverUrl: String) {
@@ -233,7 +240,7 @@ class MainPresenter @Inject constructor(
         }
     }
 
-    private suspend fun saveAccount(uiModel: NavHeaderUiModel) {
+    private fun saveAccount(uiModel: NavHeaderUiModel) {
         val icon = settings.favicon()?.let {
             currentServer.serverLogoUrl(it)
         }
@@ -245,20 +252,6 @@ class MainPresenter @Inject constructor(
             uiModel.userAvatar
         )
         saveAccountInteractor.save(account)
-    }
-
-    private suspend fun clearTokens() {
-        serverInteractor.clear()
-        val pushToken = localRepository.get(LocalRepository.KEY_PUSH_TOKEN)
-        if (pushToken != null) {
-            try {
-                retryIO("unregisterPushToken") { client.unregisterPushToken(pushToken) }
-                view.invalidateToken(pushToken)
-            } catch (ex: Exception) {
-                Timber.d(ex, "Error unregistering push token")
-            }
-        }
-        localRepository.clearAllFromServer(currentServer)
     }
 
     private suspend fun subscribeMyselfUpdates() {

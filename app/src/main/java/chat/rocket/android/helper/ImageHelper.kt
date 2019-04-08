@@ -37,7 +37,7 @@ object ImageHelper {
 
     // TODO - implement a proper image viewer with a proper Transition
     // TODO - We should definitely write our own ImageViewer
-    fun openImage(context: Context, imageUrl: String, imageName: String) {
+    fun openImage(context: Context, imageUrl: String, imageName: String? = "") {
         var imageViewer: ImageViewer? = null
         val request =
             ImageRequestBuilder.newBuilderWithSource(imageUrl.toUri())
@@ -55,8 +55,8 @@ object ImageHelper {
         )
         val toolbar = Toolbar(context).also {
             it.inflateMenu(R.menu.image_actions)
-            it.setOnMenuItemClickListener {
-                return@setOnMenuItemClickListener when (it.itemId) {
+            it.setOnMenuItemClickListener { view ->
+                return@setOnMenuItemClickListener when (view.itemId) {
                     R.id.action_save_image -> saveImage(context)
                     else -> true
                 }
@@ -64,21 +64,32 @@ object ImageHelper {
 
             val titleSize = context.resources
                 .getDimensionPixelSize(R.dimen.viewer_toolbar_title)
-            val titleTextView = TextView(context).also {
-                it.text = imageName
-                it.setTextColor(Color.WHITE)
-                it.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize.toFloat())
-                it.ellipsize = TextUtils.TruncateAt.END
-                it.setSingleLine()
-                it.typeface = Typeface.DEFAULT_BOLD
-                it.setPadding(pad)
+            val titleTextView = TextView(context).also { tv ->
+                with(tv) {
+                    text = imageName
+                    setTextColor(Color.WHITE)
+                    setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize.toFloat())
+                    ellipsize = TextUtils.TruncateAt.END
+                    setSingleLine()
+                    typeface = Typeface.DEFAULT_BOLD
+                    setPadding(pad)
+                }
             }
 
-            val backArrowView = ImageView(context).also {
-                if (Locale.getDefault().language == "ar") it.setImageResource(R.drawable.ic_arrow_back_white_24dp_ar)
-                else it.setImageResource(R.drawable.ic_arrow_back_white_24dp)
-                it.setOnClickListener { imageViewer?.onDismiss() }
-                it.setPadding(0, pad, pad, pad)
+// CONFLICT: HEAD
+//            val backArrowView = ImageView(context).also {
+//                if (Locale.getDefault().language == "ar") it.setImageResource(R.drawable.ic_arrow_back_white_24dp_ar)
+//                else it.setImageResource(R.drawable.ic_arrow_back_white_24dp)
+//                it.setOnClickListener { imageViewer?.onDismiss() }
+//                it.setPadding(0, pad, pad, pad)
+// CONFLICT: MERGE
+           val backArrowView = ImageView(context).also { imgView ->
+                with(imgView) {
+                    setImageResource(R.drawable.ic_arrow_back_white_24dp)
+                    setOnClickListener { imageViewer?.onDismiss() }
+                    setPadding(0, pad, pad, pad)
+                }
+// CONFLICT: END
             }
 
             val layoutParams = AppBarLayout.LayoutParams(
@@ -91,14 +102,16 @@ object ImageHelper {
         }
 
         val appBarLayout = AppBarLayout(context).also {
-            it.layoutParams = lparams
-            it.setBackgroundColor(Color.BLACK)
-            it.addView(
-                toolbar, AppBarLayout.LayoutParams(
-                    AppBarLayout.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
+            with(it) {
+                layoutParams = lparams
+                setBackgroundColor(Color.BLACK)
+                addView(
+                        toolbar, AppBarLayout.LayoutParams(
+                        AppBarLayout.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
                 )
-            )
+                )
+            }
         }
 
         val builder = ImageViewer.createPipelineDraweeControllerBuilder()

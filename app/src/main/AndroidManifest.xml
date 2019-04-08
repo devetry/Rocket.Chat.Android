@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:name=".app.RocketChatApplication"
@@ -79,6 +81,11 @@
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
+            android:name=".videoconference.ui.VideoConferenceActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <activity
             android:name=".chatroom.ui.ChatRoomActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
@@ -110,6 +117,15 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="12ac6e94f850aaffcdff52001af77ca415d06a43" />
-    </application>
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="chat.rocket.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
 </manifest>

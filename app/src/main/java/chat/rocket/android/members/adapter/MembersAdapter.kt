@@ -13,8 +13,9 @@ import kotlinx.android.synthetic.main.avatar_profile.*
 import kotlinx.android.synthetic.main.item_member.view.*
 import java.util.*
 
-class MembersAdapter(private val listener: (MemberUiModel) -> Unit) :
-    RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
+class MembersAdapter(
+    private val listener: (MemberUiModel) -> Unit
+) : RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
     private var dataSet: List<MemberUiModel> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MembersAdapter.ViewHolder =
@@ -57,6 +58,8 @@ class MembersAdapter(private val listener: (MemberUiModel) -> Unit) :
                 image_avatar_text_view.setBackgroundColor(color)
             }
             text_member.content = memberUiModel.displayName
+            text_member.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    DrawableHelper.getUserStatusDrawable(memberUiModel.status, context), null, null, null)
             setOnClickListener { listener(memberUiModel) }
         }
     }

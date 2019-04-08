@@ -1,7 +1,9 @@
 package chat.rocket.android.members.presentation
 
+import chat.rocket.android.chatroom.presentation.ChatRoomNavigator
 import chat.rocket.android.core.lifecycle.CancelStrategy
 import chat.rocket.android.db.DatabaseManager
+import chat.rocket.android.helper.UserHelper
 import chat.rocket.android.members.uimodel.MemberUiModel
 import chat.rocket.android.members.uimodel.MemberUiModelMapper
 import chat.rocket.android.server.infraestructure.RocketChatClientFactory
@@ -17,12 +19,13 @@ import javax.inject.Named
 
 class MembersPresenter @Inject constructor(
     private val view: MembersView,
-    private val navigator: MembersNavigator,
+    private val navigator: ChatRoomNavigator,
     private val dbManager: DatabaseManager,
     @Named("currentServer") private val currentServer: String,
     private val strategy: CancelStrategy,
     private val mapper: MemberUiModelMapper,
-    val factory: RocketChatClientFactory
+    val factory: RocketChatClientFactory,
+    private val userHelper: UserHelper
 ) {
     private val client: RocketChatClient = factory.create(currentServer)
     private var offset: Long = 0
@@ -58,12 +61,10 @@ class MembersPresenter @Inject constructor(
     }
 
     fun toMemberDetails(memberUiModel: MemberUiModel) {
-        navigator.toMemberDetails(
-            memberUiModel.avatarUri.toString(),
-            memberUiModel.realName.toString(),
-            "@${memberUiModel.username}",
-            memberUiModel.email ?: "",
-            memberUiModel.utcOffset.toString()
-        )
+        with(memberUiModel) {
+            if (userId != userHelper.user()?.id) {
+                navigator.toMemberDetails(userId)
+            }
+        }
     }
 }

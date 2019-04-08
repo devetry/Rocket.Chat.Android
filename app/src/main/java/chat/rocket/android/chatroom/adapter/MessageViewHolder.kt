@@ -11,7 +11,11 @@ import androidx.core.view.isVisible
 import chat.rocket.android.R
 import chat.rocket.android.chatroom.uimodel.MessageUiModel
 import chat.rocket.android.emoji.EmojiReactionListener
-import chat.rocket.android.util.extensions.inflate
+// CONFLICT: HEAD
+//import chat.rocket.android.util.extensions.inflate
+// CONFLICT: MERGE
+import chat.rocket.core.model.MessageType
+// CONFLICT: END
 import chat.rocket.core.model.isSystemMessage
 import com.bumptech.glide.load.resource.gif.GifDrawable
 import kotlinx.android.synthetic.main.avatar.view.*
@@ -23,7 +27,9 @@ import java.util.*
 class MessageViewHolder(
     itemView: View,
     listener: ActionsListener,
-    reactionListener: EmojiReactionListener? = null
+    reactionListener: EmojiReactionListener? = null,
+    private val avatarListener: (String) -> Unit,
+    private val joinVideoCallListener: (View) -> Unit
 ) : BaseViewHolder<MessageUiModel>(itemView, listener, reactionListener), Drawable.Callback {
 
     init {
@@ -78,7 +84,15 @@ class MessageViewHolder(
                     image_avatar_text_view.setBackgroundColor(color)
                 }
 
-                text_content_ar.setTextColor(if (data.isTemporary) Color.GRAY else Color.BLACK)
+// CONFLICT: HEAD
+//                text_content_ar.setTextColor(if (data.isTemporary) Color.GRAY else Color.BLACK)
+// CONFLICT: MERGE
+            button_join_video_call.isVisible = data.message.type is MessageType.JitsiCallStarted
+            button_join_video_call.setOnClickListener { joinVideoCallListener(it) }
+
+            image_avatar.setImageURI(data.avatar)
+            text_content.setTextColor(if (data.isTemporary) Color.GRAY else Color.BLACK)
+// CONFLICT: END
 
                 data.message.let {
                     text_edit_indicator_ar.isVisible = !it.isSystemMessage() && it.editedBy != null
@@ -151,6 +165,12 @@ class MessageViewHolder(
                             }
                     )
                     read_receipt_view.isVisible = true
+                }
+            }
+
+            image_avatar.setOnClickListener {
+                data.message.sender?.id?.let { userId ->
+                    avatarListener(userId)
                 }
             }
         }

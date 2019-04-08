@@ -10,8 +10,8 @@ import chat.rocket.android.server.domain.SaveConnectingServerInteractor
 import chat.rocket.android.server.infraestructure.RocketChatClientFactory
 import chat.rocket.android.server.presentation.CheckServerPresenter
 import chat.rocket.android.util.extension.launchUI
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class OnBoardingPresenter @Inject constructor(
@@ -19,13 +19,20 @@ class OnBoardingPresenter @Inject constructor(
     private val strategy: CancelStrategy,
     private val navigator: AuthenticationNavigator,
     private val serverInteractor: SaveConnectingServerInteractor,
-    private val refreshSettingsInteractor: RefreshSettingsInteractor,
+    refreshSettingsInteractor: RefreshSettingsInteractor,
     private val getAccountsInteractor: GetAccountsInteractor,
     val settingsInteractor: GetSettingsInteractor,
     val factory: RocketChatClientFactory
-) : CheckServerPresenter(strategy, factory, settingsInteractor) {
+) : CheckServerPresenter(
+    strategy = strategy,
+    factory = factory,
+    settingsInteractor = settingsInteractor,
+    refreshSettingsInteractor = refreshSettingsInteractor
+) {
 
     fun toSignInToYourServer() = navigator.toSignInToYourServer()
+
+    fun toCreateANewServer(createServerUrl: String) = navigator.toWebPage(createServerUrl)
 
     fun connectToCommunityServer(communityServerUrl: String) {
         connectToServer(communityServerUrl) {
@@ -43,6 +50,9 @@ class OnBoardingPresenter @Inject constructor(
                     wordpressOauthUrl,
                     casLoginUrl,
                     casToken,
+                    casServiceName,
+                    casServiceNameTextColor,
+                    casServiceButtonColor,
                     customOauthUrl,
                     customOauthServiceName,
                     customOauthServiceNameTextColor,
@@ -60,8 +70,6 @@ class OnBoardingPresenter @Inject constructor(
         }
     }
 
-    fun toCreateANewServer(createServerUrl: String) = navigator.toWebPage(createServerUrl)
-
     private fun connectToServer(serverUrl: String, block: () -> Unit) {
         launchUI(strategy) {
             // Check if we already have an account for this server...
@@ -72,12 +80,11 @@ class OnBoardingPresenter @Inject constructor(
             }
             view.showLoading()
             try {
-                withContext(DefaultDispatcher) {
-                    refreshSettingsInteractor.refresh(serverUrl)
-
+                withContext(Dispatchers.Default) {
                     setupConnectionInfo(serverUrl)
 
                     // preparing next fragment before showing it
+                    refreshServerAccounts()
                     checkEnabledAccounts(serverUrl)
                     checkIfLoginFormIsEnabled()
                     checkIfCreateNewAccountIsEnabled()

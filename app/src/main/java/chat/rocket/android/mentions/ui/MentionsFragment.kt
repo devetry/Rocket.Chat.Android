@@ -25,11 +25,9 @@ import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_mentions.*
 import javax.inject.Inject
 
-fun newInstance(chatRoomId: String): Fragment {
-    return MentionsFragment().apply {
-        arguments = Bundle(1).apply {
-            putString(BUNDLE_CHAT_ROOM_ID, chatRoomId)
-        }
+fun newInstance(chatRoomId: String): Fragment = MentionsFragment().apply {
+    arguments = Bundle(1).apply {
+        putString(BUNDLE_CHAT_ROOM_ID, chatRoomId)
     }
 }
 
@@ -37,24 +35,20 @@ internal const val TAG_MENTIONS_FRAGMENT = "MentionsFragment"
 private const val BUNDLE_CHAT_ROOM_ID = "chat_room_id"
 
 class MentionsFragment : Fragment(), MentionsView {
-
-    private lateinit var chatRoomId: String
-    private val adapter = ChatRoomAdapter(enableActions = false)
     @Inject
     lateinit var presenter: MentionsPresenter
     @Inject
     lateinit var analyticsManager: AnalyticsManager
+    private lateinit var chatRoomId: String
+    private val adapter = ChatRoomAdapter(enableActions = false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
 
-        val bundle = arguments
-        if (bundle != null) {
-            chatRoomId = bundle.getString(BUNDLE_CHAT_ROOM_ID)
-        } else {
-            requireNotNull(bundle) { "no arguments supplied when the fragment was instantiated" }
-        }
+        arguments?.run {
+            chatRoomId = getString(BUNDLE_CHAT_ROOM_ID, "")
+        } ?: requireNotNull(arguments) { "no arguments supplied when the fragment was instantiated" }
     }
 
     override fun onCreateView(
@@ -122,9 +116,6 @@ class MentionsFragment : Fragment(), MentionsView {
     }
 
     private fun setupToolbar() {
-        (activity as ChatRoomActivity).let {
-            it.showToolbarTitle(getString(R.string.msg_mentions))
-            it.hideToolbarChatRoomIcon()
-        }
+        (activity as ChatRoomActivity).setupToolbarTitle((getString(R.string.msg_mentions)))
     }
 }

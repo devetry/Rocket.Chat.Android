@@ -66,11 +66,9 @@ internal const val REQUEST_CODE_FOR_SIGN_IN_REQUIRED = 1
 internal const val REQUEST_CODE_FOR_MULTIPLE_ACCOUNTS_RESOLUTION = 2
 internal const val REQUEST_CODE_FOR_SAVE_RESOLUTION = 3
 
-fun newInstance(serverName: String): Fragment {
-    return LoginFragment().apply {
-        arguments = Bundle(1).apply {
-            putString(SERVER_NAME, serverName)
-        }
+fun newInstance(serverName: String): Fragment = LoginFragment().apply {
+    arguments = Bundle(1).apply {
+        putString(SERVER_NAME, serverName)
     }
 }
 
@@ -115,13 +113,18 @@ class LoginFragment : Fragment(), LoginView {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
 
-        val ytpAuthData = (arguments?.getSerializable(ARG_YTP_OAUTH) as YTPOAuth)
-
-        startActivityForResult(activity?.ytpoauthWebViewIntent(ytpAuthData), REQUEST_CODE_FOR_OAUTH)
-
-        val bundle = arguments
-        if (bundle != null) {
-            serverName = bundle.getString(SERVER_NAME)
+// CONFLICT: HEAD
+//        val ytpAuthData = (arguments?.getSerializable(ARG_YTP_OAUTH) as YTPOAuth)
+//
+//        startActivityForResult(activity?.ytpoauthWebViewIntent(ytpAuthData), REQUEST_CODE_FOR_OAUTH)
+//
+//        val bundle = arguments
+//        if (bundle != null) {
+//            serverName = bundle.getString(SERVER_NAME)
+// CONFLICT: MERGE
+        arguments?.run {
+            serverName = getString(SERVER_NAME)
+// CONFLICT: END
         }
 
     }
@@ -144,13 +147,29 @@ class LoginFragment : Fragment(), LoginView {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && data != null) {
-            when (requestCode) {
-                REQUEST_CODE_FOR_OAUTH -> {
-                    presenter.authenticateWithOauth(
-                            data.getStringExtra(INTENT_OAUTH_CREDENTIAL_TOKEN),
-                            data.getStringExtra(INTENT_OAUTH_CREDENTIAL_SECRET)
-                    )
+// CONFLICT: HEAD
+//        if (resultCode == Activity.RESULT_OK && data != null) {
+//            when (requestCode) {
+//                REQUEST_CODE_FOR_OAUTH -> {
+//                    presenter.authenticateWithOauth(
+//                            data.getStringExtra(INTENT_OAUTH_CREDENTIAL_TOKEN),
+//                            data.getStringExtra(INTENT_OAUTH_CREDENTIAL_SECRET)
+//                    )
+// CONFLICT: MERGE
+        if (resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                when (requestCode) {
+                    REQUEST_CODE_FOR_MULTIPLE_ACCOUNTS_RESOLUTION ->
+                        getCredentials(data)?.let {
+                            onCredentialRetrieved(it.first, it.second)
+                        }
+                    REQUEST_CODE_FOR_SIGN_IN_REQUIRED ->
+                        getCredentials(data)?.let { credential ->
+                            text_username_or_email.setText(credential.first)
+                            text_password.setText(credential.second)
+                        }
+                    REQUEST_CODE_FOR_SAVE_RESOLUTION -> showMessage(getString(R.string.msg_credentials_saved_successfully))
+// CONFLICT: END
                 }
             }
         }
@@ -207,7 +226,7 @@ class LoginFragment : Fragment(), LoginView {
     override fun showGenericErrorMessage() = showMessage(R.string.msg_generic_error)
 
     private fun setupOnClickListener() =
-        ui { _ ->
+        ui {
             button_log_in.setOnClickListener {
                 presenter.authenticateWithUserAndPassword(
                     text_username_or_email.textContent,
@@ -217,8 +236,13 @@ class LoginFragment : Fragment(), LoginView {
         }
 
     override fun showForgotPasswordView() {
-        ui { _ ->
-            button_forgot_your_password.isGone = true
+// CONFLICT: HEAD
+//        ui { _ ->
+//            button_forgot_your_password.isGone = true
+// CONFLICT: MERGE
+        ui {
+            button_forgot_your_password.isVisible = true
+// CONFLICT: END
             button_forgot_your_password.setOnClickListener { presenter.forgotPassword() }
 
         }

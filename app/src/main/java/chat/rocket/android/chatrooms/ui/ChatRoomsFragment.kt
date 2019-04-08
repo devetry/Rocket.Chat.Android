@@ -1,6 +1,6 @@
 package chat.rocket.android.chatrooms.ui
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.os.Handler
@@ -37,6 +37,7 @@ import chat.rocket.android.helper.SharedPreferenceHelper
 import chat.rocket.android.util.extension.onQueryTextListener
 import chat.rocket.android.util.extensions.fadeIn
 import chat.rocket.android.util.extensions.fadeOut
+import chat.rocket.android.util.extensions.ifNotNullNotEmpty
 import chat.rocket.android.util.extensions.inflate
 import chat.rocket.android.util.extensions.showToast
 import chat.rocket.android.util.extensions.ui
@@ -69,11 +70,9 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
     private var progressDialog: ProgressDialog? = null
 
     companion object {
-        fun newInstance(chatRoomId: String? = null): ChatRoomsFragment {
-            return ChatRoomsFragment().apply {
-                arguments = Bundle(1).apply {
-                    putString(BUNDLE_CHAT_ROOM_ID, chatRoomId)
-                }
+        fun newInstance(chatRoomId: String? = null): ChatRoomsFragment = ChatRoomsFragment().apply {
+            arguments = Bundle(1).apply {
+                putString(BUNDLE_CHAT_ROOM_ID, chatRoomId)
             }
         }
     }
@@ -82,12 +81,10 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
         setHasOptionsMenu(true)
-        val bundle = arguments
-        if (bundle != null) {
-            chatRoomId = bundle.getString(BUNDLE_CHAT_ROOM_ID)
-            chatRoomId?.let {
-                // TODO - bring back support to load a room from id.
-                //presenter.goToChatRoomWithId(it)
+        arguments?.run {
+            chatRoomId = getString(BUNDLE_CHAT_ROOM_ID)
+            chatRoomId.ifNotNullNotEmpty { roomId ->
+                presenter.loadChatRoom(roomId)
                 chatRoomId = null
             }
         }
@@ -130,12 +127,14 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
                 )
             )
             recycler_view.itemAnimator = DefaultItemAnimator()
-            recycler_view.adapter = adapter
 
             viewModel.getChatRooms().observe(viewLifecycleOwner, Observer { rooms ->
                 rooms?.let {
                     Timber.d("Got items: $it")
                     adapter.values = it
+                    if (recycler_view.adapter != adapter) {
+                        recycler_view.adapter = adapter
+                    }
                     if (rooms.isNotEmpty()) {
                         text_no_data_to_display.isVisible = false
                     }
@@ -180,27 +179,33 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 // Simply setting sortView to visible won't work, so we invalidate the options
                 // to recreate the entire menu...
-                /**
-                 * ROCKET CHAT CODE EDITIED
-                 *
-                 * DESCRIPTION: Querying for the letter `a` as a default search
-                 *
-                 * AUTHOR: Tanner Juby
-                 * DATE: 10/11/18
-                 *
-                 * START OF EDIT
-                 */
-                updateSort()
-                /**
-                 * END OF EDIT
-                 *
-                 * PREVIOUS CODE: n/a
-                 */
+// CONFLICT: HEAD
+//                /**
+//                 * ROCKET CHAT CODE EDITIED
+//                 *
+//                 * DESCRIPTION: Querying for the letter `a` as a default search
+//                 *
+//                 * AUTHOR: Tanner Juby
+//                 * DATE: 10/11/18
+//                 *
+//                 * START OF EDIT
+//                 */
+//                updateSort()
+//                /**
+//                 * END OF EDIT
+//                 *
+//                 * PREVIOUS CODE: n/a
+//                 */
+// CONFLICT: MERGE
+                viewModel.showLastMessage = true
+// CONFLICT: END
                 activity?.invalidateOptionsMenu()
+                queryChatRoomsByName(null)
                 return true
             }
 
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                viewModel.showLastMessage = false
                 sortView?.isVisible = false
                 return true
             }
@@ -250,14 +255,16 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
                     )
                 }
 
-                AlertDialog.Builder(context)
-                    .setTitle(R.string.dialog_sort_title)
-                    .setView(dialogLayout)
-                    .setPositiveButton(R.string.dialog_button_done) { dialog, _ ->
-                        invalidateQueryOnSearch()
-                        updateSort()
-                        dialog.dismiss()
-                    }.show()
+                context?.let {
+                    AlertDialog.Builder(it)
+                        .setTitle(R.string.dialog_sort_title)
+                        .setView(dialogLayout)
+                        .setPositiveButton(R.string.msg_sort) { dialog, _ ->
+                            invalidateQueryOnSearch()
+                            updateSort()
+                            dialog.dismiss()
+                        }.show()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -332,21 +339,20 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
         ui {
             text_connection_status.fadeIn()
             handler.removeCallbacks(dismissStatus)
-            when (state) {
+            text_connection_status.text = when (state) {
                 is State.Connected -> {
-                    text_connection_status.text = getString(R.string.status_connected)
                     handler.postDelayed(dismissStatus, 2000)
+                    getString(R.string.status_connected)
                 }
-                is State.Disconnected -> text_connection_status.text =
-                        getString(R.string.status_disconnected)
-                is State.Connecting -> text_connection_status.text =
-                        getString(R.string.status_connecting)
-                is State.Authenticating -> text_connection_status.text =
-                        getString(R.string.status_authenticating)
-                is State.Disconnecting -> text_connection_status.text =
-                        getString(R.string.status_disconnecting)
-                is State.Waiting -> text_connection_status.text =
-                        getString(R.string.status_waiting, state.seconds)
+                is State.Disconnected -> getString(R.string.status_disconnected)
+                is State.Connecting -> getString(R.string.status_connecting)
+                is State.Authenticating -> getString(R.string.status_authenticating)
+                is State.Disconnecting -> getString(R.string.status_disconnecting)
+                is State.Waiting -> getString(R.string.status_waiting, state.seconds)
+                else -> {
+                    handler.postDelayed(dismissStatus, 500)
+                    ""
+                }
             }
         }
     }
