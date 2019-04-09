@@ -86,7 +86,6 @@ class YTPOAuth constructor(var chat_server: String,
 
 
 class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
-
     @Inject
     lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
     @Inject
@@ -129,11 +128,11 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
         } else {
             // YTP UPDATE
             // NEW:
-
+            launch(UI + job) {
                 YTPOAuth(intent)?.let {
                     presenter.ytpAuth(it)
                 }
-
+            }
             // OLD:
 //            launch(UI + job) {
 //                YTPOAuth(intent)?.let {
