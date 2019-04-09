@@ -23,16 +23,16 @@ import chat.rocket.android.util.extensions.addFragment
 import chat.rocket.android.util.extensions.encodeToBase64
 import chat.rocket.android.util.extensions.generateRandomString
 //import chat.rocket.android.util.extensions.setVisible
-import chat.rocket.common.util.ifNull
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.coroutines.MainScope
 // CONFLICT: HEAD
 //import kotlinx.coroutines.experimental.Job
 //import kotlinx.coroutines.experimental.android.UI
-//import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.launch
 // CONFLICT: MERGE
 // CONFLICT: END
 import javax.inject.Inject
@@ -128,7 +128,7 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
         } else {
             // YTP UPDATE
             // NEW:
-            launch(UI + job) {
+            MainScope().launch {
                 YTPOAuth(intent)?.let {
                     presenter.ytpAuth(it)
                 }
@@ -176,22 +176,24 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
     }
 
     private fun loadCredentials() {
-        intent.getLoginDeepLinkInfo()?.let {
-            // YTP UPDATE
-            // NEW:
+        if (intent.getLoginDeepLinkInfo()?.let {
+                    // YTP UPDATE
+                    // NEW:
 
-                YTPOAuth(intent)?.let {
-                    presenter.ytpAuth(it)
-                }
-            // OLD
+                    YTPOAuth(intent)?.let {
+                        presenter.ytpAuth(it)
+                    }
+                    // OLD
 //            launch(UI + job) {
 //                YTPOAuth(intent)?.let {
 //                    presenter.ytpAuth(it)
 //                }
 //            }
-            // END
-            showServerFragment(it)
-        }.ifNull {
+                    // END
+                    showServerFragment(it)
+                } == null) {
+
+        } else {
             val newServer = intent.getBooleanExtra(INTENT_ADD_NEW_SERVER, false)
             presenter.loadCredentials(newServer) { isAuthenticated ->
                 if (isAuthenticated) {

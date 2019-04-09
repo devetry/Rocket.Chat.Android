@@ -52,7 +52,6 @@ import chat.rocket.android.util.extensions.ui
 import chat.rocket.android.webview.oauth.ui.*
 import chat.rocket.android.webview.sso.ui.INTENT_SSO_TOKEN
 import chat.rocket.android.webview.sso.ui.ssoWebViewIntent
-import chat.rocket.common.util.ifNull
 
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.CompositeDisposable
@@ -114,19 +113,17 @@ class LoginFragment : Fragment(), LoginView {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
 
-// CONFLICT: HEAD
-//        val ytpAuthData = (arguments?.getSerializable(ARG_YTP_OAUTH) as YTPOAuth)
-//
-//        startActivityForResult(activity?.ytpoauthWebViewIntent(ytpAuthData), REQUEST_CODE_FOR_OAUTH)
-//
-//        val bundle = arguments
-//        if (bundle != null) {
-//            serverName = bundle.getString(SERVER_NAME)
-// CONFLICT: MERGE
+        // YTP UPDATE
+        // NEW:
+        val ytpAuthData = (arguments?.getSerializable(ARG_YTP_OAUTH) as YTPOAuth)
+        startActivityForResult(activity?.ytpoauthWebViewIntent(ytpAuthData), REQUEST_CODE_FOR_OAUTH)
         arguments?.run {
             serverName = getString(SERVER_NAME)
-// CONFLICT: END
         }
+        // OLD:
+//        arguments?.run {
+//            serverName = getString(SERVER_NAME)
+        // END
 
     }
 
@@ -148,32 +145,38 @@ class LoginFragment : Fragment(), LoginView {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-// CONFLICT: HEAD
-//        if (resultCode == Activity.RESULT_OK && data != null) {
-//            when (requestCode) {
-//                REQUEST_CODE_FOR_OAUTH -> {
-//                    presenter.authenticateWithOauth(
-//                            data.getStringExtra(INTENT_OAUTH_CREDENTIAL_TOKEN),
-//                            data.getStringExtra(INTENT_OAUTH_CREDENTIAL_SECRET)
-//                    )
-// CONFLICT: MERGE
-        if (resultCode == Activity.RESULT_OK) {
+        // YTP UPDATE
+        // NEW:
+        if (resultCode == Activity.RESULT_OK && data != null) {
             if (data != null) {
                 when (requestCode) {
-                    REQUEST_CODE_FOR_MULTIPLE_ACCOUNTS_RESOLUTION ->
-                        getCredentials(data)?.let {
-                            onCredentialRetrieved(it.first, it.second)
-                        }
-                    REQUEST_CODE_FOR_SIGN_IN_REQUIRED ->
-                        getCredentials(data)?.let { credential ->
-                            text_username_or_email.setText(credential.first)
-                            text_password.setText(credential.second)
-                        }
-                    REQUEST_CODE_FOR_SAVE_RESOLUTION -> showMessage(getString(R.string.msg_credentials_saved_successfully))
-// CONFLICT: END
+                    REQUEST_CODE_FOR_OAUTH -> {
+                        presenter.authenticateWithOauth(
+                                data.getStringExtra(INTENT_OAUTH_CREDENTIAL_TOKEN),
+                                data.getStringExtra(INTENT_OAUTH_CREDENTIAL_SECRET)
+                        )
+                    }
                 }
             }
         }
+        // OLD:
+//        if (resultCode == Activity.RESULT_OK) {
+//            if (data != null) {
+//                when (requestCode) {
+//                    REQUEST_CODE_FOR_MULTIPLE_ACCOUNTS_RESOLUTION ->
+//                        getCredentials(data)?.let {
+//                            onCredentialRetrieved(it.first, it.second)
+//                        }
+//                    REQUEST_CODE_FOR_SIGN_IN_REQUIRED ->
+//                        getCredentials(data)?.let { credential ->
+//                            text_username_or_email.setText(credential.first)
+//                            text_password.setText(credential.second)
+//                        }
+//                    REQUEST_CODE_FOR_SAVE_RESOLUTION -> showMessage(getString(R.string.msg_credentials_saved_successfully))
+//                }
+//            }
+//        }
+        // END
     }
 
     override fun onResume() {
@@ -237,13 +240,12 @@ class LoginFragment : Fragment(), LoginView {
         }
 
     override fun showForgotPasswordView() {
-// CONFLICT: HEAD
-//        ui { _ ->
-//            button_forgot_your_password.isGone = true
-// CONFLICT: MERGE
         ui {
-            button_forgot_your_password.isVisible = true
-// CONFLICT: END
+            // YTP UPDATE
+            // NEW:
+            button_forgot_your_password.isGone = true
+            // OLD:
+//            button_forgot_your_password.isVisible = true
             button_forgot_your_password.setOnClickListener { presenter.forgotPassword() }
 
         }
