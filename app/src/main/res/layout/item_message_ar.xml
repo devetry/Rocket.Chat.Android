@@ -100,15 +100,27 @@
         app:layout_constraintRight_toLeftOf="@+id/layout_avatar_ar"
         tools:text="Ronald Perkins" />
 
+    <!--ISSUE: TIMESTAMP not fount-->
+    <!--<TextView-->
+        <!--android:id="@+id/text_message_time_ar"-->
+        <!--style="@style/Timestamp.TextView"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--app:layout_constraintBaseline_toBaselineOf="@+id/text_sender_ar"-->
+        <!--app:layout_constraintEnd_toStartOf="@+id/text_edit_indicator_ar"-->
+        <!--tools:text="11:45 PM" />-->
+
+    <!--TEMP REPLACEMENT-->
     <TextView
         android:id="@+id/text_message_time_ar"
-        style="@style/Timestamp.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/text_sender_ar"
         app:layout_constraintEnd_toStartOf="@+id/text_edit_indicator_ar"
         tools:text="11:45 PM" />
+    <!--END-->
 
     <TextView
         android:id="@+id/text_edit_indicator_ar"

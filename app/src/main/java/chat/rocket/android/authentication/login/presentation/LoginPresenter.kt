@@ -34,7 +34,7 @@ import chat.rocket.common.model.User
 import chat.rocket.common.util.ifNull
 import chat.rocket.core.RocketChatClient
 import chat.rocket.core.internal.rest.*
-import kotlinx.coroutines.experimental.delay
+//import kotlinx.coroutines.experimental.delay
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

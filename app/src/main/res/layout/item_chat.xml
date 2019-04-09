@@ -16,26 +16,24 @@
         android:layout_height="48dp"
         android:layout_marginTop="5dp"
         app:layout_constraintStart_toStartOf="parent"
-<!--CONFLICT: HEAD-->
-        <!--app:layout_constraintTop_toTopOf="parent" />-->
 
-    <!--<TextView-->
-        <!--android:id="@+id/image_avatar_text_view"-->
-        <!--android:layout_width="40dp"-->
-        <!--android:layout_height="40dp"-->
-        <!--android:layout_marginTop="5dp"-->
-        <!--android:background="@color/magenta"-->
-        <!--android:gravity="center"-->
-        <!--android:textAlignment="center"-->
-        <!--android:textSize="20dp"-->
-        <!--android:textColor="@color/white"-->
-        <!--android:text="TJ"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent" />-->
-<!--CONFLICT: MERGE-->
         app:layout_constraintTop_toTopOf="parent"
         app:roundedCornerRadius="4dp" />
-<!--CONFLICT END-->
+
+    <TextView
+        android:id="@+id/image_avatar_text_view"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/magenta"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:textColor="@color/white"
+        android:text="TJ"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/image_chat_icon"
         android:layout_width="12dp"
@@ -44,29 +42,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/text_chat_name"
         app:layout_constraintStart_toEndOf="@+id/image_avatar"
         app:layout_constraintTop_toTopOf="@+id/text_chat_name"
-<!--CONFLICT: HEAD-->
-        <!--tools:src="@drawable/ic_hashtag_unread_12dp" />-->
 
-    <!--<TextView-->
-        <!--android:id="@+id/text_last_message"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:layout_marginTop="2dp"-->
-        <!--android:layout_weight="0.8"-->
-        <!--android:ellipsize="end"-->
-        <!--android:maxLines="2"-->
-        <!--android:textDirection="locale"-->
-        <!--android:visibility="gone"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="@+id/image_chat_icon"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/text_chat_name"-->
-        <!--tools:text="Filipe de Lima Brito: Type something that is very big and need at least to lines, or maybe even more" />-->
-
-<!--CONFLICT: MERGE-->
         tools:src="@drawable/ic_hashtag_12dp" />
-<!--CONFLICT: END-->
 
     <TextView
         android:id="@+id/text_chat_name"
@@ -98,6 +75,7 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="12dp"
         android:textDirection="locale"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/layout_unread_messages_badge"
         app:layout_constraintStart_toStartOf="@+id/image_chat_icon"

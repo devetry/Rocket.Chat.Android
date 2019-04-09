@@ -52,34 +52,36 @@ class VideoConferenceActivity : JitsiMeetActivity(), JitsiVideoConferenceView,
     override fun onConferenceJoined(map: MutableMap<String, Any>?) =
         logJitsiMeetViewState("Joined video conferencing", map)
 
-    override fun onConferenceWillLeave(map: MutableMap<String, Any>?) =
+    fun onConferenceWillLeave(map: MutableMap<String, Any>?) =
         logJitsiMeetViewState("Leaving video conferencing", map)
 
-    override fun onConferenceLeft(map: MutableMap<String, Any>?) {
+    fun onConferenceLeft(map: MutableMap<String, Any>?) {
         logJitsiMeetViewState("Left video conferencing", map)
         finishJitsiVideoConference()
     }
 
-    override fun onLoadConfigError(map: MutableMap<String, Any>?) =
+    fun onLoadConfigError(map: MutableMap<String, Any>?) =
         logJitsiMeetViewState("Error loading video conference config", map)
 
-    override fun onConferenceFailed(map: MutableMap<String, Any>?) =
+    fun onConferenceFailed(map: MutableMap<String, Any>?) =
         logJitsiMeetViewState("Video conference failed", map)
 
     override fun startJitsiVideoConference(url: String, name: String?) {
-        view?.loadURLObject(
-            bundleOf(
-                "config" to bundleOf(
-                    "startWithAudioMuted" to true,
-                    "startWithVideoMuted" to true
-                ),
-                "context" to bundleOf(
-                    "user" to bundleOf("name" to name),
-                    "iss" to "rocketchat-android"
-                ),
-                "url" to url
-            )
-        )
+        // YTP UPDATE
+        // Not sure what is suppose to replace loadURLObject...
+//        view?.loadURLObject(
+//            bundleOf(
+//                "config" to bundleOf(
+//                    "startWithAudioMuted" to true,
+//                    "startWithVideoMuted" to true
+//                ),
+//                "context" to bundleOf(
+//                    "user" to bundleOf("name" to name),
+//                    "iss" to "rocketchat-android"
+//                ),
+//                "url" to url
+//            )
+//        )
     }
 
     override fun finishJitsiVideoConference() {

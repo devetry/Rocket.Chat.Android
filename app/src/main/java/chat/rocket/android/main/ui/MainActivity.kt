@@ -281,26 +281,30 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
         }
     }
 
-// CONFLICT: HEAD
-//    fun setAvatar(avatarUrl: String, name: String) {
-//        val rnd = Random()
-//        val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-//        image_avatar.setBackgroundColor(color)
-//        if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?")) {
-//            image_avatar.visibility = View.VISIBLE
-//            if (image_avatar_text_view != null) image_avatar_text_view.visibility = View.INVISIBLE
-//            image_avatar.setImageURI(avatarUrl)
-//        } else {
-//            image_avatar.visibility = View.INVISIBLE
-//            if (image_avatar_text_view != null) {
-//                image_avatar_text_view.visibility = View.VISIBLE
-//                image_avatar_text_view.text = name.substring(0, 2).toUpperCase()
-//                val rnd = Random()
-//                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-//                image_avatar_text_view.setBackgroundColor(color)
-//            }
-//        }
-    // CONFLICT: MERGE
+//    fun setAvatar(avatarUrl: String) {
+//        headerLayout.image_avatar.setImageURI(avatarUrl)
+//    }
+
+    fun setAvatar(avatarUrl: String, name: String) {
+        val rnd = Random()
+        val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+        headerLayout.image_avatar.setBackgroundColor(color)
+        if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?")) {
+            headerLayout.image_avatar.visibility = View.VISIBLE
+            if (image_avatar_text_view != null) image_avatar_text_view.visibility = View.INVISIBLE
+            headerLayout.image_avatar.setImageURI(avatarUrl)
+        } else {
+            headerLayout.image_avatar.visibility = View.INVISIBLE
+            if (image_avatar_text_view != null) {
+                image_avatar_text_view.visibility = View.VISIBLE
+                image_avatar_text_view.text = name.substring(0, 2).toUpperCase()
+                val rnd = Random()
+                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+                image_avatar_text_view.setBackgroundColor(color)
+            }
+        }
+    }
+
     fun showLogoutDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.title_are_you_sure)
@@ -308,11 +312,6 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
             .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.cancel() }
             .create()
             .show()
-    }
-
-    fun setAvatar(avatarUrl: String) {
-// CONFLICT: END
-        headerLayout.image_avatar.setImageURI(avatarUrl)
     }
 
     fun getDrawerLayout(): DrawerLayout = drawer_layout

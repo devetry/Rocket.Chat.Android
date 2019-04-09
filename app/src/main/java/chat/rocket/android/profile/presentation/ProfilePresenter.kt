@@ -115,11 +115,12 @@ class ProfilePresenter @Inject constructor(
                         uriInteractor.getInputStream(uri)
                     }
                 }
-// CONFLICT: HEAD
-//                view.reloadUserAvatar(serverUrl.avatarUrl(myselfUsername), myselfName)
-// CONFLICT: MERGE
-                user?.username?.let { view.reloadUserAvatar(serverUrl.avatarUrl(it)) }
-// CONFLICT: END
+                // YTP UPDATE
+                // NEW
+                user?.username?.let { view.reloadUserAvatar(serverUrl.avatarUrl(it), "") }
+                // OLD
+//                user?.username?.let { view.reloadUserAvatar(serverUrl.avatarUrl(it)) }
+                // END
             } catch (exception: RocketChatException) {
                 exception.message?.let {
                     view.showMessage(it)
@@ -146,12 +147,12 @@ class ProfilePresenter @Inject constructor(
                         byteArray?.inputStream()
                     }
                 }
-// CONFLICT: HEAD
-//                view.reloadUserAvatar(serverUrl.avatarUrl(myselfUsername), myselfName)
-// CONFLICT: MERGE
-
-                user?.username?.let { view.reloadUserAvatar(serverUrl.avatarUrl(it)) }
-// CONFLICT: END
+                // YTP UPDATE
+                // NEW
+                user?.username?.let { view.reloadUserAvatar(serverUrl.avatarUrl(it), "") }
+                // OLD
+//                user?.username?.let { view.reloadUserAvatar(serverUrl.avatarUrl(it)) }
+                // END
             } catch (exception: RocketChatException) {
                 exception.message?.let {
                     view.showMessage(it)
@@ -168,15 +169,15 @@ class ProfilePresenter @Inject constructor(
         launchUI(strategy) {
             view.showLoading()
             try {
-// CONFLICT: HEAD
-//                retryIO { client.resetAvatar(myselfId) }
-//                view.reloadUserAvatar(serverUrl.avatarUrl(myselfUsername), myselfName)
-// CONFLICT: MERGE
                 user?.id?.let { id ->
                     retryIO { client.resetAvatar(id) }
                 }
-                user?.username?.let { view.reloadUserAvatar(serverUrl.avatarUrl(it)) }
-// CONFLICT: END
+                // YTP UPDATE
+                // NEW
+                user?.username?.let { view.reloadUserAvatar(serverUrl.avatarUrl(it), "") }
+                // OLD
+//                user?.username?.let { view.reloadUserAvatar(serverUrl.avatarUrl(it)) }
+                // END
             } catch (exception: RocketChatException) {
                 exception.message?.let {
                     view.showMessage(it)

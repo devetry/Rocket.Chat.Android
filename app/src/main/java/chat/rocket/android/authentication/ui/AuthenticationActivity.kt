@@ -16,10 +16,12 @@ import chat.rocket.android.analytics.event.ScreenViewEvent
 import chat.rocket.android.authentication.domain.model.LoginDeepLinkInfo
 import chat.rocket.android.authentication.domain.model.getLoginDeepLinkInfo
 import chat.rocket.android.authentication.presentation.AuthenticationPresenter
+import chat.rocket.android.core.lifecycle.CancelStrategy
+import chat.rocket.android.util.extension.launchUI
 import chat.rocket.android.util.extensions.addFragment
 import chat.rocket.android.util.extensions.encodeToBase64
 import chat.rocket.android.util.extensions.generateRandomString
-import chat.rocket.android.util.extensions.setVisible
+//import chat.rocket.android.util.extensions.setVisible
 import chat.rocket.common.util.ifNull
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
@@ -81,7 +83,14 @@ class YTPOAuth constructor(var chat_server: String,
     }
 }
 
-class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
+// YTP UPDATE
+// NEW:
+class AuthenticationActivity @Inject constructor(
+        private val strategy: CancelStrategy
+) : AppCompatActivity(), HasSupportFragmentInjector {
+// OLD:
+//class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
+// END
     @Inject
     lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
     @Inject
@@ -123,11 +132,20 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
             }
 
         } else {
-            launch(UI + job) {
+            // YTP UPDATE
+            // NEW:
+            launchUI(strategy) {
                 YTPOAuth(intent)?.let {
                     presenter.ytpAuth(it)
                 }
             }
+            // OLD:
+//            launch(UI + job) {
+//                YTPOAuth(intent)?.let {
+//                    presenter.ytpAuth(it)
+//                }
+//            }
+            // END
         }
     }
 
@@ -165,12 +183,20 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     private fun loadCredentials() {
         intent.getLoginDeepLinkInfo()?.let {
-
-            launch(UI + job) {
+            // YTP UPDATE
+            // NEW:
+            launchUI(strategy) {
                 YTPOAuth(intent)?.let {
                     presenter.ytpAuth(it)
                 }
             }
+            // OLD
+//            launch(UI + job) {
+//                YTPOAuth(intent)?.let {
+//                    presenter.ytpAuth(it)
+//                }
+//            }
+            // END
             showServerFragment(it)
         }.ifNull {
             val newServer = intent.getBooleanExtra(INTENT_ADD_NEW_SERVER, false)

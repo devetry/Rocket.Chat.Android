@@ -10,11 +10,7 @@ buildscript {
     }
 
     dependencies {
-// CONFLICT: HEAD
-//        classpath 'com.android.tools.build:gradle:3.2.1'
-// CONFLICT: MERGE
         classpath 'com.android.tools.build:gradle:3.3.2'
-// CONFLICT: END
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${versions.dokka}"
         classpath 'com.google.gms:google-services:4.2.0'
