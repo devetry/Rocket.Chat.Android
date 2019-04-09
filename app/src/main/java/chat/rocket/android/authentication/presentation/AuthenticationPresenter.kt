@@ -1,6 +1,7 @@
 package chat.rocket.android.authentication.presentation
 
 import android.content.Intent
+import android.util.Log
 import chat.rocket.android.authentication.ui.AuthenticationActivity
 import chat.rocket.android.authentication.ui.YTPOAuth
 //import chat.rocket.android.infrastructure.LocalRepository
@@ -33,8 +34,7 @@ class AuthenticationPresenter @Inject constructor(
         private val saveConnectingServerInteractor: SaveConnectingServerInteractor,
         private val accountsRepository: AccountsRepository
 ) {
-    suspend fun ytpAuth(ytpOAuth: YTPOAuth) {
-
+     fun ytpAuth(ytpOAuth: YTPOAuth) {
 //        val removeAccountInteractor = RemoveAccountInteractor(accountsRepository)
 //        removeAccountInteractor.remove(LocalRepository.CURRENT_USERNAME_KEY)
 //

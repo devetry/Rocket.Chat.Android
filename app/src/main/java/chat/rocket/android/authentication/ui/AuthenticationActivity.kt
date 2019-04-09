@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import android.view.Menu
@@ -83,14 +84,9 @@ class YTPOAuth constructor(var chat_server: String,
     }
 }
 
-// YTP UPDATE
-// NEW:
-class AuthenticationActivity @Inject constructor(
-        private val strategy: CancelStrategy
-) : AppCompatActivity(), HasSupportFragmentInjector {
-// OLD:
-//class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
-// END
+
+class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
+
     @Inject
     lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
     @Inject
@@ -106,7 +102,6 @@ class AuthenticationActivity @Inject constructor(
 
     override fun onStart() {
         super.onStart()
-
         if (intent.getStringExtra(YTPOAuth.INTENT_BASE_URL) == null ||
                 intent.getStringExtra(YTPOAuth.INTENT_AUTH_URL) == null ||
                 intent.getStringExtra(YTPOAuth.INTENT_SESSION_COOKIE) == null ||
@@ -134,11 +129,11 @@ class AuthenticationActivity @Inject constructor(
         } else {
             // YTP UPDATE
             // NEW:
-            launchUI(strategy) {
+
                 YTPOAuth(intent)?.let {
                     presenter.ytpAuth(it)
                 }
-            }
+
             // OLD:
 //            launch(UI + job) {
 //                YTPOAuth(intent)?.let {
@@ -185,11 +180,10 @@ class AuthenticationActivity @Inject constructor(
         intent.getLoginDeepLinkInfo()?.let {
             // YTP UPDATE
             // NEW:
-            launchUI(strategy) {
+
                 YTPOAuth(intent)?.let {
                     presenter.ytpAuth(it)
                 }
-            }
             // OLD
 //            launch(UI + job) {
 //                YTPOAuth(intent)?.let {

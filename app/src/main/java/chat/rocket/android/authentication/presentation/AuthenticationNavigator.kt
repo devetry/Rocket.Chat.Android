@@ -1,6 +1,7 @@
 package chat.rocket.android.authentication.presentation
 
 import android.content.Intent
+import android.util.Log
 import chat.rocket.android.R
 import chat.rocket.android.analytics.event.ScreenViewEvent
 import chat.rocket.android.authentication.domain.model.LoginDeepLinkInfo
@@ -22,6 +23,9 @@ class AuthenticationNavigator(internal val activity: AuthenticationActivity) {
         activity.addFragmentBackStack("LoginFragment", R.id.fragment_container) {
             LoginFragment.newInstance(ytpOAuth)
         }
+//        activity.addFragmentBackStack(ScreenViewEvent.Login.screenName, R.id.fragment_container) {
+//            chat.rocket.android.authentication.login.ui.newInstance(serverUrl)
+//        }
     }
 
 //    fun toLogin() {
