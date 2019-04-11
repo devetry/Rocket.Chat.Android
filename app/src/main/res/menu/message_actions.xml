@@ -6,15 +6,17 @@
         android:icon="@drawable/ic_add_reaction"
         android:title="@string/action_msg_add_reaction" />
 
-    <item
-        android:id="@+id/action_reply"
-        android:icon="@drawable/ic_action_message_reply_24dp"
-        android:title="@string/action_msg_reply" />
+    <!--YTP UPDATE-->
+    <!--Removed Msg actions-->
+    <!--<item-->
+        <!--android:id="@+id/action_reply"-->
+        <!--android:icon="@drawable/ic_action_message_reply_24dp"-->
+        <!--android:title="@string/action_msg_reply" />-->
 
-    <item
-        android:id="@+id/action_quote"
-        android:icon="@drawable/ic_action_message_quote_24dp"
-        android:title="@string/action_msg_quote" />
+    <!--<item-->
+        <!--android:id="@+id/action_quote"-->
+        <!--android:icon="@drawable/ic_action_message_quote_24dp"-->
+        <!--android:title="@string/action_msg_quote" />-->
 
     <item
         android:id="@+id/action_permalink"

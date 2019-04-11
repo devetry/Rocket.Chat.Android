@@ -28,8 +28,5 @@ data class MessageUiModel(
     override val viewType: Int
         get() = BaseUiModel.ViewType.MESSAGE.viewType
     override val layoutId: Int
-        get() {
-            return if (Locale.getDefault().language == "ar") R.layout.item_message_ar
-            else R.layout.item_message
-        }
+        get() = R.layout.item_message
 }

@@ -76,20 +76,12 @@ object ImageHelper {
                 }
             }
 
-// CONFLICT: HEAD
-//            val backArrowView = ImageView(context).also {
-//                if (Locale.getDefault().language == "ar") it.setImageResource(R.drawable.ic_arrow_back_white_24dp_ar)
-//                else it.setImageResource(R.drawable.ic_arrow_back_white_24dp)
-//                it.setOnClickListener { imageViewer?.onDismiss() }
-//                it.setPadding(0, pad, pad, pad)
-// CONFLICT: MERGE
            val backArrowView = ImageView(context).also { imgView ->
                 with(imgView) {
                     setImageResource(R.drawable.ic_arrow_back_white_24dp)
                     setOnClickListener { imageViewer?.onDismiss() }
                     setPadding(0, pad, pad, pad)
                 }
-// CONFLICT: END
             }
 
             val layoutParams = AppBarLayout.LayoutParams(

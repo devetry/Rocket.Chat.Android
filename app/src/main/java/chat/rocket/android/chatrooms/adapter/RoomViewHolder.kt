@@ -47,22 +47,12 @@ class RoomViewHolder(itemView: View, private val listener: (RoomUiModel) -> Unit
         val room = data.data
         with(itemView) {
 
-// CONFLICT: HEAD
-//            if (room.avatar.contains("avatar/louis?") || room.avatar.contains("avatar/Advisor_Nada?")) {
-//                image_avatar.visibility = View.VISIBLE
-//                image_avatar_text_view.visibility = View.INVISIBLE
-//                image_avatar.setImageURI(room.avatar)
-// CONFLICT: MERGE
-            if (room.status != null && room.type is RoomType.DirectMessage) {
-                image_chat_icon.setImageDrawable(getStatusDrawable(room.status))
-            } else {
-                image_chat_icon.setImageDrawable(getRoomDrawable(room.type))
-            }
-
-            if (room.lastMessage != null) {
-                text_last_message.text = room.lastMessage
-                text_last_message.isVisible = true
-// CONFLICT: END
+            // YTP UPDATE
+            // NEW:
+            if (room.avatar.contains("avatar/louis?") || room.avatar.contains("avatar/Advisor_Nada?")) {
+                image_avatar.visibility = View.VISIBLE
+                image_avatar_text_view.visibility = View.INVISIBLE
+                image_avatar.setImageURI(room.avatar)
             } else {
                 image_avatar.visibility = View.INVISIBLE
                 image_avatar_text_view.visibility = View.VISIBLE
@@ -70,6 +60,13 @@ class RoomViewHolder(itemView: View, private val listener: (RoomUiModel) -> Unit
                 val rnd = Random()
                 val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
                 image_avatar_text_view.setBackgroundColor(color)
+            }
+            // END
+
+            if (room.status != null && room.type is RoomType.DirectMessage) {
+                image_chat_icon.setImageDrawable(getStatusDrawable(room.status))
+            } else {
+                image_chat_icon.setImageDrawable(getRoomDrawable(room.type))
             }
 
             text_chat_name.text = room.name

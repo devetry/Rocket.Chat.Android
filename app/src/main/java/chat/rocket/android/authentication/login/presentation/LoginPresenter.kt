@@ -40,7 +40,7 @@ import javax.inject.Inject
 
 
 /**
- * CODE EDITED IN ROCKET CHAT
+ * YTP UPDATE
  */
 private const val TYPE_LOGIN_OAUTH = 1
 
@@ -158,7 +158,7 @@ class LoginPresenter @Inject constructor(
 
 
     /**
-     * CODE EDITED IN ROCKET CHAT
+     * YTP UPDATE
      */
     private lateinit var credentialToken: String
     private lateinit var credentialSecret: String

@@ -11,63 +11,6 @@ import chat.rocket.android.util.extension.onQueryTextListener
 
 internal fun ChatRoomFragment.setupMenu(menu: Menu) {
     setupSearchMessageMenuItem(menu, requireContext())
-// CONFLICT: HEAD
-//    setupFavoriteMenuItem(menu)
-//
-//    menu.add(
-//        Menu.NONE,
-//        MENU_ACTION_PINNED_MESSAGES,
-//        Menu.NONE,
-//        R.string.title_pinned_messages
-//    )
-//
-//    menu.add(
-//        Menu.NONE,
-//        MENU_ACTION_FAVORITE_MESSAGES,
-//        Menu.NONE,
-//        R.string.title_favorite_messages
-//    )
-//
-//    if (chatRoomType != RoomType.DIRECT_MESSAGE && !disableMenu) {
-////        menu.add(
-////            Menu.NONE,
-////            MENU_ACTION_MEMBER,
-////            Menu.NONE,
-////            R.string.title_members_list
-////        )
-//
-//        menu.add(
-//            Menu.NONE,
-//            MENU_ACTION_MENTIONS,
-//            Menu.NONE,
-//            R.string.msg_mentions
-//        )
-//    }
-//
-//    if (!disableMenu) {
-//        menu.add(
-//            Menu.NONE,
-//            MENU_ACTION_FILES,
-//            Menu.NONE,
-//            R.string.title_files
-//        )
-//    }
-//}
-//
-//internal fun ChatRoomFragment.setOnMenuItemClickListener(item: MenuItem) {
-//    when (item.itemId) {
-//        MENU_ACTION_FAVORITE_UNFAVORITE_CHAT -> presenter.toggleFavoriteChatRoom(
-//            chatRoomId,
-//            isFavorite
-//        )
-//        MENU_ACTION_MEMBER -> presenter.toMembersList(chatRoomId)
-//        MENU_ACTION_MENTIONS -> presenter.toMentions(chatRoomId)
-//        MENU_ACTION_PINNED_MESSAGES -> presenter.toPinnedMessageList(chatRoomId)
-//        MENU_ACTION_FAVORITE_MESSAGES -> presenter.toFavoriteMessageList(chatRoomId)
-//        MENU_ACTION_FILES -> presenter.toFileList(chatRoomId)
-//    }
-// CONFLICT: MERGE
-// CONFLICT: END
 }
 
 private fun ChatRoomFragment.setupSearchMessageMenuItem(menu: Menu, context: Context) {

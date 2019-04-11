@@ -162,12 +162,17 @@ class ChatDetailsFragment : Fragment(), ChatDetailsView {
                 it.addOption(getString(R.string.msg_mentions), R.drawable.ic_at_black_20dp) {
                     presenter.toMentions(chatRoomId!!)
                 }
-                it.addOption(
-                    getString(R.string.title_members),
-                    R.drawable.ic_people_outline_black_24dp
-                ) {
-                    presenter.toMembers(chatRoomId!!)
-                }
+                // YTP UPDATE
+                // DESCRIPTION: Removes Members List
+                // NEW: none
+                // OLD:
+//                it.addOption(
+//                    getString(R.string.title_members),
+//                    R.drawable.ic_people_outline_black_24dp
+//                ) {
+//                    presenter.toMembers(chatRoomId!!)
+//                }
+                // END
             }
 
             it.addOption(

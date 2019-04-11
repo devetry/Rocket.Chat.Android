@@ -93,14 +93,10 @@ import kotlinx.android.synthetic.main.fragment_chat_room.*
 import kotlinx.android.synthetic.main.message_attachment_options.*
 import kotlinx.android.synthetic.main.message_composer.*
 import kotlinx.android.synthetic.main.message_list.*
-// CONFLICT: HEAD
-import java.util.*
-// CONFLICT: MERGE
 import kotlinx.android.synthetic.main.reaction_praises_list_item.view.*
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
-// CONFLICT: END
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject

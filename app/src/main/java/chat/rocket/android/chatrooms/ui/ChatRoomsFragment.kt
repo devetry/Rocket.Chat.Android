@@ -179,26 +179,24 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 // Simply setting sortView to visible won't work, so we invalidate the options
                 // to recreate the entire menu...
-// CONFLICT: HEAD
-//                /**
-//                 * ROCKET CHAT CODE EDITIED
-//                 *
-//                 * DESCRIPTION: Querying for the letter `a` as a default search
-//                 *
-//                 * AUTHOR: Tanner Juby
-//                 * DATE: 10/11/18
-//                 *
-//                 * START OF EDIT
-//                 */
-//                updateSort()
-//                /**
-//                 * END OF EDIT
-//                 *
-//                 * PREVIOUS CODE: n/a
-//                 */
-// CONFLICT: MERGE
-                viewModel.showLastMessage = true
-// CONFLICT: END
+                /**
+                 * ROCKET CHAT CODE EDITIED
+                 *
+                 * DESCRIPTION: Querying for the letter `a` as a default search
+                 *
+                 * AUTHOR: Tanner Juby
+                 * DATE: 10/11/18
+                 *
+                 * START OF EDIT
+                 */
+                updateSort()
+                viewModel.showLastMessage = false
+                /**
+                 * END OF EDIT
+                 *
+                 * PREVIOUS CODE:
+                 * viewModel.showLastMessage = true
+                 */
                 activity?.invalidateOptionsMenu()
                 queryChatRoomsByName(null)
                 return true

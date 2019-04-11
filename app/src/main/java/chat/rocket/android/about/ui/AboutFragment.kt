@@ -56,8 +56,13 @@ class AboutFragment : Fragment() {
     private fun setupToolbar() {
         with((activity as MainActivity).toolbar) {
             title = getString(R.string.title_about)
+            // YTP UPDATE
+            // NEW:
             if (Locale.getDefault().language == "ar") setNavigationIcon(R.drawable.ic_arrow_back_white_24dp_ar)
             else setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            // OLD:
+            setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            // END
             setNavigationOnClickListener { activity?.onBackPressed() }
         }
     }

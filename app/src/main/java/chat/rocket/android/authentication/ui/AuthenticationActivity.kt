@@ -29,12 +29,7 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.coroutines.MainScope
-// CONFLICT: HEAD
-//import kotlinx.coroutines.experimental.Job
-//import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.launch
-// CONFLICT: MERGE
-// CONFLICT: END
 import javax.inject.Inject
 import java.io.Serializable
 import java.util.*
@@ -146,8 +141,13 @@ class AuthenticationActivity : AppCompatActivity(), HasSupportFragmentInjector {
     private fun setupToolbar() {
         with(toolbar) {
             setSupportActionBar(this)
+            // YTP UPDATE
+            // NEW:
             if (Locale.getDefault().language == "ar") setNavigationIcon(R.drawable.ic_arrow_back_white_24dp_ar)
             else setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            // OLD:
+            setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            // END
             setNavigationOnClickListener { onBackPressed() }
         }
         supportActionBar?.setDisplayShowTitleEnabled(false)

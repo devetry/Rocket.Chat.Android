@@ -5,10 +5,7 @@ ext {
             minSdk                : 21,
             compileSdk            : 28,
             targetSdk             : 28,
-// CONFLICT: HEAD
             minSdk                : 21,
-// CONFLICT: MERGE
-// CONFLICT: END
             buildTools            : '28.0.3',
             dokka                 : '0.9.16',
 

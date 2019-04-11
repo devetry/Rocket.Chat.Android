@@ -9,28 +9,13 @@ Please, follow the rules as shown here (by adding a new string in the correct se
 Coding style:
 https://github.com/RocketChat/java-code-styles/blob/master/CODING_STYLE.md#strings
 -->
-<!-- CONFLICT: HEAD -->
-<!--<resources xmlns:tools="http://schemas.android.com/tools">-->
-    <!--
-        ROCKET CHAT CODE EDITIED
-     -->
-    <!--<string-array name="settings_actions">-->
-        <!--<item>Change Password</item>-->
-        <!--<item>About</item>-->
-        <!--<item>About</item>-->
-    <!--</string-array>-->
-    <!--<string name="app_name">Young Thinkers Connect</string>-->
-    <!--<string name="title_sign_in_your_server">Sign in your server</string>-->
-    <!--<string name="title_log_in">Log in</string>-->
-<!-- CONFLICT: MERGE -->
 <resources>
-    <string name="app_name" translatable="false">Rocket.Chat</string>
+    <string name="app_name">Young Thinkers Advice</string>
 
     <!-- Titles -->
     <string name="title_sign_in_your_server">Sign in to your server</string>
     <string name="title_log_in">Login</string>
     <string name="title_share_the_app">Share App</string>
-<!-- CONFLICT: END-->
     <string name="title_register_username">Register username</string>
     <string name="title_sign_up">Sign up</string>
     <string name="title_authentication">Authentication</string>
@@ -40,11 +25,6 @@ https://github.com/RocketChat/java-code-styles/blob/master/CODING_STYLE.md#strin
     <string name="title_members">Members</string>
     <string name="title_counted_members">Members (%d)</string>
     <string name="title_settings">Settings</string>
-<!-- CONFLICT: HEAD-->
-    <!--<string name="title_password">Change Password</string>-->
-    <!--<string name="title_update_profile">Update profile</string>-->
-    <!--<string name="title_about">About</string>-->
-<!-- CONFLICT: MERGE-->
     <string name="title_rate_us">Rate Us</string>
     <string name="title_password">Change Password</string>
     <string name="title_update_profile">Update profile</string>
@@ -57,7 +37,6 @@ https://github.com/RocketChat/java-code-styles/blob/master/CODING_STYLE.md#strin
     <string name="title_description">Description</string>
 
     <!-- Actions -->
-<!-- CONFLICT: END-->
     <string name="action_connect">Connect</string>
     <string name="action_use_this_username">Use this username</string>
     <string name="action_terms_of_service">Terms of Service</string>
@@ -74,8 +53,6 @@ https://github.com/RocketChat/java-code-styles/blob/master/CODING_STYLE.md#strin
     <string name="action_away">Away</string>
     <string name="action_busy">Busy</string>
     <string name="action_invisible">Invisible</string>
-<!-- CONFLICT: HEAD-->
-<!-- CONFLICT: MERGE-->
     <string name="action_delete_account">Delete account</string>
     <string name="action_favorite">Favorite</string>
     <string name="action_remove_favorite">Remove favorite</string>
@@ -93,7 +70,6 @@ https://github.com/RocketChat/java-code-styles/blob/master/CODING_STYLE.md#strin
     </string-array>
 
     <!-- Regular information messages -->
-<!-- CONFLICT: END-->
     <string name="msg_generic_error">Sorry, an error has occurred, please try again</string>
     <string name="msg_no_data_to_display">No data to display</string>
     <string name="msg_check_this_out">Check this out</string>
@@ -139,13 +115,7 @@ https://github.com/RocketChat/java-code-styles/blob/master/CODING_STYLE.md#strin
     <string name="msg_preview_audio">Audio</string>
     <string name="msg_preview_photo">Photo</string>
     <string name="msg_no_messages_yet">No messages yet</string>
-<!-- CONFLICT: HEAD-->
-    <!--<string name="msg_version">Version</string>-->
-    <!--<string name="msg_build">Build</string>-->
-    <!--<string name="msg_ok">OK</string>-->
-<!-- CONFLICT: MERGE-->
     <string name="msg_build">Build %1$d - %2$s - %3$s</string>
-<!-- CONFLICT: END-->
     <string name="msg_ver_not_recommended">
         Looks like your server version is below the recommended version %1$s.
 You can still login but you may experience unexpected behaviors.</string>
@@ -153,8 +123,6 @@ You can still login but you may experience unexpected behaviors.</string>
         Looks like your server version is below the minimum required version %1$s.
 Please upgrade your server to login!
     </string>
-<!-- CONFLICT: HEAD-->
-<!-- CONFLICT: MERGE-->
     <string name="msg_permalink_copied">Permalink copied</string>
     <string name="msg_no_topic">No topic</string>
     <string name="msg_no_announcement">No announcement</string>
@@ -175,7 +143,6 @@ Please upgrade your server to login!
     <!-- Preferences messages -->
 
     <!-- System messages -->
-<!-- CONFLICT: END-->
     <string name="message_room_name_changed">Room name changed to: %1$s by %2$s</string>
     <string name="message_user_added_by">User %1$s added by %2$s</string>
     <string name="message_user_removed_by">User %1$s removed by %2$s</string>
@@ -184,31 +151,15 @@ Please upgrade your server to login!
     <string name="message_welcome">Welcome %s</string>
     <string name="message_removed">Message removed</string>
     <string name="message_pinned">Pinned a message:</string>
-<!-- CONFLICT: HEAD-->
-    <!--<string name="action_msg_reply">Reply</string>-->
-<!-- CONFLICT: MERGE-->
     <string name="message_video_call_started">Video call started by %1$s</string>
 
     <!-- Message actions -->
     <string name="action_msg_reply">Reply</string>
     <string name="action_info">Info</string>
-<!-- CONFLICT: END-->
     <string name="action_msg_edit">Edit</string>
     <string name="action_msg_copy">Copy</string>
     <string name="action_msg_quote">Quote</string>
     <string name="action_msg_delete">Delete</string>
-<!-- CONFLICT: HEAD-->
-    <!--<string name="action_msg_pin">Pin Message</string>-->
-    <!--<string name="action_msg_unpin">Unpin Message</string>-->
-    <!--<string name="action_msg_star">Star Message</string>-->
-    <!--<string name="action_msg_share">Share</string>-->
-    <!--<string name="action_title_editing">Editing Message</string>-->
-    <!--<string name="action_msg_add_reaction">Add reaction</string>-->
-    <!--<string name="permission_editing_not_allowed">Editing is not allowed</string>-->
-    <!--<string name="permission_deleting_not_allowed">Deleting is not allowed</string>-->
-    <!--<string name="permission_pinning_not_allowed">Pinning is not allowed</string>-->
-    <!--<string name="title_members_list">Members List</string>-->
-<!-- CONFLICT: MERGE-->
     <string name="action_pin">Pin</string>
     <string name="action_unpin">Unpin</string>
     <string name="action_star">Star</string>
@@ -232,7 +183,6 @@ Please upgrade your server to login!
     <!-- Mentions -->
 
     <!-- Pinned Messages -->
-<!-- CONFLICT: END-->
     <string name="title_pinned_messages">Pinned Messages</string>
     <string name="no_pinned_messages">No pinned messages</string>
     <string name="no_pinned_description">All the pinned messages
@@ -267,29 +217,21 @@ appear here.</string>
     <string name="Join_the_given_channel">Join the given channel</string>
     <string name="Guggy_Command_Description">Generates a gif based upon the provided text</string>
     <string name="Slash_Topic_Description">Set topic</string>
-<!-- CONFLICT: HEAD-->
-    <!--<string name="msg_no_recent_emoji">No recent emoji</string>-->
-    <!--<string name="menu_chatroom_sort">Sort</string>-->
-<!-- CONFLICT: MERGE-->
 
     <!-- Emoji message-->
     <string name="msg_no_recent_emoji">No recent emojis</string>
 
     <!-- Sorting and grouping-->
     <string name="msg_sort">Sort</string>
-<!-- CONFLICT: END-->
     <string name="dialog_sort_title">Sort by</string>
     <string name="dialog_sort_by_alphabet">Alphabetical</string>
     <string name="dialog_sort_by_activity">Activity</string>
     <string name="dialog_group_by_type">Group by type</string>
     <string name="dialog_group_favourites">Group favourites</string>
     <string name="chatroom_header">Header</string>
-<!-- CONFLICT: HEAD-->
-<!-- CONFLICT: MERGE-->
 
     <!--ChatRooms Headers-->
     <string name="header_favorite">Favorites</string>
-<!-- CONFLICT: END-->
     <string name="header_channel">Channels</string>
     <string name="header_private_groups">Private Groups</string>
     <string name="header_direct_messages">Direct Messages</string>
@@ -410,14 +352,6 @@ appear here</string>
     <string name="msg_view_more">view more</string>
     <string name="msg_view_less">view less</string>
     <string name="message_room_changed_privacy">Room type changed to: %1$s by %2$s</string>
-<!-- CONFLICT: HEAD-->
-    <!--<string name="foss" tools:ignore="MissingTranslation">(FOSS)</string>-->
-    <string name="ytp_download_description">Download the Young Thinkers Program app to access the content of this app.</string>
-    <string name="ytp_download_title">Young Thinkers Program</string>
-    <string name="ytp_download_button">Download</string>
-<!--</resources>-->
-<!-- CONFLICT: MERGE-->
-
     <string name="foss" translatable="false">(FOSS)</string>
 
     <!-- User Details -->
@@ -428,5 +362,10 @@ appear here</string>
     <string name="submit">Submit</string>
     <string name="required">*required</string>
     <string name="report_sent">Your report has been sent!</string>
+
+    <!-- YTP Specific -->
+    <string name="ytp_download_description">Download the Young Thinkers Program app to access the content of this app.</string>
+    <string name="ytp_download_title">Young Thinkers Program</string>
+    <string name="ytp_download_button">Download</string>
 </resources>
 <!-- CONFLICT: END-->

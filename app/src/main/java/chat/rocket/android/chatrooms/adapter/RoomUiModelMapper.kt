@@ -2,13 +2,7 @@ package chat.rocket.android.chatrooms.adapter
 
 import android.app.Application
 import android.text.SpannableStringBuilder
-// CONFLICT: HEAD
-//import androidx.core.content.ContextCompat
-//import androidx.core.text.bold
-//import androidx.core.text.color
-//import androidx.core.util.rangeTo
-// CONFLICT: MERGE
-// CONFLICT: END
+
 import chat.rocket.android.R
 import chat.rocket.android.chatrooms.adapter.model.RoomUiModel
 import chat.rocket.android.db.model.ChatRoom
@@ -84,20 +78,11 @@ class RoomUiModelMapper(
         return list
     }
 
-// CONFLICT: HEAD
-//    private fun mapUser(user: User): RoomUiModel {
-//        return with(user) {
-//            val name = mapName(user.username!!, user.name, false)
-//            val status = user.status
-//            var avatar = serverUrl.avatarUrl(user.username!!)
-//            val username = user.username!!
-// CONFLICT: MERGE
     private fun mapUser(user: User): RoomUiModel = with(user) {
         val name = mapName(user.username!!, user.name)
         val status = user.status
         val avatar = serverUrl.avatarUrl(user.username!!)
         val username = user.username!!
-// CONFLICT: END
 
         RoomUiModel(
                 id = user.id,
@@ -129,25 +114,6 @@ class RoomUiModelMapper(
         )
     }
 
-// CONFLICT: HEAD
-//    fun map(chatRoom: ChatRoom): RoomUiModel {
-//        return with(chatRoom.chatRoom) {
-//            val isUnread = alert || unread > 0
-//            val type = roomTypeOf(type)
-//            val status = chatRoom.status?.let { userStatusOf(it) }
-//            val roomName = mapName(name, fullname, isUnread)
-//            val timestamp = mapDate(lastMessageTimestamp ?: updatedAt, isUnread)
-//            val avatar = if (type is RoomType.DirectMessage) {
-//                serverUrl.avatarUrl(name)
-//            } else {
-//                serverUrl.avatarUrl(name, isGroupOrChannel = true, format = "svg")
-//            }
-//            val unread = mapUnread(unread)
-//            val lastMessage = mapLastMessage(lastMessageUserId, chatRoom.lastMessageUserName,
-//                    chatRoom.lastMessageUserFullName, lastMessageText, isUnread,
-//                    type is RoomType.DirectMessage)
-//            val open = open
-// CONFLICT: MERGE
     fun map(chatRoom: ChatRoom, showLastMessage: Boolean = true): RoomUiModel = with(chatRoom.chatRoom) {
         val isUnread = alert || unread > 0
         val type = roomTypeOf(type)
@@ -175,7 +141,6 @@ class RoomUiModelMapper(
         val hasMentions = mapMentions(userMentions, groupMentions)
         val open = open
         val lastMessageMarkdown = lastMessage?.let { Markwon.markdown(context, it.toString()).toString() }
-// CONFLICT: END
 
         RoomUiModel(
                 id = id,

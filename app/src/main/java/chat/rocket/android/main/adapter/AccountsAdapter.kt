@@ -24,7 +24,13 @@ class AccountsAdapter(
         }
     }
 
-    override fun getItemCount() = accounts.size + 2
+    // YTP UPDATE
+    // DESCRIPTION: Removes `Add Account` from Menu
+    // NEW:
+    override fun getItemCount() = accounts.size + 1
+    // OLD:
+//    override fun getItemCount() = accounts.size + 2
+    // END
 
     override fun getItemViewType(position: Int): Int {
         return when {

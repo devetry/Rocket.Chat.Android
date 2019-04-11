@@ -196,12 +196,7 @@ class DatabaseManager(val context: Application, val serverUrl: String) {
     }
 
     fun processRooms(rooms: List<ChatRoom>) {
-// CONFLICT: HEAD
-//        chatRoomDao().delete()
-//        launch(dbContext) {
-// CONFLICT: MERGE
         GlobalScope.launch(dbManagerContext) {
-// CONFLICT: END
             val entities = rooms.map { mapChatRoom(it) }
             sendOperation(Operation.CleanInsertRooms(entities))
         }

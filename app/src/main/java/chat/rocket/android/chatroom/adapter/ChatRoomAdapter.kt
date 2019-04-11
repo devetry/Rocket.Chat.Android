@@ -43,28 +43,6 @@ class ChatRoomAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
         return when (viewType.toViewType()) {
             BaseUiModel.ViewType.MESSAGE -> {
-// CONFLICT: HEAD
-//                if (Locale.getDefault().language == "ar") {
-//                    val view = parent.inflate(R.layout.item_message_ar)
-//                    MessageViewHolder(view, actionsListener, reactionListener)
-//                }
-//                else {
-//                    val view = parent.inflate(R.layout.item_message)
-//                    MessageViewHolder(view, actionsListener, reactionListener)
-//                }
-//            }
-//            BaseUiModel.ViewType.IMAGE_ATTACHMENT -> {
-//                val view = parent.inflate(R.layout.message_attachment)
-//                ImageAttachmentViewHolder(view, actionsListener, reactionListener)
-//            }
-//            BaseUiModel.ViewType.AUDIO_ATTACHMENT -> {
-//                val view = parent.inflate(R.layout.message_attachment)
-//                AudioAttachmentViewHolder(view, actionsListener, reactionListener)
-//            }
-//            BaseUiModel.ViewType.VIDEO_ATTACHMENT -> {
-//                val view = parent.inflate(R.layout.message_attachment)
-//                VideoAttachmentViewHolder(view, actionsListener, reactionListener)
-// CONFLICT: MERGE
                 val view = parent.inflate(R.layout.item_message)
                 MessageViewHolder(
                     view,
@@ -77,7 +55,6 @@ class ChatRoomAdapter(
                         }
                     }
                 )
-// CONFLICT: END
             }
             BaseUiModel.ViewType.URL_PREVIEW -> {
                 val view = parent.inflate(R.layout.message_url_preview)
@@ -273,15 +250,16 @@ class ChatRoomAdapter(
                             analyticsManager.logMessageActionInfo()
                         }
 
-                        R.id.action_reply -> {
-                            actionSelectListener.citeMessage(roomName, roomType, id, true)
-                            analyticsManager.logMessageActionReply()
-                        }
-
-                        R.id.action_quote -> {
-                            actionSelectListener.citeMessage(roomName, roomType, id, false)
-                            analyticsManager.logMessageActionQuote()
-                        }
+                        // YTP UPDATE
+//                        R.id.action_reply -> {
+//                            actionSelectListener.citeMessage(roomName, roomType, id, true)
+//                            analyticsManager.logMessageActionReply()
+//                        }
+//
+//                        R.id.action_quote -> {
+//                            actionSelectListener.citeMessage(roomName, roomType, id, false)
+//                            analyticsManager.logMessageActionQuote()
+//                        }
 
                         R.id.action_copy -> {
                             actionSelectListener.copyMessage(id)

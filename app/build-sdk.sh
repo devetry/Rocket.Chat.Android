@@ -94,13 +94,8 @@ if ! check_git_dirty && ! check_last_commit && [ -f "${CURRENT_DIR}"/libs/common
 	exit 0
 fi
 
-# CONFLICT: HEAD
-#cd "${SDK_DIR}" && sudo ./gradlew common:assemble && cd "${CURRENT_DIR}"
-#cd "${SDK_DIR}" && sudo ./gradlew core:assemble && cd "${CURRENT_DIR}"
-# CONFLICT: MERGE
 cd "${SDK_DIR}" && ./gradlew --no-daemon common:assemble && cd "${CURRENT_DIR}"
 cd "${SDK_DIR}" && ./gradlew --no-daemon core:assemble && cd "${CURRENT_DIR}"
-# CONFLICT: END
 
 rm "${CURRENT_DIR}"/libs/common* "${CURRENT_DIR}"/libs/core*
 

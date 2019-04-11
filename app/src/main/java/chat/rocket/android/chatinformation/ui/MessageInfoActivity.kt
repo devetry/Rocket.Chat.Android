@@ -48,8 +48,13 @@ class MessageInfoActivity : AppCompatActivity(), HasSupportFragmentInjector {
         text_toolbar_title.textContent = getString(R.string.message_information_title)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        // YTP UPDATE
+        // NEW:
         if (Locale.getDefault().language == "ar") toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp_ar)
         else toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        // OLD:
+//        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        // END
         toolbar.setNavigationOnClickListener { finishActivity() }
     }
 

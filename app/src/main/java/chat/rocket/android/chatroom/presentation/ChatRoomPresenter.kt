@@ -71,26 +71,17 @@ import chat.rocket.core.internal.rest.unpinMessage
 import chat.rocket.core.internal.rest.unstarMessage
 import chat.rocket.core.internal.rest.updateMessage
 import chat.rocket.core.internal.rest.uploadFile
-// CONFLICT: HEAD
-//import chat.rocket.core.model.*
-//import kotlinx.coroutines.experimental.CommonPool
-//import kotlinx.coroutines.experimental.DefaultDispatcher
-//import kotlinx.coroutines.experimental.android.UI
-//import kotlinx.coroutines.experimental.channels.Channel
-//import kotlinx.coroutines.experimental.launch
-//import kotlinx.coroutines.experimental.withContext
-// CONFLICT: MERGE
 import chat.rocket.core.model.ChatRoom
 import chat.rocket.core.model.ChatRoomRole
 import chat.rocket.core.model.Command
 import chat.rocket.core.model.Message
 import chat.rocket.core.model.Room
+import chat.rocket.core.model.MessageType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-// CONFLICT: END
 import org.threeten.bp.Instant
 import timber.log.Timber
 import java.util.*
@@ -221,35 +212,33 @@ class ChatRoomPresenter @Inject constructor(
             view.showLoading()
             try {
                 if (offset == 0L) {
-// CONFLICT: HEAD
-//                    val oldLocalMessages = messagesRepository.getByRoomId(chatRoomId)
-//                    /**
-//                     * CODE EDITED
-//                     */
-//                    var localMessages = mutableListOf<Message>()
-//                    for (message in oldLocalMessages) {
-//                        var isValid = true
-//                        if (message.type is MessageType.UserJoined ||
-//                                message.type is MessageType.UserLeft ||
-//                                message.type is MessageType.UserAdded ||
-//                                message.type is MessageType.UserRemoved ||
-//                                message.type is MessageType.UserMuted ||
-//                                message.type is MessageType.UserUnMuted) {
-//                            isValid = false
-//                        }
-//                        if (isValid) localMessages.add(message)
-//                    }
-// CONFLICT: MERGE
                     // FIXME - load just 50 messages from DB to speed up. We will reload from Network after that
                     // FIXME - We need to handle the pagination, first fetch from DB, then from network
-                    val localMessages = messagesRepository.getRecentMessages(chatRoomId, 50)
-// CONFLICT: END
+                    val tempLocalMessages =  messagesRepository.getRecentMessages(chatRoomId, 50)
+
+                    /**
+                     * YTP UPDATE
+                     */
+                    var localMessages = mutableListOf<Message>()
+                    for (message in tempLocalMessages) {
+                        var isValid = true
+                        if (message.type is MessageType.UserJoined ||
+                                message.type is MessageType.UserLeft ||
+                                message.type is MessageType.UserAdded ||
+                                message.type is MessageType.UserRemoved ||
+                                message.type is MessageType.UserMuted ||
+                                message.type is MessageType.UserUnMuted) {
+                            isValid = false
+                        }
+                        if (isValid) localMessages.add(message)
+                    }
+
                     val oldMessages = mapper.map(
                         localMessages, RoomUiModel(
-                        roles = chatRoles,
-                        // FIXME: Why are we fixing isRoom attribute to true here?
-                        isBroadcast = chatIsBroadcast, isRoom = true
-                    )
+                            roles = chatRoles,
+                            // FIXME: Why are we fixing isRoom attribute to true here?
+                            isBroadcast = chatIsBroadcast, isRoom = true
+                        )
                     )
                     val lastSyncDate = messagesRepository.getLastSyncDate(chatRoomId)
                     if (oldMessages.isNotEmpty() && lastSyncDate != null) {
@@ -289,28 +278,26 @@ class ChatRoomPresenter @Inject constructor(
         offset: Long = 0,
         clearDataSet: Boolean
     ) {
-            val messages =
-                    retryIO("loadAndShowMessages($chatRoomId, $chatRoomType, $offset") {
-                        client.messages(chatRoomId, roomTypeOf(chatRoomType), offset, 30).result
-                    }
+            var tempMessages = retryIO("loadAndShowMessages($chatRoomId, $chatRoomType, $offset") {
+                client.messages(chatRoomId, roomTypeOf(chatRoomType), offset, 30).result
+            }
 
             /**
-             * CODE EDITED
+             * YTP UPDATE
              */
-//            var messages = mutableListOf<Message>()
-//            for (message in originalMessages) {
-//                var isValid = true
-//                if (message.type is MessageType.UserJoined ||
-//                        message.type is MessageType.UserLeft ||
-//                        message.type is MessageType.UserAdded ||
-//                        message.type is MessageType.UserRemoved ||
-//                        message.type is MessageType.UserMuted ||
-//                        message.type is MessageType.UserUnMuted) {
-//                    isValid = false
-//                }
-//                if (isValid) messages.add(message)
-//            }
-
+            var messages = mutableListOf<Message>()
+            for (message in tempMessages) {
+                var isValid = true
+                if (message.type is MessageType.UserJoined ||
+                        message.type is MessageType.UserLeft ||
+                        message.type is MessageType.UserAdded ||
+                        message.type is MessageType.UserRemoved ||
+                        message.type is MessageType.UserMuted ||
+                        message.type is MessageType.UserUnMuted) {
+                    isValid = false
+                }
+                if (isValid) messages.add(message)
+            }
 
             messagesRepository.saveAll(messages)
 

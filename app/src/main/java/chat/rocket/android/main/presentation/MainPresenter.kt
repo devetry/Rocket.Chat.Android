@@ -169,37 +169,8 @@ class MainPresenter @Inject constructor(
     }
 
     fun logout() {
-// CONFLICT: HEAD
-//        launchUI(strategy) {
-//            //            view.showProgress()
-//            try {
-//                clearTokens()
-//                retryIO("logout") { client.logout() }
-//            } catch (exception: RocketChatException) {
-//                Timber.d(exception, "Error calling logout")
-//                exception.message?.let {
-//                    view.showMessage(it)
-//                }.ifNull {
-//                    view.showGenericErrorMessage()
-//                }
-//            }
-//
-//            try {
-//                disconnect()
-//                removeAccountInteractor.remove(currentServer)
-//                tokenRepository.remove(currentServer)
-//
-//                withContext(CommonPool) { dbManager.logout() }
-////                navigator.switchOrAddNewServer()
-//            } catch (ex: Exception) {
-//                Timber.d(ex, "Error cleaning up the session...")
-//            }
-////            view.hideProgress()
-//        }
-// CONFLICT: MERGE
         setupConnectionInfo(currentServer)
         super.logout(userDataChannel)
-// CONFLICT: END
     }
 
     fun connect() {
