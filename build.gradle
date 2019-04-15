@@ -1,6 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-apply from: rootProject.file('dependencies.gradle')
+buildscript {
+    apply from: rootProject.file('dependencies.gradle')
 
+<<<<<<< HEAD
 ext {
     compileSdkVersion = 26
     targetSdkVersion = 26
@@ -43,6 +45,36 @@ allprojects {
 // This block encapsulates custom properties and makes them available to all modules in the project.
 // You can also create properties to specify versions for dependencies.
 // Having consistent versions between modules can avoid conflicts with behavior.
+=======
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://maven.fabric.io/public' }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:${versions.dokka}"
+        classpath 'com.google.gms:google-services:4.2.0'
+        classpath 'io.fabric.tools:gradle:1.26.1'
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.20.0"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://jitpack.io" }
+        maven { url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases" }
+    }
+
+    apply from: rootProject.file('dependencies.gradle')
+}
+>>>>>>> develop
 
 task clean(type: Delete) {
     delete rootProject.buildDir

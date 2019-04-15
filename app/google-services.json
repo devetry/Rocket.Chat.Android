@@ -1,27 +1,46 @@
 {
   "project_info": {
+<<<<<<< HEAD
     "project_number": "1020987621558",
     "firebase_url": "https://rocketchatnative.firebaseio.com",
     "project_id": "rocketchatnative",
     "storage_bucket": "rocketchatnative.appspot.com"
+=======
+    "project_number": "412822424799",
+    "firebase_url": "https://young-thinkers-program-connect.firebaseio.com",
+    "project_id": "young-thinkers-program-connect",
+    "storage_bucket": "young-thinkers-program-connect.appspot.com"
+>>>>>>> develop
   },
   "client": [
     {
       "client_info": {
+<<<<<<< HEAD
         "mobilesdk_app_id": "1:1020987621558:android:16da2e50aff9f0c9",
+=======
+        "mobilesdk_app_id": "1:412822424799:android:db9280efeabefe2f",
+>>>>>>> develop
         "android_client_info": {
-          "package_name": "chat.rocket.android"
+          "package_name": "chat.rocket.ytpconnect"
         }
       },
       "oauth_client": [
         {
+<<<<<<< HEAD
           "client_id": "1020987621558-trk61fjrahho0ujtjap095p1jmi48pfq.apps.googleusercontent.com",
+=======
+          "client_id": "412822424799-2ltfhtmtrqvseg8n6eme38rabvo94kb1.apps.googleusercontent.com",
+>>>>>>> develop
           "client_type": 3
         }
       ],
       "api_key": [
         {
+<<<<<<< HEAD
           "current_key": "AIzaSyDc7VYUdU6kRkoRTToiCn1rh-W0wJvhLWk"
+=======
+          "current_key": "AIzaSyAchxcyemX3ij4A2OTSowGqXqv4fVcGgkg"
+>>>>>>> develop
         }
       ],
       "services": {

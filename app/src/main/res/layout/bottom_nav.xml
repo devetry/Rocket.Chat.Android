@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomNav"
+    android:layout_gravity="bottom"
+    android:background="@color/blue"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/ytp_bottom_navigation_height"
+    android:layoutDirection="ltr"
+    tools:showIn="@layout/activity_main">
+
+    <LinearLayout
+        android:id="@+id/levelsTab"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/levelsTabIcon"
+            android:layout_width="@dimen/image_icon_size"
+            android:layout_height="@dimen/image_icon_size"
+            app:srcCompat="@drawable/ic_levels" />
+
+        <TextView
+            android:id="@+id/levelsTabTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:text="Levels" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/careersTab"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/image_icon_size"
+            android:layout_height="@dimen/image_icon_size"
+            app:srcCompat="@drawable/ic_careers" />
+
+        <TextView
+            android:id="@+id/careersTabTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:text="Careers" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/coursesTab"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/image_icon_size"
+            android:layout_height="@dimen/image_icon_size"
+            app:srcCompat="@drawable/ic_courses" />
+
+        <TextView
+            android:id="@+id/coursesTabTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:text="Courses" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/chatTab"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/image_icon_size"
+            android:layout_height="@dimen/image_icon_size"
+            app:srcCompat="@drawable/ic_chat" />
+
+        <TextView
+            android:id="@+id/chatTabTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:textColor="@color/white"
+            android:text="@string/general_chat" />
+    </LinearLayout>
+
+</LinearLayout>

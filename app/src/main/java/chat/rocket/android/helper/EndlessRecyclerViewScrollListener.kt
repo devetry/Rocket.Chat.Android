@@ -1,5 +1,6 @@
 package chat.rocket.android.helper
 
+<<<<<<< HEAD
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -8,6 +9,15 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 /**
  * Created by Filipe de Lima Brito (filipedelimabrito@gmail.com) on 9/21/17.
  * Source info: https://github.com/codepath/android_guides/wiki/Endless-Scrolling-with-AdapterViews-and-RecyclerView
+=======
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+
+/**
+ * Info: https://github.com/codepath/android_guides/wiki/Endless-Scrolling-with-AdapterViews-and-RecyclerView
+>>>>>>> develop
  */
 abstract class EndlessRecyclerViewScrollListener : RecyclerView.OnScrollListener {
     private var visibleThreshold = 5 // The minimum amount of items to have below of the current scroll position before loading more.
@@ -46,7 +56,11 @@ abstract class EndlessRecyclerViewScrollListener : RecyclerView.OnScrollListener
     // This happens many times a second during a scroll, so be wary of the code you place here.
     // We are given a few useful parameters to help us work out if we need to load some more data,
     // but first we check if we are waiting for the previous load to finish.
+<<<<<<< HEAD
     override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
+=======
+    override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
+>>>>>>> develop
         var lastVisibleItemPosition = 0
         val totalItemCount = layoutManager.itemCount
 
@@ -107,5 +121,9 @@ abstract class EndlessRecyclerViewScrollListener : RecyclerView.OnScrollListener
     }
 
     // Defines the process for actually loading more data based on page
+<<<<<<< HEAD
     abstract fun onLoadMore(page: Int, totalItemsCount: Int, recyclerView: RecyclerView?)
+=======
+    abstract fun onLoadMore(page: Int, totalItemsCount: Int, recyclerView: RecyclerView)
+>>>>>>> develop
 }
