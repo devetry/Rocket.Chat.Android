@@ -26,6 +26,7 @@ import android.graphics.drawable.PictureDrawable
 import android.opengl.Visibility
 import com.bumptech.glide.Glide
 import androidx.core.view.ViewCompat.animate
+import chat.rocket.android.helper.AvatarHelper
 import chat.rocket.android.util.Utils
 import kotlinx.android.synthetic.main.avatar_profile.*
 import java.util.*
@@ -49,17 +50,18 @@ class RoomViewHolder(itemView: View, private val listener: (RoomUiModel) -> Unit
 
             // YTP UPDATE
             // NEW:
-            if (room.avatar.contains("avatar/louis?") || room.avatar.contains("avatar/Advisor_Nada?")) {
+            if (room.avatar.contains("avatar/louis?") || room.avatar.contains("avatar/Advisor_Nada?") || room.avatar.contains("avatar/Young_Thinkers_")) {
+                var avatar = room.avatar.substringBefore("?format=jpeg")
                 image_avatar.visibility = View.VISIBLE
                 image_avatar_text_view.visibility = View.INVISIBLE
-                image_avatar.setImageURI(room.avatar)
+                Log.d("AVATAR_URL", avatar)
+                image_avatar.setImageURI(avatar)
             } else {
                 image_avatar.visibility = View.INVISIBLE
                 image_avatar_text_view.visibility = View.VISIBLE
                 image_avatar_text_view.text = room.name.substring(0, 2).toUpperCase()
-                val rnd = Random()
-                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-                image_avatar_text_view.setBackgroundColor(color)
+                val color = AvatarHelper().getAvatarBackground(room.name)
+                image_avatar_text_view.setBackgroundColor(resources.getColor(color))
             }
             // END
 

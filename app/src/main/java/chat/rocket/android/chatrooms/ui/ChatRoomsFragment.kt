@@ -180,7 +180,7 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
                 // Simply setting sortView to visible won't work, so we invalidate the options
                 // to recreate the entire menu...
                 /**
-                 * ROCKET CHAT CODE EDITIED
+                 * ROCKET CHAT CODE EDITED
                  *
                  * DESCRIPTION: Querying for the letter `a` as a default search
                  *

@@ -149,10 +149,13 @@ class ChatRoomPresenter @Inject constructor(
                 val canModerate = isOwnerOrMod()
                 // Can post anyway if has the 'post-readonly' permission on server.
                 val room = dbManager.getRoom(roomId)
+                Log.d("SET UP CHAT ROOM", "CHECK 1: ${roomId}")
+                Log.d("SET UP CHAT ROOM", "CHECK 2: ${dbManager}")
                 room?.let {
                     chatIsBroadcast = it.chatRoom.broadcast ?: false
                     val roomUiModel = roomMapper.map(it, true)
                     launchUI(strategy) {
+                        Log.d("SET UP CHAT ROOM", "CHECK 3")
                         view.onRoomUpdated(roomUiModel = roomUiModel.copy(
                             broadcast = chatIsBroadcast,
                             canModerate = canModerate,
@@ -1143,11 +1146,18 @@ class ChatRoomPresenter @Inject constructor(
 
     private fun logMessageSent() {
         when {
-            roomTypeOf(chatRoomType) is RoomType.DirectMessage ->
+            roomTypeOf(chatRoomType) is RoomType.DirectMessage -> {
                 analyticsManager.logMessageSent(SubscriptionTypeEvent.DirectMessage)
-            roomTypeOf(chatRoomType) is RoomType.Channel ->
+            }
+
+            roomTypeOf(chatRoomType) is RoomType.Channel -> {
+
                 analyticsManager.logMessageSent(SubscriptionTypeEvent.Channel)
-            else -> analyticsManager.logMessageSent(SubscriptionTypeEvent.Group)
+            }
+            else -> {
+
+                analyticsManager.logMessageSent(SubscriptionTypeEvent.Group)
+            }
         }
     }
 

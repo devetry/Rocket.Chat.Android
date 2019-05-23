@@ -9,6 +9,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import chat.rocket.android.R
+import chat.rocket.android.analytics.FirebaseAnalyticsHandler
 import chat.rocket.android.app.RocketChatApplication
 import chat.rocket.android.chatroom.presentation.ChatRoomNavigator
 import chat.rocket.android.server.domain.GetCurrentServerInteractor
@@ -66,9 +67,13 @@ class ChatRoomActivity : AppCompatActivity(), HasSupportFragmentInjector {
     @Inject
     lateinit var managerFactory: ConnectionManagerFactory
 
+    lateinit var analyticsHandler: FirebaseAnalyticsHandler
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
+
+        analyticsHandler = FirebaseAnalyticsHandler(this)
 
         setContentView(R.layout.activity_chat_room)
 

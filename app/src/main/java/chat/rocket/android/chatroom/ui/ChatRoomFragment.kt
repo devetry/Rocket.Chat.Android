@@ -284,6 +284,10 @@ class ChatRoomFragment : Fragment(), ChatRoomView, EmojiKeyboardListener, EmojiR
         }
             ?: requireNotNull(arguments) { "no arguments supplied when the fragment was instantiated" }
 
+        Log.d("CHAT ROOM", "ID: ${chatRoomId}")
+        Log.d("CHAT ROOM", "TYPE: ${chatRoomType}")
+        Log.d("CHAT ROOM", "SUBSCRIBED: ${isSubscribed}")
+
         adapter = ChatRoomAdapter(
             roomId = chatRoomId,
             roomType = chatRoomType,
@@ -455,6 +459,7 @@ class ChatRoomFragment : Fragment(), ChatRoomView, EmojiKeyboardListener, EmojiR
     }
 
     override fun onRoomUpdated(roomUiModel: RoomUiModel) {
+        Log.d("ON ROOM UPDATED", "CHECK 1")
         // TODO: We should rely solely on the user being able to post, but we cannot guarantee
         // that the "(channels|groups).roles" endpoint is supported by the server in use.
         ui {
@@ -473,6 +478,17 @@ class ChatRoomFragment : Fragment(), ChatRoomView, EmojiKeyboardListener, EmojiR
         ui {
             if (!text.isBlank()) {
                 if (!text.startsWith("/")) {
+
+                    /**
+                     * YTP UPDATE
+                     */
+                    // NEW:
+                    var params = Bundle()
+                    params.putString("action", "Sent Message")
+                    (activity as ChatRoomActivity).analyticsHandler.logChatAction(params)
+                    // OLD: N/A
+                    // END
+
                     presenter.sendMessage(chatRoomId, text, editingMessageId)
                 } else {
                     presenter.runCommand(text, chatRoomId)
@@ -811,7 +827,6 @@ class ChatRoomFragment : Fragment(), ChatRoomView, EmojiKeyboardListener, EmojiR
         endlessRecyclerViewScrollListener = object :
             EndlessRecyclerViewScrollListener(recycler_view.layoutManager as LinearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, recyclerView: RecyclerView) {
-                Log.d("LoadMore", "Loading more messages")
                 presenter.loadMessages(chatRoomId, chatRoomType, page * 30L)
 //                presenter.loadMessages(chatRoomId, chatRoomType)
             }
@@ -830,6 +845,7 @@ class ChatRoomFragment : Fragment(), ChatRoomView, EmojiKeyboardListener, EmojiR
     }
 
     private fun setupMessageComposer(roomUiModel: RoomUiModel) {
+
         if (isReadOnly || !roomUiModel.writable) {
             text_room_is_read_only.isVisible = true
             input_container.isVisible = false
@@ -844,7 +860,20 @@ class ChatRoomFragment : Fragment(), ChatRoomView, EmojiKeyboardListener, EmojiR
         } else if (!isSubscribed && roomTypeOf(chatRoomType) !is RoomType.DirectMessage) {
             input_container.isVisible = false
             button_join_chat.isVisible = true
-            button_join_chat.setOnClickListener { presenter.joinChat(chatRoomId) }
+            button_join_chat.setOnClickListener {
+
+                /**
+                 * YTP UPDATE
+                 */
+                // NEW:
+                var params = Bundle()
+                params.putString("action", "Joined Channel")
+                (activity as ChatRoomActivity).analyticsHandler.logChannelAction(params)
+                // OLD: N/A
+                // END
+
+                presenter.joinChat(chatRoomId)
+            }
         } else {
             input_container.isVisible = true
             text_room_is_read_only.isVisible = false

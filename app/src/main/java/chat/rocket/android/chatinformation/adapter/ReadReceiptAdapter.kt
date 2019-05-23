@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import chat.rocket.android.R
 import chat.rocket.android.chatinformation.adapter.ReadReceiptAdapter.ReadReceiptViewHolder
 import chat.rocket.android.chatinformation.viewmodel.ReadReceiptViewModel
+import chat.rocket.android.helper.AvatarHelper
 import chat.rocket.android.util.extensions.inflate
 import kotlinx.android.synthetic.main.avatar.view.*
 import kotlinx.android.synthetic.main.avatar_profile.*
@@ -42,7 +43,7 @@ class ReadReceiptAdapter : RecyclerView.Adapter<ReadReceiptViewHolder>() {
 
         fun bind(readReceipt: ReadReceiptViewModel) {
             with(itemView) {
-                if (readReceipt.avatar.contains("avatar/louis?format=jpeg") || readReceipt.avatar.contains("avatar/Advisor_Nada?")) {
+                if (readReceipt.avatar.contains("avatar/louis?format=jpeg") || readReceipt.avatar.contains("avatar/Advisor_Nada?") || readReceipt.avatar.contains("avatar/Young_Thinkers_")) {
                     image_avatar.visibility = View.VISIBLE
                     image_avatar_text_view.visibility = View.GONE
                     image_avatar.setImageURI(readReceipt.avatar)
@@ -50,9 +51,8 @@ class ReadReceiptAdapter : RecyclerView.Adapter<ReadReceiptViewHolder>() {
                     image_avatar.visibility = View.GONE
                     image_avatar_text_view.visibility = View.VISIBLE
                     image_avatar_text_view.text = readReceipt.name.substring(0, 2).toUpperCase()
-                    val rnd = Random()
-                    val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-                    image_avatar_text_view.setBackgroundColor(color)
+                    val color = AvatarHelper().getAvatarBackground(readReceipt.name)
+                    image_avatar_text_view.setBackgroundColor(resources.getColor(color))
                 }
                 receipt_name.text = readReceipt.name
                 receipt_time.text = readReceipt.time

@@ -46,6 +46,7 @@ import java.util.*
 import javax.inject.Inject
 import android.app.NotificationManager
 import android.content.Context
+import chat.rocket.android.helper.AvatarHelper
 
 
 private const val CURRENT_STATE = "current_state"
@@ -289,7 +290,7 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
         val rnd = Random()
         val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
         headerLayout.image_avatar.setBackgroundColor(color)
-        if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?")) {
+        if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?") || avatarUrl.contains("avatar/Young_Thinkers_")) {
             headerLayout.image_avatar.visibility = View.VISIBLE
             if (image_avatar_text_view != null) image_avatar_text_view.visibility = View.INVISIBLE
             headerLayout.image_avatar.setImageURI(avatarUrl)
@@ -298,9 +299,8 @@ class MainActivity : AppCompatActivity(), MainView, HasActivityInjector,
             if (image_avatar_text_view != null) {
                 image_avatar_text_view.visibility = View.VISIBLE
                 image_avatar_text_view.text = name.substring(0, 2).toUpperCase()
-                val rnd = Random()
-                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-                image_avatar_text_view.setBackgroundColor(color)
+                val color = AvatarHelper().getAvatarBackground(name)
+                image_avatar_text_view.setBackgroundColor(resources.getColor(color))
             }
         }
     }
