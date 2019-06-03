@@ -1,5 +1,6 @@
 package chat.rocket.android.chatrooms.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -55,10 +56,8 @@ class ChatRoomsViewModel(
                     delay(200)
                     // TODO - find a better way for cancellation checking
                     if (!coroutineContext.isActive) return@wrap
-
                     val rooms = repository.search(string).let { mapper.map(it, showLastMessage = this.showLastMessage) }
                     data.postValue(rooms.toMutableList() + LoadingItemHolder())
-
 
                     if (!coroutineContext.isActive) return@wrap
 
@@ -66,13 +65,13 @@ class ChatRoomsViewModel(
                     if (!coroutineContext.isActive) return@wrap
 
                     spotlight?.let {
+                        Log.d("GET CHAT ROOMS", "CHECK 5: ${rooms.toMutableList() + spotlight}")
                         data.postValue(rooms.toMutableList() + spotlight)
                     }.ifNull {
                         data.postValue(rooms)
                     }
                 }
             } else {
-
                 repository.getChatRooms(query.asSortingOrder())
                         .nonNull()
                         .distinct()

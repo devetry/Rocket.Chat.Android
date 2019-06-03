@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import chat.rocket.android.R
+import chat.rocket.android.helper.AvatarHelper
 import chat.rocket.android.members.uimodel.MemberUiModel
 import chat.rocket.android.util.extensions.content
 import chat.rocket.android.util.extensions.inflate
@@ -45,7 +46,7 @@ class MembersAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(memberUiModel: MemberUiModel, listener: (MemberUiModel) -> Unit) = with(itemView) {
-            if (memberUiModel.avatarUri!!.contains("avatar/louis?format=jpeg") || memberUiModel.avatarUri.contains("avatar/Advisor_Nada?")) {
+            if (memberUiModel.avatarUri!!.contains("avatar/louis?format=jpeg") || memberUiModel.avatarUri.contains("avatar/Advisor_Nada?") || memberUiModel.avatarUri.contains("avatar/Young_Thinkers_")) {
                 image_avatar.visibility = View.VISIBLE
                 image_avatar_text_view.visibility = View.GONE
                 image_avatar.setImageURI(memberUiModel.avatarUri)
@@ -53,9 +54,8 @@ class MembersAdapter(
                 image_avatar.visibility = View.GONE
                 image_avatar_text_view.visibility = View.VISIBLE
                 image_avatar_text_view.text = memberUiModel.displayName.substring(0, 2).toUpperCase()
-                val rnd = Random()
-                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-                image_avatar_text_view.setBackgroundColor(color)
+                val color = AvatarHelper().getAvatarBackground(memberUiModel.displayName)
+                image_avatar_text_view.setBackgroundColor(resources.getColor(color))
             }
             text_member.content = memberUiModel.displayName
             text_member.setCompoundDrawablesRelativeWithIntrinsicBounds(

@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import chat.rocket.android.R
 import chat.rocket.android.analytics.AnalyticsManager
 import chat.rocket.android.analytics.event.ScreenViewEvent
+import chat.rocket.android.helper.AvatarHelper
 import chat.rocket.android.main.ui.MainActivity
 import chat.rocket.android.profile.presentation.ProfilePresenter
 import chat.rocket.android.profile.presentation.ProfileView
@@ -129,7 +130,7 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
     override fun showProfile(avatarUrl: String, name: String, username: String, email: String?) {
         ui {
 
-            if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?")) {
+            if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?") || avatarUrl.contains("avatar/Young_Thinkers_")) {
                 image_avatar.visibility = View.VISIBLE
                 image_avatar_text_view.visibility = View.INVISIBLE
                 image_avatar.setImageURI(avatarUrl)
@@ -137,9 +138,8 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
                 image_avatar.visibility = View.INVISIBLE
                 image_avatar_text_view.visibility = View.VISIBLE
                 image_avatar_text_view.text = name.substring(0, 2).toUpperCase()
-                val rnd = Random()
-                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-                image_avatar_text_view.setBackgroundColor(color)
+                val color = AvatarHelper().getAvatarBackground(name)
+                image_avatar_text_view.setBackgroundColor(resources.getColor(color))
             }
 
             text_name.textContent = name
@@ -157,7 +157,7 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
     override fun reloadUserAvatar(avatarUrl: String, name: String) {
         Fresco.getImagePipeline().evictFromCache(avatarUrl.toUri())
 
-        if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?")) {
+        if (avatarUrl.contains("avatar/louis?format=jpeg") || avatarUrl.contains("avatar/Advisor_Nada?") || avatarUrl.contains("avatar/Young_Thinkers_")) {
             image_avatar.visibility = View.VISIBLE
             image_avatar_text_view.visibility = View.INVISIBLE
             image_avatar.setImageURI(avatarUrl)
@@ -165,9 +165,8 @@ class ProfileFragment : Fragment(), ProfileView, ActionMode.Callback {
             image_avatar.visibility = View.INVISIBLE
             image_avatar_text_view.visibility = View.VISIBLE
             image_avatar_text_view.text = name.substring(0, 2).toUpperCase()
-            val rnd = Random()
-            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-            image_avatar_text_view.setBackgroundColor(color)
+            val color = AvatarHelper().getAvatarBackground(name)
+            image_avatar_text_view.setBackgroundColor(resources.getColor(color))
         }
         (activity as MainActivity).setAvatar(avatarUrl, name)
     }

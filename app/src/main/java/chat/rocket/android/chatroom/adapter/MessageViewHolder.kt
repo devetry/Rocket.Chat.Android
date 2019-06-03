@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import chat.rocket.android.R
 import chat.rocket.android.chatroom.uimodel.MessageUiModel
 import chat.rocket.android.emoji.EmojiReactionListener
+import chat.rocket.android.helper.AvatarHelper
 import chat.rocket.core.model.MessageType
 import chat.rocket.core.model.isSystemMessage
 import com.bumptech.glide.load.resource.gif.GifDrawable
@@ -58,7 +59,7 @@ class MessageViewHolder(
 //            text_content.text = data.content
                 text_content.text_content.text = data.content
 
-                if (data.avatar.contains("avatar/louis?format=jpeg") || data.avatar.contains("avatar/Advisor_Nada?")) {
+                if (data.avatar.contains("avatar/louis?format=jpeg") || data.avatar.contains("avatar/Advisor_Nada?") || data.avatar.contains("avatar/Young_Thinkers_")) {
                     image_avatar.visibility = View.VISIBLE
                     image_avatar_text_view.visibility = View.GONE
                     image_avatar.setImageURI(data.avatar)
@@ -66,9 +67,8 @@ class MessageViewHolder(
                     image_avatar.visibility = View.GONE
                     image_avatar_text_view.visibility = View.VISIBLE
                     image_avatar_text_view.text = data.senderName.substring(0, 2).toUpperCase()
-                    val rnd = Random()
-                    val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-                    image_avatar_text_view.setBackgroundColor(color)
+                    val color = AvatarHelper().getAvatarBackground(data.senderName)
+                    image_avatar_text_view.setBackgroundColor(resources.getColor(color))
                 }
 
                 text_content.setTextColor(if (data.isTemporary) Color.GRAY else Color.BLACK)
