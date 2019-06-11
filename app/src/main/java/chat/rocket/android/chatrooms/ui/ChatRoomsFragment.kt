@@ -377,7 +377,7 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
              *
              * START OF EDIT
              */
-            viewModel.setQuery(Query.Search("a"))
+            viewModel.setQuery(Query.Search(""))
             /**
              * END OF EDIT
              *

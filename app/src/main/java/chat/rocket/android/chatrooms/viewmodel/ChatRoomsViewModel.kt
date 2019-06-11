@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import chat.rocket.android.chatrooms.adapter.ItemHolder
 import chat.rocket.android.chatrooms.adapter.LoadingItemHolder
 import chat.rocket.android.chatrooms.adapter.RoomUiModelMapper
+import chat.rocket.android.chatrooms.adapter.model.RoomUiModel
 import chat.rocket.android.chatrooms.domain.FetchChatRoomsInteractor
 import chat.rocket.android.chatrooms.infrastructure.ChatRoomsRepository
 import chat.rocket.android.server.infraestructure.ConnectionManager
@@ -56,7 +57,53 @@ class ChatRoomsViewModel(
                     delay(200)
                     // TODO - find a better way for cancellation checking
                     if (!coroutineContext.isActive) return@wrap
-                    val rooms = repository.search(string).let { mapper.map(it, showLastMessage = this.showLastMessage) }
+
+
+                    var rooms = repository.search(string).let { mapper.map(it, showLastMessage = this.showLastMessage) }
+                    /**
+                     * ROCKET CHAT CODE EDITED
+                     *
+                     * DESCRIPTION: Searches for all channels when search is empty
+                     *
+                     * AUTHOR: Tanner Juby
+                     * DATE: 6/11/19
+                     *
+                     * START OF EDIT
+                     */
+                    if (string == "") {
+                        rooms = repository.search("a").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("b").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("c").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("d").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("e").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("f").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("g").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("h").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("i").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("j").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("k").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("l").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("m").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("n").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("o").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("p").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("q").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("r").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("s").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("t").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("u").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("v").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("w").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("x").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("y").let { mapper.map(it, showLastMessage = this.showLastMessage) } +
+                                repository.search("z").let { mapper.map(it, showLastMessage = this.showLastMessage) }
+                        rooms = rooms.distinctBy { (it.data as RoomUiModel).name }
+                    }
+                    /**
+                     * END OF EDIT
+                     *
+                     * PREVIOUS CODE: n/a
+                     */
                     data.postValue(rooms.toMutableList() + LoadingItemHolder())
 
                     if (!coroutineContext.isActive) return@wrap
@@ -65,7 +112,6 @@ class ChatRoomsViewModel(
                     if (!coroutineContext.isActive) return@wrap
 
                     spotlight?.let {
-                        Log.d("GET CHAT ROOMS", "CHECK 5: ${rooms.toMutableList() + spotlight}")
                         data.postValue(rooms.toMutableList() + spotlight)
                     }.ifNull {
                         data.postValue(rooms)
