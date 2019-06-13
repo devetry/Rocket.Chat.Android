@@ -293,9 +293,8 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
                 val dialogLayout = layoutInflater.inflate(R.layout.chatrooms_search_dialog, null)
                 context?.let {
                     AlertDialog.Builder(it)
-                            .setTitle(R.string.msg_warning)
                             .setView(dialogLayout)
-                            .setPositiveButton(R.string.msg_cancel) { dialog, _ ->
+                            .setNegativeButton(R.string.msg_cancel) { dialog, _ ->
                                 dialog.dismiss()
                             }.show()
                 }
