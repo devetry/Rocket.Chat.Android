@@ -11,6 +11,7 @@ https://github.com/RocketChat/java-code-styles/blob/master/CODING_STYLE.md#strin
 -->
 <resources>
     <string name="app_name">Young Thinkers Advice</string>
+    <string name="chatrooms_dialog_warning">Feature coming soon. Find and join new channels on desktop!</string>
 
     <!-- Titles -->
     <string name="title_sign_in_your_server">Sign in to your server</string>

@@ -167,48 +167,63 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.chatrooms, menu)
 
-        sortView = menu.findItem(R.id.action_sort)
+        /**
+         * ROCKET CHAT CODE EDITED
+         *
+         * DESCRIPTION: Removes Search View
+         *
+         * AUTHOR: Tanner Juby
+         * DATE: 6/13/19
+         *
+         * START OF EDIT
+         */
+//        sortView = menu.findItem(R.id.action_sort)
+//
+//        var searchItem = menu.findItem(R.id.action_search)
+//        searchView = searchItem?.actionView as? SearchView
+//        searchView?.setIconifiedByDefault(false)
+//        searchView?.maxWidth = Integer.MAX_VALUE
+//        searchView?.onQueryTextListener { queryChatRoomsByName(it) }
 
-        var searchItem = menu.findItem(R.id.action_search)
-        searchView = searchItem?.actionView as? SearchView
-        searchView?.setIconifiedByDefault(false)
-        searchView?.maxWidth = Integer.MAX_VALUE
-        searchView?.onQueryTextListener { queryChatRoomsByName(it) }
-
-        val expandListener = object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                // Simply setting sortView to visible won't work, so we invalidate the options
-                // to recreate the entire menu...
-                /**
-                 * ROCKET CHAT CODE EDITED
-                 *
-                 * DESCRIPTION: Querying for the letter `a` as a default search
-                 *
-                 * AUTHOR: Tanner Juby
-                 * DATE: 10/11/18
-                 *
-                 * START OF EDIT
-                 */
-                updateSort()
-                viewModel.showLastMessage = false
-                /**
-                 * END OF EDIT
-                 *
-                 * PREVIOUS CODE:
-                 * viewModel.showLastMessage = true
-                 */
-                activity?.invalidateOptionsMenu()
-                queryChatRoomsByName(null)
-                return true
-            }
-
-            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                viewModel.showLastMessage = false
-                sortView?.isVisible = false
-                return true
-            }
-        }
-        searchItem?.setOnActionExpandListener(expandListener)
+//        val expandListener = object : MenuItem.OnActionExpandListener {
+//            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+//                // Simply setting sortView to visible won't work, so we invalidate the options
+//                // to recreate the entire menu...
+//                /**
+//                 * ROCKET CHAT CODE EDITED
+//                 *
+//                 * DESCRIPTION: Removes viewing of preview message
+//                 *
+//                 * AUTHOR: Tanner Juby
+//                 * DATE: 10/11/18
+//                 *
+//                 * START OF EDIT
+//                 */
+//                updateSort()
+//                viewModel.showLastMessage = false
+//                /**
+//                 * END OF EDIT
+//                 *
+//                 * PREVIOUS CODE:
+//                 * viewModel.showLastMessage = true
+//                 */
+//                activity?.invalidateOptionsMenu()
+//                queryChatRoomsByName(null)
+//                return true
+//            }
+//
+//            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+//                viewModel.showLastMessage = false
+//                sortView?.isVisible = false
+//                return true
+//            }
+//        }
+//        searchItem?.setOnActionExpandListener(expandListener)
+        /**
+         * END OF EDIT
+         *
+         * PREVIOUS CODE: commented out code
+         */
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -264,6 +279,32 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
                         }.show()
                 }
             }
+            /**
+             * ROCKET CHAT CODE EDITED
+             *
+             * DESCRIPTION: Add feature coming soon modal when user attempts to search
+             *
+             * AUTHOR: Tanner Juby
+             * DATE: 6/13/19
+             *
+             * START OF EDIT
+             */
+            R.id.action_search -> {
+                val dialogLayout = layoutInflater.inflate(R.layout.chatrooms_search_dialog, null)
+                context?.let {
+                    AlertDialog.Builder(it)
+                            .setTitle(R.string.msg_warning)
+                            .setView(dialogLayout)
+                            .setPositiveButton(R.string.msg_cancel) { dialog, _ ->
+                                dialog.dismiss()
+                            }.show()
+                }
+            }
+            /**
+             * END OF EDIT
+             *
+             * PREVIOUS CODE: n/a
+             */
         }
         return super.onOptionsItemSelected(item)
     }

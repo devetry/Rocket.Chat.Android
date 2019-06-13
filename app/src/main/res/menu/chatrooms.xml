@@ -4,12 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="AppCompatResource">
 
+    <!--ROCKET CHAT CODE EDITED-->
+    <!--DESCRIPTION: Removes searchView on action-->
+    <!--AUTHOR: Tanner Juby-->
+    <!--DATE: 6/13/19-->
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_white_24dp"
         android:title="@string/action_search"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
+    <!--<item-->
+        <!--android:id="@+id/action_search"-->
+        <!--android:icon="@drawable/ic_search_white_24dp"-->
+        <!--android:title="@string/action_search"-->
+        <!--app:actionViewClass="androidx.appcompat.widget.SearchView"-->
+        <!--app:showAsAction="ifRoom|collapseActionView" />-->
 
     <item
         android:id="@+id/action_sort"
