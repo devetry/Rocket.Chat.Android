@@ -294,7 +294,7 @@ class ChatRoomsFragment : Fragment(), ChatRoomsView {
                 context?.let {
                     AlertDialog.Builder(it)
                             .setView(dialogLayout)
-                            .setNegativeButton(R.string.msg_cancel) { dialog, _ ->
+                            .setNegativeButton(R.string.modal_action_dismiss) { dialog, _ ->
                                 dialog.dismiss()
                             }.show()
                 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="chatrooms_dialog_warning">ميزة ستضاف قريباً! جِد وانضم لقنوات جديدة على الحاسوب المكتبي!</string>
+    <string name="modal_action_dismiss">إغلاق</string>
 
     <!-- Titles -->
     <string name="title_sign_in_your_server">تسجيل الدخول إلى خادمك</string>
