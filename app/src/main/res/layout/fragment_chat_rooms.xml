@@ -9,6 +9,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_below="@+id/text_connection_status"
+        android:layout_above="@id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -56,4 +57,17 @@
         android:textSize="20sp"
         android:visibility="gone"
         tools:visibility="visible" />
+
+    <include
+        android:id="@+id/bottom_nav"
+        layout="@layout/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ytp_bottom_navigation_height"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </RelativeLayout>
+
